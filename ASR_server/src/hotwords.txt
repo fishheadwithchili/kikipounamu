@@ -1,0 +1,846 @@
+# === AI/Machine Learning 大语言模型 ===
+GPT GPT-2 GPT-3 GPT-3.5 GPT-4 GPT-4o GPT-4-Turbo ChatGPT
+Claude Claude-2 Claude-3 Claude-3.5 克劳德
+Gemini Gemini-Pro Gemini-Ultra Gemini-Flash
+LLaMA LLaMA-2 LLaMA-3 Llama Mistral Mixtral
+通义千问 Qwen Qwen-7B Qwen-72B 阿里通义
+文心一言 ERNIE ERNIE-Bot ERNIE-3.0 ERNIE-4.0 百度文心
+讯飞星火 星火大模型 星火认知
+Kimi Moonshot 月之暗面
+智谱清言 ChatGLM GLM-4 GLM-130B
+百川 Baichuan Baichuan-7B Baichuan-13B
+豆包 云雀模型 字节豆包
+DeepSeek DeepSeek-R1 DeepSeek-Coder
+BERT RoBERTa ALBERT DistilBERT
+T5 PaLM PaLM-2 Codex
+腾讯混元 混元大模型 紫东太初 书生 浦语
+盘古 盘古大模型 MOSS 日日新 天工AI 秘塔
+
+# === AI公司与品牌 ===
+OpenAI Anthropic Google DeepMind
+Stability AI Midjourney Runway Meta AI
+Microsoft Copilot 百度 阿里 阿里达摩院
+字节跳动 腾讯 华为 科大讯飞
+商汤科技 旷视科技 依图科技 智源研究院
+智谱AI 百川智能 月之暗面 零一万物 MiniMax
+英伟达 NVIDIA AMD Intel Tesla AI
+老黄 黄仁勋 Sam Altman 马斯克 xAI
+Cohere AI21 Labs Inflection AI
+
+# === 深度学习框架 ===
+PyTorch TensorFlow Keras JAX
+PaddlePaddle 飞桨 MindSpore
+Caffe MXNet Theano CNTK DyNet Chainer
+
+# === LLM开发框架 ===
+Hugging Face Transformers LangChain LlamaIndex
+Semantic Kernel AutoGPT AgentGPT
+Dify Flowise Coze 扣子 字节扣子
+
+# === AI加速与部署 ===
+CUDA cuDNN ONNX TensorRT OpenVINO CoreML
+NCNN MNN vLLM Triton Inference Server
+DeepSpeed Megatron-LM FSDP ZeRO
+FlashAttention PagedAttention
+Ollama LM Studio llama.cpp
+
+# === 向量数据库 ===
+Milvus Pinecone Weaviate Chroma FAISS
+Qdrant Elasticsearch PGVector LanceDB ChromaDB
+
+# === Transformer与神经网络 ===
+Transformer Attention Self-Attention Multi-Head Attention
+多头注意力 Cross-Attention 交叉注意力
+Positional Encoding 位置编码 Encoder Decoder
+编码器 解码器 Masked Language Model MLM
+CNN 卷积神经网络 RNN 循环神经网络
+LSTM 长短期记忆 GRU 门控循环单元
+GAN 生成对抗网络 Generator Discriminator
+VAE 变分自编码器 Autoencoder
+Diffusion Model 扩散模型 U-Net
+ViT Vision Transformer ResNet VGG Inception
+MLP 多层感知机 Perceptron Feedforward
+
+# === 训练术语 ===
+Epoch 轮次 Batch 批次 Batch Size 批量大小
+Mini-batch Learning Rate 学习率
+Loss 损失 Loss Function 损失函数
+Gradient 梯度 Gradient Descent 梯度下降
+SGD Adam AdamW RMSprop Adagrad Optimizer 优化器
+Backpropagation 反向传播 BP算法 Forward Propagation
+Pre-training 预训练 Fine-tuning 微调 精调
+Transfer Learning 迁移学习 Few-shot Learning
+Zero-shot Learning Meta Learning 元学习
+Contrastive Learning 对比学习
+Supervised Learning 监督学习 Unsupervised Learning
+Overfitting 过拟合 Underfitting 欠拟合
+Regularization 正则化 L1正则化 L2正则化
+Dropout BatchNorm LayerNorm Weight Decay
+Early Stopping Data Augmentation 数据增强
+
+# === 大模型训练技术 ===
+RLHF 人类反馈强化学习 PPO 近端策略优化
+DPO Direct Preference Optimization SFT 监督微调
+Instruction Tuning 指令微调 LoRA QLoRA AdaLoRA
+PEFT 参数高效微调 Prefix Tuning Prompt Tuning
+Adapter 适配器 Quantization 量化
+INT8 INT4 FP16 BF16 FP32 Mixed Precision 混合精度
+Model Parallelism 模型并行 Data Parallelism 数据并行
+Pipeline Parallelism 流水线并行 Tensor Parallelism
+Gradient Checkpointing Knowledge Distillation 知识蒸馏
+
+# === RAG与检索增强 ===
+RAG 检索增强生成 Retrieval Augmented Generation
+Vector Database 向量数据库 Vector Search 向量搜索
+Semantic Search 语义搜索 Embedding Model 嵌入模型
+Chunk Chunking 文本分块 Retriever 检索器
+Reranker 重排序器 Hybrid Search 混合搜索
+BM25 TF-IDF Top-K Retrieval
+
+# === Prompt工程 ===
+Prompt 提示词 提示语 Prompt Engineering 提示词工程
+System Prompt 系统提示 User Prompt 用户提示
+Prompt Template 提示词模板 In-context Learning
+Chain-of-Thought CoT 思维链 Tree-of-Thought ToT
+ReAct Self-Consistency Few-shot Prompting Zero-shot Prompting
+
+# === Agent智能体 ===
+Agent 智能体 代理 AI Agent Multi-Agent 多智能体
+Autonomous Agent 自主代理 Tool Use 工具调用
+Function Calling 函数调用 Plugin 插件
+Workflow 工作流 Orchestration 编排
+Memory 记忆 长期记忆 短期记忆 Planning 规划 Reasoning 推理
+
+# === 生成与对话 ===
+Text Generation 文本生成 Response Generation
+Completion 补全 Chat Completion 对话补全
+Conversation 对话 多轮对话 Context 上下文
+Temperature 温度参数 Top-P Top-K Sampling 采样
+Beam Search 束搜索 Greedy Decoding Nucleus Sampling
+
+# === 评估指标 ===
+Accuracy 准确率 Precision 精确率 Recall 召回率
+F1-Score F1值 AUC ROC曲线 Perplexity 困惑度
+BLEU ROUGE METEOR Cross-Entropy 交叉熵
+MSE MAE IoU mAP Benchmark MMLU SuperGLUE GLUE
+Confusion Matrix 混淆矩阵
+
+# === NLP术语 ===
+NLP 自然语言处理 NLU 自然语言理解 NLG 自然语言生成
+Sentiment Analysis 情感分析 NER 命名实体识别
+POS 词性标注 Dependency Parsing 依存分析
+Text Classification 文本分类 Machine Translation 机器翻译
+Question Answering QA 问答系统 Text Summarization 文本摘要
+Reading Comprehension 阅读理解 Intent Recognition 意图识别
+Slot Filling 槽位填充 Knowledge Graph 知识图谱
+Embedding 嵌入 词嵌入 Word2Vec GloVe FastText
+Token Tokenization 分词 BPE WordPiece SentencePiece
+Vocabulary 词表 Context Window 上下文窗口
+
+# === 多模态 ===
+Multimodal 多模态 Vision-Language Model 视觉语言模型
+CLIP BLIP DALL-E Stable Diffusion SD Midjourney MJ
+Text-to-Image 文生图 Image-to-Text 图生文
+Text-to-Video 文生视频 Sora 可灵
+Text-to-Speech TTS 文本转语音 Speech-to-Text STT
+ASR 自动语音识别 OCR 光学字符识别
+Image Captioning 图像描述 VQA 视觉问答
+Image Segmentation 图像分割 Object Detection 目标检测
+
+# === GPU与算力 ===
+GPU 显卡 TPU NPU A100 H100 H200 B100 B200
+RTX 4090 RTX 3090 VRAM 显存 算力 FLOPS TFLOPS
+GPU集群 分布式训练 推理卡 训练卡
+CUDA Core Tensor Core NVLink PCIe InfiniBand
+
+# === AI中文俚语 ===
+大模型 小模型 基座模型 底座模型 微调 精调
+炼丹 炼丹师 炼丹炉 调参 调参侠 
+跑模型 训模型 推理 涨点 掉点 刷榜
+SOTA State-of-the-Art Baseline 基线
+开源 闭源 开源模型 蒸馏 剪枝 压缩
+量化 INT8量化 4bit量化 推理速度 吞吐量 延迟
+Token数 Token消耗 API调用
+Hallucination 幻觉 胡说八道 模型崩溃 模型退化
+泛化能力 鲁棒性 可解释性 对齐 Alignment 价值对齐
+越狱 Jailbreak 提示注入 Prompt Injection
+
+# === AI缩写 ===
+LLM 大语言模型 SLM 小语言模型 VLM 视觉语言模型
+MoE 混合专家模型 AGI 通用人工智能 ASI 超级人工智能
+AIGC AI生成内容 GenAI 生成式AI CV 计算机视觉
+RL 强化学习 DL 深度学习 ML 机器学习 AI 人工智能
+
+# === MLOps与部署 ===
+MLOps Inference 推理 Deployment 部署
+Model Serving 模型服务 API Endpoint
+Latency Throughput Scalability
+Weights & Biases wandb MLflow DVC Kubeflow
+Model Registry Model Versioning Edge Deployment
+
+# === 前端框架 ===
+React Vue Angular Next.js Nuxt Svelte Solid Astro
+Remix Gatsby Preact Qwik SvelteKit VitePress
+Vue Router Vuex Pinia Vuepress Element UI Element Plus
+Ant Design Vue Vuetify Quasar Naive UI Vant Arco Design
+React Router Redux MobX Zustand Jotai Recoil
+React Query TanStack Query SWR RTK Query
+Formik React Hook Form Framer Motion React Native Expo
+
+# === UI组件库 ===
+Tailwind CSS Ant Design Element UI Chakra UI Material UI
+Shadcn Radix UI Headless UI DaisyUI Bootstrap Bulma
+Semantic UI Carbon Design Mantine NextUI Semi Design TDesign
+
+# === CSS框架工具 ===
+Sass Less Stylus PostCSS CSS Modules Styled Components
+Emotion CSS-in-JS WindiCSS UnoCSS Vanilla Extract
+
+# === 后端框架 ===
+Express Koa Fastify NestJS Hapi Hono ElysiaJS
+Django Flask FastAPI Tornado Sanic Starlette Quart
+Spring Boot Spring Cloud Spring MVC MyBatis Hibernate
+Laravel Symfony CodeIgniter Yii
+Rails Sinatra Gin Echo Fiber Chi Beego GoFrame
+Actix Axum Rocket Warp
+
+# === Node.js生态 ===
+Node.js Deno Bun npm yarn pnpm npx nvm
+PM2 Nodemon ts-node tsx esbuild
+
+# === 数据库 ===
+MySQL PostgreSQL MongoDB Redis SQLite MariaDB
+Oracle SQL Server CockroachDB TiDB PolarDB OceanBase
+ClickHouse TimescaleDB InfluxDB Cassandra DynamoDB
+HBase Neo4j SurrealDB PlanetScale Neon Supabase
+Firebase Firestore FaunaDB
+
+# === ORM框架 ===
+Prisma Drizzle TypeORM Sequelize MikroORM Mongoose
+Knex Kysely SQLAlchemy Django ORM GORM Ent Diesel Sea-ORM
+
+# === 缓存与消息队列 ===
+Redis Memcached Caffeine Hazelcast
+Kafka RabbitMQ RocketMQ ActiveMQ Pulsar NSQ
+ZeroMQ NATS Redis Streams Amazon SQS
+
+# === 云服务商 ===
+AWS Azure GCP 阿里云 腾讯云 华为云 火山云 百度云
+七牛云 又拍云 Vercel Netlify Railway Render Fly.io
+DigitalOcean Linode Vultr Heroku Cloudflare Workers
+
+# === AWS服务 ===
+EC2 S3 Lambda RDS DynamoDB CloudFront Route53
+EKS ECS Fargate SQS SNS Kinesis CloudWatch IAM VPC
+ELB ALB API Gateway Cognito Amplify CodePipeline
+
+# === 云服务通用 ===
+云服务器 ECS 云数据库 RDS 对象存储 OSS CDN
+负载均衡 SLB 弹性伸缩 容器服务 Serverless 函数计算
+API网关 VPC 私有网络 安全组 密钥管理 KMS
+
+# === API相关 ===
+REST RESTful GraphQL gRPC WebSocket tRPC JSON-RPC
+OpenAPI Swagger Postman Insomnia Hoppscotch Apidog Apifox
+
+# === 认证授权 ===
+JWT OAuth OAuth2 OIDC SAML SSO LDAP Kerberos
+Passport.js Auth0 Clerk Okta Firebase Auth Supabase Auth
+NextAuth Lucia Auth Keycloak
+
+# === 构建工具 ===
+Webpack Vite Rollup esbuild Turbopack Parcel Snowpack
+Gulp Grunt Browserify Rspack swc Babel terser
+
+# === 测试框架 ===
+Jest Vitest Mocha Jasmine Cypress Playwright Puppeteer
+Selenium TestCafe Testing Library Enzyme SuperTest
+Chai Sinon MSW Storybook
+
+# === 代码质量 ===
+ESLint Prettier Stylelint Husky lint-staged commitlint
+editorconfig TypeScript TSC Biome oxlint
+
+# === 版本控制 ===
+Git GitHub GitLab Bitbucket Gitee SVN
+SourceTree GitKraken Git Flow GitHub Flow
+clone pull push commit merge rebase checkout branch
+tag stash cherry-pick reset revert diff blame log
+Pull Request Merge Request PR MR fork
+
+# === 前端概念中文 ===
+前端 后端 全栈 接口 调接口 请求 响应 跨域 同源策略
+组件 模块 路由 状态管理 双向绑定 虚拟DOM Diff算法
+响应式 声明式 函数式 面向对象 热更新 热重载 HMR
+脚手架 CLI 代码分割 懒加载 按需加载 预加载 Tree Shaking
+打包 构建 编译 转译 压缩 混淆 Source Map
+
+# === 小程序 ===
+微信小程序 支付宝小程序 百度小程序 字节小程序
+QQ小程序 UniApp Taro mpvue WePY Remax Kbone
+
+# === 跨端开发 ===
+React Native Flutter Weex Hippy NativeScript
+Cordova Ionic Capacitor Electron Tauri NW.js PWA
+
+# === 数据可视化 ===
+ECharts D3.js Chart.js Highcharts AntV G2 G6 L7 X6
+Recharts Victory Nivo Plotly Three.js PixiJS Konva
+
+# === 编程语言 ===
+Python JavaScript TypeScript Java C++ C# Go Golang
+Rust Swift Kotlin Ruby PHP Scala Elixir Haskell
+Dart Lua R MATLAB Julia Perl Shell Bash
+Objective-C SQL HTML CSS YAML JSON XML Markdown
+
+# === Python生态 ===
+pip conda virtualenv venv Poetry Pipenv pyenv anaconda
+NumPy Pandas Matplotlib Seaborn Plotly SciPy Scikit-learn
+requests BeautifulSoup Scrapy Selenium pytest unittest
+tqdm rich click argparse logging pydantic Celery
+
+# === Jupyter ===
+Jupyter IPython JupyterLab notebook Colab
+
+# === Rust生态 ===
+Cargo rustc rustup crates.io Clippy rustfmt
+Tokio async-std Futures Serde serde_json
+anyhow thiserror clap Tauri Dioxus Yew
+rayon crossbeam regex chrono uuid rand
+
+# === Go生态 ===
+Goroutine Channel Go Modules go.mod go.sum GOPATH
+Gin Echo Beego Fiber Iris Chi GORM Ent
+Cobra Viper zap logrus testify
+
+# === Java生态 ===
+Maven Gradle Spring Spring Boot Spring Cloud
+Hibernate MyBatis JPA Netty Quarkus Micronaut
+JUnit Mockito Lombok Jackson Guava GraalVM
+
+# === IDE编辑器 ===
+VS Code Visual Studio Code VSCode Vim Neovim Emacs
+Sublime Text JetBrains IntelliJ IDEA PyCharm WebStorm
+GoLand CLion Eclipse Xcode Android Studio
+Cursor Zed Fleet GitHub Copilot Codeium Tabnine
+
+# === 编程概念 ===
+变量 常量 函数 方法 参数 返回值 作用域 命名空间
+模块 包 依赖 导入 导出 注释 文档 注解 装饰器
+类 对象 继承 封装 多态 抽象类 接口 重载 重写
+泛型 类型推断 静态类型 动态类型 类型注解
+闭包 匿名函数 Lambda 箭头函数 高阶函数 柯里化
+并发 并行 多线程 多进程 协程 异步 同步
+阻塞 非阻塞 锁 互斥锁 死锁 原子操作 线程池
+垃圾回收 GC 内存泄漏 指针 引用 智能指针
+
+# === 数据结构算法 ===
+数组 链表 栈 队列 哈希表 树 二叉树 红黑树 B树 堆 图
+排序 冒泡排序 快速排序 归并排序 堆排序 二分查找
+深度优先 广度优先 DFS BFS 动态规划 DP 贪心算法
+回溯 递归 迭代 分治 时间复杂度 空间复杂度 大O表示法
+
+# === 软件工程 ===
+敏捷 Scrum Kanban 迭代 冲刺 Sprint 需求分析
+Code Review 代码审查 单元测试 集成测试 E2E测试
+TDD BDD 测试覆盖率 Mock 重构
+
+# === 编程口语 ===
+跑代码 写脚本 调bug 修bug 找bug 造轮子 搬砖
+撸代码 码代码 敲代码 屎山 祖传代码 面条代码
+上线 下线 灰度 回滚 发版 合代码 拉分支 提PR
+报错了 跑不起来 挂了 崩了 卡死了 内存爆了 死循环
+
+# === DevOps容器化 ===
+Docker Docker Compose Docker Swarm  Dockerfile Docker Hub
+Docker Registry containerd CRI-O runc Podman
+容器 镜像 仓库 容器化 容器编排 容器运行时
+镜像构建 镜像拉取 镜像推送 镜像标签 多阶段构建
+Buildah Skopeo Kaniko BuildKit
+
+# === Kubernetes核心 ===
+Kubernetes K8S K8s kubectl kubelet kube-proxy
+kube-apiserver kube-scheduler kube-controller-manager
+Pod ReplicaSet Deployment StatefulSet DaemonSet Job CronJob
+Service Endpoint ClusterIP NodePort LoadBalancer
+Ingress IngressController ConfigMap  Secret  Namespace
+PersistentVolume PV  PersistentVolumeClaim PVC StorageClass
+HorizontalPodAutoscaler HPA VerticalPodAutoscaler VPA
+ServiceAccount Role ClusterRole RoleBinding RBAC
+NetworkPolicy CustomResourceDefinition CRD Operator
+
+# === K8S术语 ===
+控制平面 工作节点 主节点 容器运行时 服务发现
+滚动更新 回滚 扩缩容 自动伸缩 亲和性 污点 容忍度
+探针 存活探针 就绪探针 启动探针 Sidecar
+
+# === CI/CD工具 ===
+Jenkins Jenkins Pipeline Jenkinsfile
+GitLab CI GitLab Runner .gitlab-ci.yml
+GitHub Actions workflow action runner
+CircleCI Travis CI Bamboo TeamCity
+ArgoCD Argo Workflows Argo Rollouts
+Tekton FluxCD Flux Drone Spinnaker
+
+# === CI/CD概念 ===
+持续集成 CI Continuous Integration
+持续交付 CD Continuous Delivery  持续部署
+流水线 Pipeline 管道 工作流 Workflow
+构建 Build 编译 打包 发布 Release
+部署 Deploy 回滚 Rollback 上线 下线
+分支策略 主干开发 Trunk Based Development
+特性分支 Feature Branch Git Flow GitHub Flow
+质量门禁 Quality Gate 代码扫描 静态分析
+
+# === 基础设施即代码 ===
+Terraform Terraform Cloud terraform plan terraform apply
+HCL tfstate Pulumi Ansible Ansible Playbook Ansible Role
+ansible-vault Chef  Cookbook Recipe Puppet Manifest
+SaltStack CloudFormation AWS CDK
+
+# === IaC概念 ===
+基础设施即代码 IaC 声明式 Declarative 命令式 Imperative
+状态管理 状态文件 资源编排 资源配置 模块化
+配置漂移 配置一致性 幂等性 不可变基础设施
+
+# === 监控告警 ===
+Prometheus Prometheus Operator PromQL Alertmanager
+告警规则 告警路由 告警抑制 告警静默
+Grafana Grafana Dashboard Grafana Loki Grafana Tempo
+Datadog New Relic Dynatrace Splunk
+Zabbix Nagios Icinga ELK Elasticsearch Logstash Kibana
+Fluentd Fluent Bit OpenTelemetry OTEL Jaeger Zipkin
+SkyWalking Pinpoint Sentry PagerDuty
+Thanos Cortex VictoriaMetrics InfluxDB TimescaleDB
+Node Exporter Blackbox Exporter
+
+# === 可观测性 ===
+可观测性 Observability 监控 Monitoring 告警 Alerting
+指标 Metrics 日志 Logs 追踪 Traces 链路追踪 分布式追踪
+时序数据库 TSDB 仪表盘 Dashboard 数据采集 Scrape
+SLI SLO SLA 服务水平指标 服务水平目标 服务水平协议
+错误预算 Error Budget MTTD MTTR MTTF
+健康检查 Health Check Liveness Probe Readiness Probe
+
+# === 服务网格 ===
+Istio Istio Gateway istiod istioctl VirtualService
+DestinationRule ServiceEntry Linkerd Envoy Envoy Proxy
+Consul Consul Connect Kuma Kong Mesh SOFAMESH
+
+# === 服务网格概念 ===
+服务网格 Service Mesh 边车 Sidecar 数据平面 Data Plane
+控制平面 Control Plane 流量管理 流量路由 负载均衡
+熔断器 Circuit Breaker 重试 Retry 超时 Timeout
+限流 Rate Limiting 故障注入 mTLS 零信任网络
+
+# === GitOps ===
+GitOps Git即运维 声明式 同步 Sync 漂移检测
+期望状态 实际状态 自动同步 手动同步
+
+# === 云原生 ===
+云原生 Cloud Native CNCF 微服务 Microservices
+单体应用 Monolithic 分布式系统 无服务器 Serverless
+FaaS BaaS Knative OpenFaaS 服务注册 服务发现
+API网关 API Gateway Kong APISIX Ambassador
+配置中心 Nacos Apollo Consul etcd ZooKeeper
+弹性伸缩 Auto Scaling 水平伸缩 垂直伸缩
+高可用 High Availability HA 容错 Fault Tolerance 灾备
+混沌工程 Chaos Engineering Chaos Monkey LitmusChaos ChaosBlade
+
+# === 部署策略 ===
+滚动更新 Rolling Update 滚动部署
+蓝绿部署 Blue Green Deployment
+金丝雀发布 Canary Release 金丝雀部署
+灰度发布 Gray Release 渐进式交付 Progressive Delivery
+A/B测试 影子流量 Traffic Mirroring
+特性开关 Feature Toggle Feature Flag
+暗启动 Dark Launch 零停机部署
+
+# === 信息安全漏洞类型 ===
+SQL注入 XSS跨站脚本 存储型XSS 反射型XSS DOM型XSS
+CSRF跨站请求伪造 SSRF服务器端请求伪造 RCE远程代码执行
+命令执行 代码执行 LFI本地文件包含 RFI远程文件包含
+XXE XML外部实体注入 反序列化漏洞 逻辑漏洞
+越权漏洞 水平越权 垂直越权 0day零日漏洞 1day Nday
+任意文件上传 任意文件下载 目录遍历 路径穿越
+信息泄露 敏感信息泄露 源码泄露 配置泄露
+弱口令 默认口令 硬编码 未授权访问 身份认证绕过
+缓冲区溢出 堆溢出 栈溢出 整数溢出 格式化字符串
+UAF释放后使用 沙箱逃逸 容器逃逸 虚拟机逃逸
+提权漏洞 本地提权 DLL劫持 DLL注入
+LDAP注入 XPath注入 模板注入 SSTI CRLF注入
+Host头攻击 点击劫持 开放重定向 URL跳转
+CORS配置错误 JWT漏洞 OAuth漏洞 会话固定 会话劫持
+
+# === 攻击手法 ===
+钓鱼攻击 鱼叉攻击 水坑攻击 社会工程学 社工
+暴力破解 爆破 字典攻击 彩虹表攻击 哈希碰撞
+中间人攻击 ARP欺骗 ARP投毒 DNS劫持 DNS欺骗
+DDoS分布式拒绝服务 CC攻击 SYN洪泛 UDP洪泛
+放大攻击 反射攻击 慢速攻击 Slowloris 重放攻击
+降级攻击 侧信道攻击 时序攻击 供应链攻击
+子域名接管 账号劫持 密码喷洒 凭证填充
+撞库攻击 脱库攻击 邮件伪造 钓鱼邮件
+无文件攻击 内存马 Webshell 一句话木马
+冰蝎 哥斯拉 蚁剑 中国菜刀 大马 小马 图片马
+免杀马 编码绕过 大小写绕过 双写绕过 宽字节注入
+二次注入 堆叠注入 时间盲注 布尔盲注 报错注入
+联合查询注入 DNS外带 HTTP外带 Payload Shellcode
+POC概念验证 EXP漏洞利用 黄金票据 白银票据
+PTH哈希传递 PTT票据传递 Kerberoasting DCSync攻击
+
+# === 渗透工具 ===
+Burp Suite Burp Intruder Burp Repeater Burp Scanner
+Nmap端口扫描 Masscan Metasploit MSF Meterpreter
+SQLMap Wireshark抓包 Tcpdump Cobalt Strike CS Beacon
+Hydra爆破 Medusa John the Ripper Hashcat
+Aircrack-ng无线破解 OWASP ZAP Nikto DirBuster
+Dirsearch Gobuster Ffuf Wfuzz Nuclei Xray漏洞扫描
+AWVS Nessus OpenVAS IDA反汇编 Ghidra逆向
+OllyDbg x64dbg WinDbg Radare2 Binary Ninja
+Frida Hook Xposed Objection Jadx反编译 JEB APKTool
+Mimikatz抓密码 LaZagne Rubeus Impacket BloodHound
+PowerSploit PowerView Empire Covenant Sliver
+CrackMapExec Responder Bettercap Ettercap
+Proxychains Chisel Ngrok Frp内网穿透 Nps
+EarthWorm reGeorg Neo-reGeorg Stowaway Gost隧道
+SSH隧道 Netcat nc Socat
+
+# === 防御技术 ===
+WAF Web应用防火墙 IDS入侵检测系统 IPS入侵防御系统
+HIDS主机入侵检测 NIDS网络入侵检测 防火墙 NGFW
+杀毒软件 杀软 反病毒 EDR端点检测响应
+XDR扩展检测响应 MDR托管检测响应
+SIEM安全信息事件管理 SOC安全运营中心 SOAR安全编排
+态势感知 威胁情报 IOC失陷指标 IOA攻击指标
+TTP战术技术过程 ATT&CK框架 杀伤链 Kill Chain MITRE
+沙箱 蜜罐 蜜网 欺骗防御 零信任 微隔离 网络隔离
+DMZ隔离区 堡垒机 跳板机 VPN虚拟专网
+双因素认证 多因素认证 MFA 2FA OTP一次性密码
+数字证书 PKI公钥基础设施 CA SSL证书 HTTPS加密
+DLP数据防泄漏 CASB CWPP CSPM UEBA NTA NDR NAC
+网闸 数据脱敏 数据加密 密钥管理 HSM硬件安全模块
+安全基线 基线检查 漏洞扫描 漏洞修复 补丁管理 虚拟补丁
+
+# === 安全中文黑话 ===
+肉鸡 抓鸡 养鸡 杀鸡 挂马 种马 养马 杀马
+提权 降权 脱裤 拖库 洗库 撞库 社工库
+人肉搜索 开盒 扒皮 查户口 代理池 IP池
+秒拨 动态IP 隧道 打洞 穿透 内网穿透
+免杀 过杀软 过狗 过盾 绕WAF Bypass
+木马 后门 远控 RAT 僵尸网络 僵尸 肉鸡群
+跳板 傀儡机 中转站 落地 上线 下线 掉线
+心跳包 回连 反弹Shell 正向连接 反向连接
+横向移动 纵向渗透 权限维持 持久化 驻留 潜伏
+打点 据点 立足点 信息搜集 踩点 指纹识别
+旁站 C段 子域名爆破 目录爆破 端口扫描 服务识别
+漏扫 扫描器 黑盒测试 白盒测试 灰盒测试
+渗透测试 红队 蓝队 紫队 攻防演练 攻防对抗
+护网行动 HW护网 攻击队 防守队 溯源 反制
+钓鱼反制 蜜罐反制 画像 定位 取证 应急响应
+应急处置 封堵 止血 加固 整改 复盘 战报 通报
+
+# === CTF术语 ===
+Reverse逆向 Pwn二进制 Web安全 Crypto密码学
+Misc杂项 Forensics取证 Stego隐写 Mobile移动安全
+AWD攻防 Jeopardy解题 flag旗帜 WriteUp WP题解
+脚本小子 赛棍 战队 靶场 靶机 一血 首杀 AK全通
+签到题 压轴题 出题人 验题 复现
+XCTF攻防世界 BUUCTF CTFHub CTFshow
+强网杯 护网杯 网鼎杯 DEFCON BlackHat
+
+# === 安全认证 ===
+CISP CISE CISO CISP-PTE CISP-PTS CISP-IRE
+CISSP CISM CISA CEH OSCP OSCE OSWE OSEP
+GPEN GWAPT GCIH CompTIA Security+ CCSP
+SRC安全应急响应中心 漏洞赏金 Bug Bounty
+白帽子 黑帽子 灰帽子 漏洞猎人 安全研究员
+渗透测试工程师 安全工程师 安全分析师
+等级保护 等保测评 风险评估 安全审计 合规检查
+
+# === 网络协议安全 ===
+TCP UDP IP ICMP HTTP HTTPS FTP SFTP SSH Telnet
+SMTP POP3 IMAP DNS DHCP ARP SNMP LDAP SMB NetBIOS
+RPC WebSocket gRPC Modbus OPC S7comm
+三次握手 四次挥手 数据包 报文 头部 载荷
+TTL 端口 常用端口 高危端口 Socket套接字
+抓包 嗅探 流量分析 协议分析 DPI深度包检测
+
+# === Linux基础命令 ===
+ls cd pwd mkdir rmdir rm cp mv cat more less
+head tail touch echo find grep awk sed sort uniq
+wc cut paste tr diff file stat chmod chown chgrp
+umask ln tree du df mount umount fdisk mkfs fsck
+dd tar gzip bzip2 zip unzip xz
+
+# === 进程管理 ===
+ps top htop kill killall pkill pgrep nice renice
+nohup bg fg jobs crontab watch pidof pstree lsof fuser
+
+# === 用户权限 ===
+useradd userdel usermod groupadd passwd su sudo visudo
+id whoami who w last finger groups
+
+# === 系统管理 ===
+shutdown reboot halt poweroff systemctl service
+chkconfig uptime uname hostname hostnamectl dmesg
+lspci lsusb lscpu lsblk lsmod modprobe insmod rmmod
+sysctl ulimit vmstat iostat mpstat sar free sync
+
+# === 网络命令 ===
+ifconfig ip route netstat ss ping traceroute mtr
+arp dig nslookup host whois curl wget telnet
+scp sftp rsync nc netcat nmap tcpdump iftop
+iptraf nethogs bmon vnstat ethtool
+
+# === 系统服务 ===
+systemd init cron crond rsyslog syslog-ng logrotate
+journald auditd chronyd ntpd sshd httpd nginx
+mysqld mariadbd postfix vsftpd smbd snmpd
+
+# === 服务管理 ===
+daemon 守护进程 后台进程 服务启动 服务停止
+服务重启 服务状态 开机自启 systemctl start
+systemctl stop systemctl restart systemctl status
+systemctl enable systemctl disable
+
+# === 防火墙网络 ===
+iptables nftables firewalld ufw ipset conntrack
+INPUT OUTPUT FORWARD PREROUTING POSTROUTING
+ACCEPT DROP REJECT SNAT DNAT MASQUERADE
+端口转发 流量控制 访问控制 黑白名单
+fail2ban selinux apparmor
+
+# === Web服务器 ===
+Nginx Apache Httpd Tomcat Jetty Caddy Lighttpd
+HAProxy LVS Keepalived Traefik
+nginx.conf upstream server location proxy_pass
+rewrite gzip ssl listen root index
+反向代理 正向代理 负载均衡 虚拟主机
+
+# === WSL与Windows ===
+WSL WSL2 Windows Terminal PowerShell CMD Hyper-V
+WSLg wsl.conf MSYS2 Cygwin Git Bash MinGW
+
+# === 虚拟化 ===
+VMware vSphere ESXi vCenter VirtualBox KVM QEMU
+libvirt Proxmox XenServer oVirt OpenStack CloudStack
+Vagrant Packer 虚拟机 宿主机 客户机 快照 克隆
+迁移 热迁移 冷迁移 虚拟网络 虚拟磁盘 vCPU SR-IOV
+
+# === 存储相关 ===
+RAID RAID0 RAID1 RAID5 RAID6 RAID10 LVM ZFS Btrfs
+XFS ext4 ext3 NTFS NAS SAN DAS Ceph GlusterFS MinIO HDFS
+磁盘阵列 条带化 镜像 热备盘 逻辑卷 物理卷 卷组
+IOPS 吞吐量 SSD HDD NVMe SCSI SATA SAS
+
+# === 数据库管理 ===
+SELECT INSERT UPDATE DELETE CREATE DROP ALTER INDEX
+VIEW Trigger Procedure Function Transaction COMMIT ROLLBACK
+主从复制 读写分离 分库分表 分片 集群 备份 恢复
+binlog redolog undolog 慢查询 索引优化 连接池
+
+# === Redis命令 ===
+redis-cli GET SET DEL KEYS HGET HSET LPUSH RPUSH
+SADD ZADD TTL EXPIRE PUBLISH SUBSCRIBE PING INFO
+CONFIG BGSAVE SLAVEOF CLUSTER
+
+# === 消息术语 ===
+生产者 消费者 主题 Topic 分区 Partition 副本 Replica
+消费组 偏移量 Offset 延迟消息 死信队列 消息堆积
+
+# === Ansible ===
+playbook inventory role task handler template module
+fact vault become delegate_to when loop register notify
+
+# === Shell相关 ===
+shebang 变量 数组 循环 条件 函数 管道 重定向
+子shell 后台执行 信号 正则表达式 通配符
+环境变量 位置参数
+
+# === 安全术语运维 ===
+SSL TLS OpenSSL GPG SSH密钥 证书 CA 私钥 公钥
+加密 解密 哈希 MD5 SHA256 入侵检测 漏洞扫描
+认证 授权 鉴权 身份验证 访问控制 权限管理
+
+# === 中文运维表达 ===
+跑脚本 重启服务 看日志 改配置 加内存 扩容 缩容
+备份 恢复 监控 告警 报警 上线 下线 发布 回滚
+灰度 预发 测试环境 生产环境 开发环境 压测 性能测试
+故障排查 问题定位 部署服务 迁移数据 同步配置
+更新版本 打补丁 修复漏洞 清理日志 释放空间
+优化性能 调整参数 编写脚本 执行命令 检查状态
+
+# === 系统状态 ===
+正常运行 异常告警 服务中断 响应超时 连接失败
+磁盘满了 内存不足 CPU过高 负载过高 网络抖动
+丢包严重 延迟高 性能下降 服务降级 熔断 限流
+
+# === 运维指标 ===
+SLA SLO SLI QPS TPS RT 响应时间 吞吐量 可用性
+可靠性 容错性 可扩展性 可维护性 MTTR MTBF RTO RPO
+P0 P1 P2 P3 紧急 严重 一般 故障 事故 风险 隐患
+
+# === 运维平台 ===
+Jumpserver堡垒机 CMDB配置管理数据库 工单系统
+监控平台 日志平台 告警平台 发布平台 自动化平台 运维大屏
+
+# === 文件路径 ===
+/etc /var /usr /opt /home /root /tmp /boot /dev /proc
+/etc/passwd /etc/shadow /etc/hosts /etc/fstab
+/etc/resolv.conf /etc/sysctl.conf /etc/profile
+/etc/ssh/sshd_config /etc/nginx/nginx.conf /var/log
+
+# === 社交平台名称 ===
+微信 QQ 抖音 快手 B站 哔哩哔哩 小红书 微博 知乎
+豆瓣 贴吧 虎扑 即刻 Discord Telegram Twitter X 推特
+Soul 陌陌 探探 脉脉 钉钉 飞书 Lark 今日头条
+西瓜视频 微视 皮皮虾 懂车帝 得到 喜马拉雅
+网易云音乐 QQ音乐 酷狗音乐 Keep 小宇宙
+TikTok Instagram YouTube Facebook WhatsApp
+
+# === 微信生态 ===
+公众号 订阅号 服务号 企业微信 微信支付 微信红包
+小程序 小程序云开发 视频号 朋友圈 微信群 群聊
+看一看 搜一搜 微信支付分 微信豆 直播 视频号直播
+微信表情 微信状态 拍一拍 微信运动 微信读书
+推文 图文消息 模板消息 关注 取关 涨粉 掉粉
+阅读量 在看 分享 收藏 点赞 打赏 赞赏 留言
+私域流量 公域流量
+
+# === 短视频术语 ===
+直播 带货 直播带货 主播 粉丝 铁粉 点赞 双击
+转发 评论 弹幕 热搜 热门 上热门 推荐算法 流量池
+冷启动 养号 权重 限流 播放量 完播率 互动率
+转化率 点赞率 转发率 涨粉率 在线人数 同城
+关注列表 粉丝列表 作品 合拍 合集 话题 挑战赛
+BGM 背景音乐 特效 滤镜 美颜 剪辑 卡点 封面
+标题 文案 脚本 人设 IP 个人IP 垂直领域 垂类
+账号矩阵 对标账号 爆款 蹭热点 蹭流量 搬运 二创
+原创 去水印 去重 僵尸号 降权
+
+# === B站术语 ===
+UP主 投币 收藏 一键三连 三连 硬币 弹幕 鬼畜
+番剧 番 新番 补番 追番 直播间 舰长 提督 总督
+充电 大会员 年度大会员 B币 贝壳 稿件 专栏 动态
+互动抽奖 空降 前方高能 高能预警 弹幕护体
+真实 AWSL 爷青回 爷青结 破防了 名场面 泪目
+真香 空降成功 生肉 熟肉 字幕组 cv 声优
+二次元 三次元 纸片人 萌新 大佬 触手 肝 氪 白嫖
+催更 日更 周更 停更 完结撒花
+
+# === 电商术语 ===
+淘宝 天猫 京东 拼多多 抖音电商 快手电商
+抖音小店 快手小店 淘宝直播 点淘 闲鱼 得物
+唯品会 苏宁易购 1688 速卖通 跨境电商 海淘 代购
+旗舰店 官方店 专卖店 淘宝客 分销 一件代发
+无货源 选品 爆品 热销 秒杀 预售 尾款 定金
+优惠券 满减 红包 购物车 收藏夹 加购 下单 付款
+发货 物流 包邮 顺丰 菜鸟 驿站 签收 退货 退款
+售后 好评 差评 追评 晒单 买家秀 卖家秀
+DSR评分 店铺评分 信誉 皇冠 钻石
+
+# === 直播带货 ===
+坑位费 佣金 纯佣 服务费 GMV 客单价 ROI 转化率
+UV价值 GPM 场观 在线 峰值 停留时长 粉丝团 灯牌
+礼物 打赏 音浪 抖币 快币 小黄车 小风车 橱窗
+商品橱窗 精选联盟 星图 达人 达播 店播 自播 代播
+助播 副播 中控 运营 场控 逼单话术 福袋 抽奖
+秒杀款 引流款 利润款 憋单 拉时长 DOU+
+巨量千川 Feed流 投流 起号 破冷启动
+
+# === 开发者平台 ===
+掘金 思否 SegmentFault CSDN 博客园 Gitee 码云
+语雀 飞书文档 Notion 石墨文档 腾讯文档 金山文档
+ProcessOn 墨刀 蓝湖 XMind MindMaster Typora
+
+# === 技术圈平台 ===
+V2EX Hacker News Reddit Stack Overflow LeetCode 力扣
+牛客网 Codeforces AtCoder 洛谷 OJ 刷题 面经 八股文
+内推 社招 校招 秋招 春招 实习 offer HC 简历 JD
+薪资 base 股票 期权 RSU 年包 大厂
+字节跳动 阿里巴巴 腾讯 百度 网易 美团 京东 滴滴
+独角兽 创业公司 外企 国企
+
+# === 2024网络热词 ===
+city不city 好city啊 偷感 偷感很重 草台班子
+古希腊掌管的神 硬控 班味 去班味 水灵灵地 松弛感
+银发力量 小孩哥 小孩姐 数智化 智能向善 未来产业
+搞抽象 抽象 红温 浓人 淡人 主理人
+含金量还在上升 偏偏你最争气 黑神话悟空
+热辣滚烫 尔滨 新质生产力
+
+# === 经典网络流行语 ===
+yyds 永远的神 绝绝子 种草 拔草 长草 安利
+内卷 躺平 摆烂 佛系 社恐 社牛 i人 e人
+打工人 干饭人 韭菜 割韭菜 带节奏 水军 键盘侠
+杠精 喷子 黑粉 脑残粉 饭圈 塌房 糊了 爆了
+出圈 破圈 翻车 反转 实锤 吃瓜 瓜 大瓜 内娱
+鸽了 咕了 真香 打脸 给力 硬核 高能 燃 泪目
+暖心 治愈 上头 好嗑 嗑CP 嗑糖 发糖 甜 虐 刀
+玻璃心 破防 DNA动了 笑死 绷不住了 蚌埠住了
+无语 离谱 离大谱 麻了 裂开 碎了 芭比Q了
+寄了 凉了 妥妥的 拿捏 稳了 绝了 神了
+666 牛 nb 厉害 强 秀 秀儿 太秀了 奥利给 冲
+
+# === 网络缩写 ===
+yyds xswl awsl nsdd dbq xjj xgg plmm plgg dddd emo
+cpu pua kpi okr nc cp bd pr hr ceo cto cfo coo vp gm
+总监 主管 leader 经理 架构师 全栈 前端 后端
+运维 测试 产品 设计 ui ux 交互 视觉 运营 市场
+
+# === 互联网行业黑话 ===
+赋能 闭环 抓手 沉淀 迭代 对齐 拉齐 对标 对焦
+拉通 打通 打透 吃透 颗粒度 链路 触达 心智
+占领心智 用户心智 痛点 爽点 痒点 需求 刚需 伪需求
+场景 高频场景 使用场景 用户体验 交互体验
+产品逻辑 业务逻辑 底层逻辑 顶层设计 商业模式
+盈利模式 变现 流量变现 内容变现 私域 公域
+引流 获客 拉新 促活 留存 转化 复购 裂变 分销
+传播 口碑 品牌 调性 定位 差异化 壁垒 护城河
+天花板 增长 增长飞轮 第二曲线 PMF产品市场匹配
+MVP最小可行产品 灰度 AB测试 数据驱动 用户画像
+标签 千人千面 个性化推荐 算法推荐 信息流 内容分发
+去中心化 中心化 长尾 头部 腰部 尾部 垂直
+泛娱乐 下沉市场 五环外 小镇青年 Z世代 银发经济
+
+# === 职位缩写 ===
+PM产品经理 PD产品设计 RD研发 FE前端 BE后端
+QA测试 SRE运维 DBA数据库管理员 OP运营
+BD商务拓展 HR人力资源 PR公关 MKT市场 Sales销售
+UED用户体验设计 UI界面设计 UX用户体验
+VD视觉设计 TD技术总监 CTO技术总监
+VP副总裁 CEO首席执行官 COO首席运营官
+CFO首席财务官 CMO首席营销官
+
+# === 技术架构术语 ===
+高可用 HA 高并发 高性能 分布式 微服务 单体应用
+中台 网关 代理 缓存 队列 集群 主从 读写分离
+分库分表 水平扩展 垂直扩展
+
+# === 协作工具 ===
+Jira Confluence Trello Asana Notion Linear ClickUp
+Monday Slack Discord Teams 飞书 钉钉 企业微信
+语雀 石墨文档 腾讯文档 金山文档
+Markdown MDX GitBook VuePress Docusaurus Slidev
+
+# === API协议数据格式 ===
+REST RESTful GraphQL gRPC HTTP HTTPS HTTP/2 HTTP/3 QUIC
+WebSocket Server-Sent Events SSE JSON XML YAML TOML
+Protobuf Protocol Buffers Avro Thrift OpenAPI AsyncAPI
+
+# === 常用缩写总表 ===
+API SDK CLI GUI UI UX IDE ORM SQL NoSQL CDN DNS
+SSL TLS SSH FTP SFTP CRUD ACID BASE CAP IoT
+ETL BI OLAP OLTP SaaS PaaS IaaS BaaS FaaS
+VPS VPN LAN WAN IP TCP UDP HTTP HTTPS WebSocket RPC
+IPC EOF EOL UTF-8 ASCII Base64 MD5 SHA AES RSA
+
+# === 版本发布 ===
+版本号 major minor patch alpha beta RC GA LTS
+stable nightly canary preview snapshot
+SemVer 主版本 次版本 修订版本 预发布版本
+
+# === 终端工具 ===
+Terminal 终端 命令行 Shell PowerShell
+iTerm2 Hyper Windows Terminal tmux screen

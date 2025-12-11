@@ -1,0 +1,24 @@
+.venv/
+.env
+__pycache__/
+*.pyc
+*.pid
+
+# Logs
+*.log
+*_final.log
+*_startup.log
+
+# Data & Resources
+src/**/*.wav
+src/**/*.mp3
+src/storage/recordings/*
+!src/storage/recordings/.gitkeep
+src/input/*
+!src/input/.gitkeep
+resource_usage.json
+resource_usage.jsonl
+
+# Large Test Files
+tests/resources/test_audio_1h.wav
+tests/resources/test_audio_30m.wav

@@ -1,0 +1,7 @@
+.DS_Store
+*.log
+# Temporarily ignore other microservices
+ASR_electron/
+ASR_go_backend/
+ASR_pc_front/
+my_ququ/

@@ -1,0 +1,10 @@
+{
+  "timestamp": "2025-12-11T17:49:31.152457",
+  "duration": 2,
+  "concurrency": 1,
+  "total_requests": 20,
+  "success": 0,
+  "errors": 20,
+  "avg_latency": 0.0,
+  "throughput": 10.0
+}

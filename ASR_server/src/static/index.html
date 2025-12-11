@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASR Server Performance Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">🚀 ASR Server Performance</div>
+            <div class="status-badge" id="server-status">Monitor Active</div>
+        </header>
+
+        <div class="metrics-grid">
+            <div class="card metric-card">
+                <h3>CPU Usage</h3>
+                <div class="value" id="cpu-val">0%</div>
+                <div class="chart-container">
+                    <canvas id="cpuChart"></canvas>
+                </div>
+            </div>
+            <div class="card metric-card">
+                <h3>Memory Usage</h3>
+                <div class="value" id="mem-val">0 MB</div>
+                <div class="chart-container">
+                    <canvas id="memChart"></canvas>
+                </div>
+            </div>
+            <div class="card metric-card">
+                <h3>Task Queue</h3>
+                <div class="value">
+                    <span id="queue-val">0</span> <small>Waiting</small> /
+                    <span id="active-val">0</span> <small>Active</small>
+                </div>
+                <div class="chart-container">
+                    <canvas id="queueChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="card full-width">
+            <h3>Monitor Log</h3>
+            <div class="logs" id="log-container">
+                <div class="log-entry">Waiting for data stream...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Report Modal -->
+    <div class="modal-overlay" id="report-modal">
+        <div class="modal">
+            <h2>✅ Test Completed</h2>
+            <div class="report-grid">
+                <div class="report-item">
+                    <span class="report-label">Total Requests</span>
+                    <span class="report-value" id="rep-total">0</span>
+                </div>
+                <div class="report-item">
+                    <span class="report-label">Success Rate</span>
+                    <span class="report-value" id="rep-success" style="color: var(--success)">0%</span>
+                </div>
+                <div class="report-item">
+                    <span class="report-label">Avg Latency</span>
+                    <span class="report-value" id="rep-latency">0s</span>
+                </div>
+                <div class="report-item">
+                    <span class="report-label">Throughput</span>
+                    <span class="report-value" id="rep-throughput">0 req/s</span>
+                </div>
+                <div class="report-item">
+                    <span class="report-label">Duration</span>
+                    <span class="report-value" id="rep-duration">0s</span>
+                </div>
+                <div class="report-item">
+                    <span class="report-label">Concurrency</span>
+                    <span class="report-value" id="rep-concurrency">0</span>
+                </div>
+            </div>
+            <button class="close-btn" onclick="closeModal()">Close Report</button>
+        </div>
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+
+</html>

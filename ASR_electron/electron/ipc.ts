@@ -279,16 +279,4 @@ function createWavHeader(dataLength: number, sampleRate: number) {
 }
 
 
-// --- SPECIAL DEBUG FOR GHOST AUDIO ---
-const DEBUG_DIR = path.join(process.cwd(), 'debug_audio');
-if (!fs.existsSync(DEBUG_DIR)) {
-    fs.mkdirSync(DEBUG_DIR, { recursive: true });
-}
 
-ipcMain.handle('save-debug-audio-file', async (_event, sessionId: string, type: 'vad' | 'wave', audioData: string) => { // audioData is base64
-    const fileName = `${sessionId}_${type}.raw`; // Raw Float32
-    const filePath = path.join(DEBUG_DIR, fileName);
-    const buffer = Buffer.from(audioData, 'base64');
-    fs.appendFileSync(filePath, buffer);
-    return { success: true };
-});

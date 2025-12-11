@@ -1,77 +1,82 @@
 # ASR Service Startup Guide
 
-快速启动和测试 ASR FastAPI 微服务
+> **Languages**: [English](STARTUP_GUIDE.md) | [简体中文](STARTUP_GUIDE.zh-CN.md)
+
+> [!NOTE]
+> This documentation is automatically translated from the [Chinese version](STARTUP_GUIDE.zh-CN.md). In case of discrepancies, the Chinese version prevails.
+
+Quickly start and test the ASR FastAPI Microservice.
 
 ---
 
-## 📋 前置条件检查
+## 📋 Prerequisites Check
 
 ```bash
-# 1. 检查 Python 版本 (需要 3.10)
+# 1. Check Python Version (Requires 3.10)
 python --version
 
-# 2. 检查 Redis 状态
+# 2. Check Redis Status
 systemctl status redis-server
-# 或
-redis-cli ping  # 应返回 PONG
+# Or
+redis-cli ping  # Should return PONG
 
-# 3. 检查 uv 已安装
+# 3. Check uv is installed
 uv --version
 ```
 
 ---
 
-## 🚀 快速启动 (3 个终端)
+## 🚀 Quick Start (3 Terminals)
 
-### 终端 1: 安装依赖
+### Terminal 1: Install Dependencies
 
 ```bash
 cd /home/tiger/Projects/ASR_server
 
-# 安装所有依赖 (包括 FastAPI, Redis, RQ 等)
+# Install all dependencies (including FastAPI, Redis, RQ etc.)
 uv sync
 
-# 激活虚拟环境 (可选，uv 会自动使用)
+# Activate virtual environment (Optional, uv uses it automatically)
 source .venv/bin/activate
 ```
 
-### 终端 2: 启动 RQ Workers
+### Terminal 2: Start RQ Workers
 
 ```bash
 cd /home/tiger/Projects/ASR_server
 
-# 启动 1 个 Worker (会加载 ASR 模型，需要几分钟)
+# Start 1 Worker (Will load ASR model, takes a few minutes)
 ./scripts/start_workers.sh
 
-# 如果手动启动:
-# rq worker asr-queue --url redis://localhost:6379/0 --name worker-1 &
+# If manual start:
+# rq worker asr-queue --url redis://localhost:6379/0 --name worker-1 --burst &
 ```
 
-**预期输出:**
+**Expected Output:**
 ```
 🚀 Starting 1 RQ Workers for queue: asr-queue
 📡 Redis: redis://localhost:6379/0
 Starting worker-1...
 ✅ All workers started
 
-# Worker 会加载模型:
+# Worker will load model:
 🔄 正在加载 ASR 模型资源，请稍候...
 ✅ ASR 模型加载完毕，服务就绪。
 ```
 
-### 终端 3: 启动 FastAPI 服务
+### Terminal 3: Start FastAPI Service
 
 ```bash
 cd /home/tiger/Projects/ASR_server
 
-# 开发模式 (自动重载)
+# Development Mode (Auto Reload)
 uvicorn src.api.main:app --reload --host 0.0.0.0 --port 8000
 
-# 生产模式 (不自动重载)
+# Production Mode (No Auto Reload)
 # uvicorn src.api.main:app --host 0.0.0.0 --port 8000 --workers 1
 ```
 
-**预期输出:**
+**Expected Output:**
 ```
 INFO:     Will watch for changes in these directories: ['/home/tiger/Projects/ASR_server']
 INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
@@ -87,7 +92,7 @@ INFO:     Application startup complete.
 
 ---
 
-### 3. 启动 API 服务 (Port 8000)
+### 3. Start API Service (Port 8000)
 
 ```bash
 uvicorn src.api.main:app --reload --port 8000
@@ -96,13 +101,13 @@ uvicorn src.api.main:app --reload --port 8000
 
 ---
 
-## 4. 验证服务
+## 4. Verify Service
 
-### 4.1 健康检查
+### 4.1 Health Check
 
-访问 `http://localhost:8000/api/v1/health`
+Visit `http://localhost:8000/api/v1/health`
 
-**响应**:
+**Response**:
 
 ```json
 {
@@ -114,15 +119,15 @@ uvicorn src.api.main:app --reload --port 8000
 }
 ```
 
-### 4.2 提交转录任务
+### 4.2 Submit Transcription Task
 
 ```bash
-# 使用 curl 提交音频文件
+# Submit audio file using curl
 curl -X POST http://localhost:8000/api/v1/asr/submit \
   -F "audio=@tests/samples/test_audio.wav"
 ```
 
-**响应**:
+**Response**:
 
 ```json
 {
@@ -133,7 +138,7 @@ curl -X POST http://localhost:8000/api/v1/asr/submit \
 }
 ```
 
-### 4.3 查询结果
+### 4.3 Query Result
 
 ```bash
 curl http://localhost:8000/api/v1/asr/result/{task_id}
@@ -141,33 +146,33 @@ curl http://localhost:8000/api/v1/asr/result/{task_id}
 
 ---
 
-## 5. 常见问题 (FAQ)
+## 5. FAQ
 
-### Q1: API 返回 502 Bad Gateway
-*   **检查 Redis**: 确保 Redis 服务已启动 (`sudo systemctl status redis`).
-*   **检查 Worker**: 确保至少有一个 Worker 正在运行 (`./scripts/start_workers.sh`).
+### Q1: API Returns 502 Bad Gateway
+*   **Check Redis**: Ensure Redis service is started (`sudo systemctl status redis`).
+*   **Check Worker**: Ensure at least one Worker is running (`./scripts/start_workers.sh`).
 
 ### Q2: CUDA Out of Memory
-*   在 `.env` 中调小 `ASR_BATCH_SIZE`.
-*   设置 `ASR_USE_GPU=false` 强制使用 CPU.
+*   Reduce `ASR_BATCH_SIZE` in `.env`.
+*   Set `ASR_USE_GPU=false` to force CPU usage.
 
-### Q3: 端口冲突
-*   默认端口为 **8000**。如果被占用，请修改启动命令: `uvicorn ... --port 8002`.
+### Q3: Port Conflict
+*   Default port is **8000**. If occupied, modify startup command: `uvicorn ... --port 8002`.
 
-### 3. 运行单元测试
+### 3. Run Unit Tests
 
 ```bash
-# 安装 pytest (如果未安装)
+# Install pytest (If not installed)
 uv add --dev pytest httpx
 
-# 运行所有测试
+# Run all tests
 ./scripts/run_tests.sh
 
-# 运行特定测试 (注意新路径)
+# Run specific test (Note new path)
 pytest tests/integration/test_api.py::test_health_check -v
 ```
 
-**预期输出:**
+**Expected Output:**
 ```
 tests/test_api.py::test_root PASSED
 tests/test_api.py::test_health_check PASSED
@@ -179,150 +184,150 @@ tests/test_api.py::test_submit_invalid_format PASSED
 
 ---
 
-## 📊 监控和管理
+## 📊 Monitoring and Management
 
-### 查看 RQ 队列状态
+### View RQ Queue Status
 
 ```bash
-# 查看所有队列信息
+# View all queue info
 rq info --url redis://localhost:6379/0
 
-# 查看 Worker 状态
+# View Worker Status
 rq info --url redis://localhost:6379/0 --only-workers
 
-# 清空失败队列
+# Empty failed queue
 rq empty failed --url redis://localhost:6379/0
 ```
 
-### 查看日志
+### View Logs
 
 ```bash
-# API 日志
+# API Log
 tail -f src/storage/logs/asr_api.log
 
-# Worker 日志
+# Worker Log
 tail -f src/storage/logs/asr_worker.log
 
-# 错误日志
+# Error Log
 tail -f src/storage/logs/asr_error.log
 
-# 业务日志 (JSON Lines)
+# Business Log (JSON Lines)
 tail -f src/storage/logs/asr_history.jsonl
 ```
 
-### 清理旧文件
+### Clear Old Files
 
 ```bash
-# 手动清理
+# Manual Clean
 python scripts/clear_old_files.py
 
-# 查看存储空间
+# View Storage Usage
 du -sh src/storage/
 ```
 
 ---
 
-## 🔧 常见问题
+## 🔧 Common Issues
 
-### Q1: Redis 连接失败
+### Q1: Redis Connection Failed
 
-**错误**: `Connection refused` 或 `redis_connected: false`
+**Error**: `Connection refused` or `redis_connected: false`
 
-**解决**:
+**Solution**:
 ```bash
-# 启动 Redis
+# Start Redis
 sudo systemctl start redis-server
 
-# 确认运行中
-redis-cli ping  # 应返回 PONG
+# Verify running
+redis-cli ping  # Should return PONG
 ```
 
-### Q2: Worker 找不到模块
+### Q2: Worker Module Not Found
 
-**错误**: `ModuleNotFoundError: No module named 'src'`
+**Error**: `ModuleNotFoundError: No module named 'src'`
 
-**解决**:
+**Solution**:
 ```bash
-# 确保在项目根目录
-pwd  # 应该是 /home/tiger/Projects/ASR_server
+# Ensure in project root
+pwd  # Should be /home/tiger/Projects/ASR_server
 
-# 使用完整路径启动 Worker
+# Start Worker with full path
 rq worker asr-queue --url redis://localhost:6379/0 --path $(pwd)
 ```
 
-### Q3: 模型加载失败
+### Q3: Model Load Failed
 
-**错误**: `Model not found`
+**Error**: `Model not found`
 
-**解决**:
+**Solution**:
 ```bash
-# 下载模型
+# Download Model
 python scripts/download_models.py
 
-# 确认模型路径
+# Confirm Model Path
 ls ~/.cache/modelscope/hub/
 ```
 
-### Q4: 端口已被占用
+### Q4: Port Already in Use
 
-**错误**: `Address already in use`
+**Error**: `Address already in use`
 
-**解决**:
+**Solution**:
 ```bash
-# 查找占用进程
+# Find process
 lsof -i :8000
 
-# 杀死进程
+# Kill process
 kill -9 <PID>
 
-# 或使用其他端口
+# Or use another port
 uvicorn src.api.main:app --port 8002
 ```
 
 ---
 
-## 🛑 停止服务
+## 🛑 Stop Service
 
 ```bash
-# 1. 停止 FastAPI (终端 3)
+# 1. Stop FastAPI (Terminal 3)
 Ctrl+C
 
-# 2. 停止 Workers (终端 2)
+# 2. Stop Workers (Terminal 2)
 Ctrl+C
-# 或
+# Or
 pkill -f 'rq worker'
 
-# 3. (可选) 停止 Redis
+# 3. (Optional) Stop Redis
 sudo systemctl stop redis-server
 ```
 
 ---
 
-## 📝 API 接口列表
+## 📝 API Endpoint List
 
-| 接口 | 方法 | 功能 | 优先级 |
+| Endpoint | Method | Function | Priority |
 |------|------|------|--------|
-| `/api/v1/asr/submit` | POST | 提交转录任务 | 🔴 必须 |
-| `/api/v1/asr/result/{task_id}` | GET | 查询任务结果 | 🔴 必须 |
-| `/api/v1/health` | GET | 健康检查 | 🔴 必须 |
-| `/api/v1/asr/history` | GET | 获取历史记录 | 🟡 重要 |
-| `/api/v1/asr/audio/{task_id}` | GET | 下载原始录音 | 🟡 重要 |
-| `/api/v1/asr/queue/status` | GET | 查看队列状态 | 🟡 重要 |
-| `/api/v1/asr/retry/{task_id}` | POST | 重试失败任务 | 🟢 有用 |
-| `/api/v1/asr/task/{task_id}` | DELETE | 删除任务 | 🟢 有用 |
-| `/api/v1/stats` | GET | 系统统计 | ⚪ 可选 |
+| `/api/v1/asr/submit` | POST | Submit Transcription Task | 🔴 Must |
+| `/api/v1/asr/result/{task_id}` | GET | Query Task Result | 🔴 Must |
+| `/api/v1/health` | GET | Health Check | 🔴 Must |
+| `/api/v1/asr/history` | GET | Get History | 🟡 Important |
+| `/api/v1/asr/audio/{task_id}` | GET | Download Audio | 🟡 Important |
+| `/api/v1/asr/queue/status` | GET | Queue Status | 🟡 Important |
+| `/api/v1/asr/retry/{task_id}` | POST | Retry Task | 🟢 Useful |
+| `/api/v1/asr/task/{task_id}` | DELETE | Delete Task | 🟢 Useful |
+| `/api/v1/stats` | GET | System Stats | ⚪ Optional |
 
 ---
 
-## 🎯 下一步
+## 🎯 Next Steps
 
-- ✅ 服务运行成功后，访问 http://localhost:8000/docs 测试所有接口
-- ✅ 运行 `pytest tests/test_api.py` 确保所有测试通过
-- ✅ 查看 `report/ARCHITECTURE_DESIGN.md` 了解完整架构
-- 🔜 集成到 Telegram Bot (未来计划)
+- ✅ After successful service run, visit http://localhost:8000/docs to test all interfaces
+- ✅ Run `pytest tests/test_api.py` to ensure all tests pass
+- ✅ Check `reports/ARCHITECTURE_DESIGN.md` for complete architecture
+- 🔜 Integrate to Telegram Bot (Future Plan)
 
 ---
 
-**文档版本**: v1.0  
-**最后更新**: 2025-12-11  
-**项目路径**: `/home/tiger/Projects/ASR_server`
+**Version**: v1.0
+**Last Updated**: 2025-12-11
+**Project Path**: `/home/tiger/Projects/ASR_server`

@@ -1,23 +1,28 @@
-# ASR FastAPI 微服务
+# ASR FastAPI Microservice
 
-基于 FunASR 的高性能语音识别 REST API 服务
+> **Languages**: [English](README.md) | [简体中文](README.zh-CN.md)
 
-## ✨ 特性
+> [!NOTE]
+> This documentation is automatically translated from the [Chinese version](README.zh-CN.md). In case of discrepancies, the Chinese version prevails.
 
-- 🚀 **异步处理** - Redis Queue (RQ) 异步任务队列
-- 📡 **RESTful API** - 9 个完整的 API 端点
-- 🔥 **高性能** - GPU 加速，RTF < 0.05
-- 📊 **自动管理** - 文件自动清理，历史记录维护
-- 📝 **完整日志** - 分层日志 + JSON Lines 业务日志
-- 🧪 **测试完备** - 单元测试覆盖所有接口
+High-performance Speech Recognition REST API Service based on FunASR.
 
-## 🏗️ 架构
+## ✨ Features
+
+- 🚀 **Asynchronous Processing** - Redis Queue (RQ) for async tasks
+- 📡 **RESTful API** - 9 complete API endpoints
+- 🔥 **High Performance** - GPU acceleration, RTF < 0.05
+- 📊 **Auto Management** - Automatic file cleanup, history maintenance
+- 📝 **Complete Logging** - Layered logging + JSON Lines business logs
+- 🧪 **Test Coverage** - Unit tests covering all interfaces
+
+## 🏗️ Architecture
 
 ```
 ┌─────────────────────────────────────────┐
-│       Redis (全局消息队列+缓存)          │
-│       端口: 6379                        │
-└─────┬───────┬───────────────────────────┘
+│       Redis (Global Queue + Cache)       │
+│       Port: 6379                        │
+20: └─────┬───────┬───────────────────────────┘
       │       │
       ▼       ▼
 ┌──────────┐ ┌──────────┐ ┌──────────┐
@@ -26,199 +31,199 @@
 └──────────┘ └──────────┘ └──────────┘
 ```
 
-## 🌐 分布式与动态扩展
+## 🌐 Distributed & Dynamic Scaling
 
-本项目天生支持**分布式部署**与**动态水平扩展 (Vertical & Horizontal Scaling)**，这是前后端分离架构带来的核心优势。
+This project natively supports **Distributed Deployment** and **Dynamic Horizontal Scaling**, key advantages of the separated frontend-backend architecture.
 
-### 1. 动态调整算力 (Scale Up/Down)
-你可以通过简单的配置，瞬间启动几十个 Worker 并行处理海量任务：
+### 1. Dynamic Scaling (Scale Up/Down)
+You can instantly launch dozens of Workers to process massive tasks in parallel with simple configuration:
 
 ```bash
-# 修改 scripts/start_workers.sh 或通过环境变量
-export RQ_WORKER_COUNT=10  # 启动 10 个工兵
+# Modify scripts/start_workers.sh or via environment variable
+export RQ_WORKER_COUNT=10  # Start 10 sappers
 ./scripts/start_workers.sh
 ```
 
-### 2. 多机分布式集群 (Distributed Cluster)
-Worker 不必和 API 跑在同一台机器上！你可以在多台 GPU 服务器上运行 Worker，只要它们连接到同一个 Redis：
+### 2. Distributed Cluster
+Workers do not need to run on the same machine as the API! You can run Workers on multiple GPU servers as long as they connect to the same Redis:
 
-*   **服务器 A (API)**: 只运行 `uvicorn`，负责快速响应用户请求。
-*   **服务器 B (GPU)**: 运行 `scripts/start_workers.sh`，连接到 A 的 Redis。
-*   **服务器 C (GPU)**: 运行 `scripts/start_workers.sh`，连接到 A 的 Redis。
+*   **Server A (API)**: Runs only `uvicorn`, responsible for quickly responding to user requests.
+*   **Server B (GPU)**: Runs `scripts/start_workers.sh`, connected to Redis on A.
+*   **Server C (GPU)**: Runs `scripts/start_workers.sh`, connected to Redis on A.
 
-这种架构允许你随着业务增长，无限添加计算节点，而无需修改一行代码。
+This architecture allows you to add compute nodes infinitely as business grows without modifying a single line of code.
 
-## 📦 项目结构
+## 📦 Project Structure
 
 ```
 ASR_server/
 ├── src/
-│   ├── asr/              # ASR 核心模块
-│   │   ├── config.py     # 配置管理
-│   │   └── recognizer.py # 识别引擎
-│   ├── api/              # FastAPI 服务
-│   │   ├── main.py       # 应用入口
-│   │   ├── routes.py     # API 路由
-│   │   ├── models.py     # 数据模型
-│   │   ├── tasks.py      # RQ 任务
+│   ├── asr/              # ASR Core Module
+│   │   ├── config.py     # Config Management
+│   │   └── recognizer.py # Recognition Engine
+│   ├── api/              # FastAPI Service
+│   │   ├── main.py       # App Entry
+│   │   ├── routes.py     # API Routes
+│   │   ├── models.py     # Data Models
+│   │   ├── tasks.py      # RQ Tasks
 │   │   └── dependencies.py
-│   ├── utils/            # 工具模块
+│   ├── utils/            # Utility Modules
 │   │   ├── redis_client.py
 │   │   ├── file_handler.py
 │   │   └── logger.py
-│   └── storage/          # 数据存储
-│       ├── recordings/   # 音频文件
-│       └── logs/         # 日志文件
-├── scripts/              # 辅助脚本
+│   └── storage/          # Data Storage
+│       ├── recordings/   # Audio Files
+│       └── logs/         # Log Files
+├── scripts/              # Helper Scripts
 │   ├── start_workers.sh
 │   └── clear_old_files.py
-├── tests/                # 测试
+├── tests/                # Tests
 │   └── test_api.py
-└── STARTUP_GUIDE.md      # 启动指南
+└── STARTUP_GUIDE.md      # Startup Guide
 ```
 
-## 🚀 快速开始
+## 🚀 Quick Start
 
-### 1. 安装依赖
+### 1. Install Dependencies
 
-本项目使用 `uv` 进行依赖管理，并已配置为使用 **PyTorch Stable (2.7.0+)** 以支持最新的 NVIDIA 显卡 (Blackwell/CUDA 12.8)。
+This project uses `uv` for dependency management and is configured to use **PyTorch Stable (2.7.0+)** to support the latest NVIDIA cards (Blackwell/CUDA 12.8).
 
 ```bash
 uv sync
 ```
 
-### 2. 启动服务 (3 个终端)
+### 2. Start Services (3 Terminals)
 
 ```bash
-# 终端 1: 启动 Redis (推荐使用 service 命令以兼容 WSL)
+# Terminal 1: Start Redis (Recommend using service command for WSL compatibility)
 sudo service redis-server start
-# 或者: sudo systemctl start redis-server
+# Or: sudo systemctl start redis-server
 
-# 终端 2: 启动 Workers
+# Terminal 2: Start Workers
 ./scripts/start_workers.sh
 
-# 终端 3: 启动 API 服务
+# Terminal 3: Start API Service
 uvicorn src.api.main:app --reload --port 8000
 ```
 
-### 3. 测试
+### 3. Test
 
-访问 http://localhost:8000/docs 查看 API 文档
+Visit http://localhost:8000/docs to view API documentation.
 
 ```bash
-# 健康检查
+# Health Check
 curl http://localhost:8000/api/v1/health
 
-# 提交任务
+# Submit Task
 curl -X POST http://localhost:8000/api/v1/asr/submit \
   -F "audio=@test.wav"
 
-# 运行单元测试
+# Run Unit Tests
 pytest tests/test_api.py -v
 ```
 
-## 📖 完整文档
+## 📖 Full Documentation
 
-- [STARTUP_GUIDE.md](STARTUP_GUIDE.md) - 详细启动和测试指南
-- [ARCHITECTURE_DESIGN.md](report/ARCHITECTURE_DESIGN.md) - 完整架构设计
+- [STARTUP_GUIDE.md](STARTUP_GUIDE.md) - Detailed startup and test guide
+- [ARCHITECTURE_DESIGN.md](reports/ARCHITECTURE_DESIGN.md) - Complete architecture design
 
-## 🔌 API 端点
+## 🔌 API Endpoints
 
-| 端点 | 方法 | 功能 |
+| Endpoint | Method | Function |
 |------|------|------|
-| `/api/v1/asr/submit` | POST | 提交转录任务 |
-| `/api/v1/asr/result/{task_id}` | GET | 查询任务结果 |
-| `/api/v1/health` | GET | 健康检查 |
-| `/api/v1/asr/history` | GET | 获取历史记录 |
-| `/api/v1/asr/audio/{task_id}` | GET | 下载音频 |
-| `/api/v1/asr/queue/status` | GET | 队列状态 |
-| `/api/v1/asr/retry/{task_id}` | POST | 重试任务 |
-| `/api/v1/asr/task/{task_id}` | DELETE | 删除任务 |
-| `/api/v1/stats` | GET | 系统统计 |
+| `/api/v1/asr/submit` | POST | Submit Transcription Task |
+| `/api/v1/asr/result/{task_id}` | GET | Query Task Result |
+| `/api/v1/health` | GET | Health Check |
+| `/api/v1/asr/history` | GET | Get History |
+| `/api/v1/asr/audio/{task_id}` | GET | Download Audio |
+| `/api/v1/asr/queue/status` | GET | Queue Status |
+| `/api/v1/asr/retry/{task_id}` | POST | Retry Task |
+| `/api/v1/asr/task/{task_id}` | DELETE | Delete Task |
+| `/api/v1/stats` | GET | System Stats |
 
-## ⚙️ 环境变量
+## ⚙️ Environment Variables
 
-复制 `.env.example` 到 `.env` 并根据需要修改：
+Copy `.env.example` to `.env` and modify as needed:
 
 ```bash
 cp .env.example .env
 ```
 
-主要配置:
-- `REDIS_HOST` - Redis 主机 (默认: localhost)
-- `ASR_USE_GPU` - 是否使用 GPU (默认: true)
-- `ASR_BATCH_SIZE` - 批处理大小 (默认: 500)
-- `MAX_RECORDINGS` - 最大保留录音数 (默认: 10)
+Main configs:
+- `REDIS_HOST` - Redis Host (Default: localhost)
+- `ASR_USE_GPU` - Use GPU (Default: true)
+- `ASR_BATCH_SIZE` - Batch Size (Default: 500)
+- `MAX_RECORDINGS` - Max Recordings Retention (Default: 10)
 
-## 🧪 测试指南
+## 🧪 Guide to Testing
 
-本项目包含一套完整的测试系统，涵盖单元测试、集成测试和性能负载测试。
+This project includes a complete test suite covering unit tests, integration tests, and performance load tests.
 
-### 1. 测试结构
+### 1. Test Structure
 ```text
 tests/
-├── unit/           # 单元测试 (Recognizer, FileHandler, RedisClient)
-├── integration/    # API 集成测试
-├── performance/    # 负载测试与资源监控脚本
-├── resources/      # 测试用音频文件
-└── conftest.py     # 共享 Fixtures
+├── unit/           # Unit Tests (Recognizer, FileHandler, RedisClient)
+├── integration/    # API Integration Tests
+├── performance/    # Load Tests & Resource Monitor Scripts
+├── resources/      # Test Audio Files
+└── conftest.py     # Shared Fixtures
 ```
 
-### 2. 运行常规测试
-运行所有单元测试和集成测试：
+### 2. Run Regular Tests
+Run all unit and integration tests:
 ```bash
 ./scripts/run_tests.sh
 ```
 
-### 3. 高并发负载测试
-用于验证系统在高并发下的稳定性与性能。
+### 3. High Concurrency Load Test
+Used to verify stability and performance under high load.
 
 > [!IMPORTANT]
-> **运行前必读**：负载测试需要完整的后端服务支持。请确保：
-> 1. Redis 服务已启动 (`redis-server`)
-> 2. Worker 已启动 (`./scripts/start_workers.sh`)
-> 3. API 服务运行中 (`uvicorn src.api.main:app`)
+> **Read Before Run**: Load tests require full backend service support. Ensure:
+> 1. Redis service started (`redis-server`)
+> 2. Worker started (`./scripts/start_workers.sh`)
+> 3. API service running (`uvicorn src.api.main:app`)
 
-**前置条件**: 确保 API 服务已启动 (`uvicorn src.api.main:app`).
+**Prerequisite**: Ensure API service started (`uvicorn src.api.main:app`).
 
 ```bash
-# 用法: ./scripts/run_load_test.sh [并发数] [持续秒数]
+# Usage: ./scripts/run_load_test.sh [concurrency] [duration_seconds]
 ./scripts/run_load_test.sh 10 60
 ```
 
-### 4. 实时可视化仪表盘
-在运行负载测试时，访问系统内置的仪表盘查看实时数据：
-- **地址**: [http://localhost:8000/dashboard](http://localhost:8000/dashboard)
-- **监控指标**:
-    - 📈 **资源**: CPU 使用率, 内存占用的实时曲线
-    - 📉 **队列**: 待处理任务数 (Queue Depth), 活跃 Worker 数
-    - ⏱️ **性能**: 请求延迟 (Latency), 吞吐量 (Throughput)
+### 4. Real-time Visualization Dashboard
+Access system built-in dashboard during load test to view real-time data:
+- **URL**: [http://localhost:8000/dashboard](http://localhost:8000/dashboard)
+- **Metrics**:
+    - 📈 **Resources**: CPU Usage, Memory Usage real-time curves
+    - 📉 **Queue**: Queue Depth, Active Workers
+    - ⏱️ **Performance**: Latency, Throughput
 
-## 📊 监控
+## 📊 Monitoring
 
 ```bash
-# 查看队列状态
+# View Queue Status
 rq info --url redis://localhost:6379/0
 
-# 查看日志
+# View Logs
 tail -f src/storage/logs/asr_api.log
 tail -f src/storage/logs/asr_worker.log
 ```
 
-## 🛠️ 技术栈
+## 🛠️ Tech Stack
 
-- **Web 框架**: FastAPI 0.115+
-- **ASGI 服务器**: Uvicorn 0.32+
-- **任务队列**: Redis Queue (RQ) 1.16+
-- **消息存储**: Redis 5.0+
-- **ASR 引擎**: FunASR (ModelScope)
-- **深度学习**: PyTorch 2.0+
+- **Web Framework**: FastAPI 0.115+
+- **ASGI Server**: Uvicorn 0.32+
+- **Task Queue**: Redis Queue (RQ) 1.16+
+- **Message Store**: Redis 5.0+
+- **ASR Engine**: FunASR (ModelScope)
+- **Deep Learning**: PyTorch 2.0+
 
-## 📄 许可证
+## 📄 License
 
 MIT
 
 ---
 
-**Version**: 1.0.0  
+**Version**: 1.0.0
 **Last Updated**: 2025-12-11

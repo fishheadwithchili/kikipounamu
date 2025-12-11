@@ -1,173 +1,178 @@
-# ASR FastAPI 微服务架构设计方案
+# ASR FastAPI Microservice Architecture Design
 
-> 最终版本 - 2025-12-02
-> 
-> 本文档记录了 ASR 项目从单体脚本向微服务架构演进的最终设计方案。
+> **Languages**: [English](ARCHITECTURE_DESIGN.md) | [简体中文](ARCHITECTURE_DESIGN.zh-CN.md)
 
----
+> [!NOTE]
+> This documentation is automatically translated from the [Chinese version](ARCHITECTURE_DESIGN.zh-CN.md). In case of discrepancies, the Chinese version prevails.
 
-## 1. 项目背景与目标
-
-### 1.1 项目定位
-- **核心功能**: 基于 FunASR 的离线语音识别服务
-- **最终目标**: 作为 Telegram Bot 的后端微服务之一
-- **扩展规划**: 未来会有几十种工具/工作流（TTS、OCR、翻译等）
-
-### 1.2 关键约束
-- **用户规模**: 单用户使用（暂不考虑多租户）
-- **并发量**: 最多 100 个并发请求
-- **部署环境**: 本地部署，无容器化需求（暂时）
-- **开发模式**: 个人项目，需要时常升级代码
+> Final Version - 2025-12-02
+>
+> This document records the final design for the evolution of the ASR project from a monolithic script to a microservice architecture.
 
 ---
 
-## 2. 技术选型
+## 1. Background and Objectives
 
-### 2.1 核心技术栈
+### 1.1 Project Positioning
+- **Core Function**: Offline speech recognition service based on FunASR
+- **Ultimate Goal**: One of the backend microservices for a Telegram Bot
+- **Expansion Plan**: Dozens of tools/workflows in the future (TTS, OCR, Translation, etc.)
 
-| 组件 | 技术选型 | 版本要求 | 选型理由 |
+### 1.2 Key Constraints
+- **User Scale**: Single user (Multi-tenancy not considered for now)
+- **Concurrency**: Max 100 concurrent requests
+- **Deployment Environment**: Local deployment, no containerization required (temporarily)
+- **Development Mode**: Personal project, requiring frequent code upgrades
+
+---
+
+## 2. Technology Selection
+
+### 2.1 Core Tech Stack
+
+| Component | Selection | Version | Reason |
 |------|---------|---------|---------|
-| **Web 框架** | FastAPI | >=0.115.0 | 异步性能高、自动文档、微服务标准选择 |
-| **ASGI 服务器** | Uvicorn | >=0.32.0 | FastAPI 官方推荐，性能优异 |
-| **任务队列** | Redis Queue (RQ) | >=2.0.0 | 简单易用，100 并发足够，比 Celery 轻量 |
-| **消息存储** | Redis | 6.0+ | 任务队列 + 结果缓存，全局共享 |
-| **数据验证** | Pydantic | >=2.10.0 | FastAPI 内置依赖，类型安全 |
-| **依赖管理** | uv | latest | 快速、现代、自动锁版本 |
-| **ASR 引擎** | FunASR | latest | 离线高精度，支持中英混合 |
+| **Web Framework** | FastAPI | >=0.115.0 | High async performance, auto docs, standard for microservices |
+| **ASGI Server** | Uvicorn | >=0.32.0 | Recommended by FastAPI, excellent performance |
+| **Task Queue** | Redis Queue (RQ) | >=2.0.0 | Simple, sufficient for 100 concurrency, lighter than Celery |
+| **Message Store** | Redis | 6.0+ | Task queue + Result cache, globally shared |
+| **Data Validation** | Pydantic | >=2.10.0 | Built-in FastAPI dependency, type safety |
+| **Dependency Mgmt** | uv | latest | Fast, modern, auto version locking |
+| **ASR Engine** | FunASR | latest | High offline accuracy, supports mixed Chinese/English |
 
-### 2.2 不采用的方案及理由
+### 2.2 Rejected Options
 
-| 方案 | 不采用理由 |
+| Option | Reason for Rejection |
 |------|-----------|
-| **Django** | 太重，不适合微服务，异步支持不成熟 |
-| **Celery** | 配置复杂，对于 100 并发属于大材小用 |
-| **Docker** | 个人项目、无生产环境需求，暂不需要 |
-| **数据库** | 数据量小（仅保留最近 10 条），Redis + JSON 文件足够 |
+| **Django** | Too heavy, not suitable for microservices, async support immature |
+| **Celery** | Complex config, overkill for 100 concurrency |
+| **Docker** | Personal project, no production environment need presently |
+| **Database** | Small data volume (keep only last 10 records), Redis + JSON files sufficient |
 
 ---
 
-## 3. 系统架构设计
+## 3. System Architecture Design
 
-### 3.1 整体架构图
+### 3.1 Overall Architecture
 
 ```
 ┌─────────────────────────────────────────┐
-│      Telegram Bot Manager (未来)        │
-│      端口: 8000                         │
+│      Telegram Bot Manager (Future)      │
+│      Port: 8000                         │
 └─────────────┬───────────────────────────┘
               │
               ▼
 ┌─────────────────────────────────────────┐
-│       Redis (全局消息队列+缓存)          │
-│       端口: 6379                        │
-│       - RQ 任务队列                     │
-│       - 任务结果缓存                    │
-│       - 历史记录存储                    │
-└─────┬───────┬───────┬──────────┬────────┘
+│       Redis (Global Queue + Cache)       │
+│       Port: 6379                        │
+│       - RQ Task Queue                   │
+│       - Task Result Cache               │
+│       - History Storage                 │
+66: └─────┬───────┬───────┬──────────┬────────┘
       │       │       │          │
       ▼       ▼       ▼          ▼
 ┌────────┐ ┌────────┐ ┌────────┐  ...
-│  ASR   │ │  TTS   │ │  OCR   │  (未来几十个)
+│  ASR   │ │  TTS   │ │  OCR   │  (Dozens more)
 │ FastAPI│ │ FastAPI│ │ FastAPI│
 │ 8000   │ │ 8002   │ │ 8003   │
 └────────┘ └────────┘ └────────┘
 ```
 
-### 3.2 ASR 服务工作流程
+### 3.2 ASR Service Workflow
 
 ```
-用户请求 (Telegram Bot)
+User Request (Telegram Bot)
     ↓
-POST /api/v1/asr/submit (上传音频)
+POST /api/v1/asr/submit (Upload Audio)
     ↓
-FastAPI 保存文件到 src/storage/recordings/
+FastAPI saves file to src/storage/recordings/
     ↓
-创建 RQ 任务 → Redis 队列 (rq:queue:asr-queue)
+Create RQ Task → Redis Queue (rq:queue:asr-queue)
     ↓
-立即返回 task_id 给用户
+Immediately return task_id to user
     ↓
-━━━━━━━━━━━━━ 异步处理线 ━━━━━━━━━━━━━
+━━━━━━━━━━━━━ Async Processing Line ━━━━━━━━━━━━━
     ↓
-RQ Worker 从队列取任务 (2 个 Worker)
+RQ Worker picks task from queue (2 Workers)
     ↓
-调用 SpeechRecognizer.recognize()
+Call SpeechRecognizer.recognize()
     ↓
-结果存入 Redis (asr:task:{task_id})
+Save result to Redis (asr:task:{task_id})
     ↓
-更新历史记录 (asr:history:latest, 最多 10 条)
+Update history (asr:history:latest, Max 10)
     ↓
-追加到 JSON 日志 (asr_history.jsonl)
+Append to JSON Log (asr_history.jsonl)
     ↓
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     ↓
-用户轮询 GET /api/v1/asr/result/{task_id}
+User Polling GET /api/v1/asr/result/{task_id}
     ↓
-返回识别结果
+Return Recognition Result
     ↓
-(可选) 清理过期文件 (超过 10 个录音)
+(Optional) Clean expired files (Exceeding 10 recordings)
 ```
 
-### 3.3 Redis 数据结构设计
+### 3.3 Redis Data Structure Design
 
-#### Namespace 规划
+#### Namespace Planning
 ```
-asr:task:{task_id}        → String  (单个任务结果，TTL 1小时)
-asr:history:latest        → List    (最近 10 条记录)
-asr:audio:index           → Sorted Set (录音文件索引，按时间排序，最多 10 个)
-rq:queue:asr-queue        → List    (RQ 任务队列，自动管理)
-rq:job:{job_id}           → Hash    (RQ 任务详情，自动管理)
+asr:task:{task_id}        → String  (Single task result, TTL 1 hour)
+asr:history:latest        → List    (Latest 10 records)
+asr:audio:index           → Sorted Set (Audio file index, sorted by time, max 10)
+rq:queue:asr-queue        → List    (RQ Task Queue, auto managed)
+rq:job:{job_id}           → Hash    (RQ Task Details, auto managed)
 ```
 
-#### 数据示例
+#### Data Example
 ```redis
-# 单个任务结果
-SET asr:task:abc123 '{"status":"done","text":"转录内容...","duration":120.5}' EX 3600
+# Single Task Result
+SET asr:task:abc123 '{"status":"done","text":"Transcription content...","duration":120.5}' EX 3600
 
-# 历史记录列表 (最近 10 条)
+# History List (Last 10)
 LPUSH asr:history:latest '{"task_id":"abc123",...}'
-LTRIM asr:history:latest 0 9  # 保持只有 10 条
+LTRIM asr:history:latest 0 9  # Keep only 10
 
-# 录音文件索引 (按时间戳排序)
+# Audio File Index (Sorted by timestamp)
 ZADD asr:audio:index 1733155200 "2025-12-01_001_abc123.wav"
-ZREMRANGEBYRANK asr:audio:index 0 -11  # 只保留最新 10 个
+ZREMRANGEBYRANK asr:audio:index 0 -11  # Keep only newest 10
 ```
 
 ---
 
-## 4. API 接口设计
+## 4. API Interface Design
 
-### 4.1 API 列表概览
+### 4.1 API List Overview
 
-| API | 方法 | 用途 | 优先级 |
+| API | Method | Purpose | Priority |
 |-----|------|------|--------|
-| `/api/v1/asr/submit` | POST | 提交转录任务 | 🔴 必须 |
-| `/api/v1/asr/result/{task_id}` | GET | 查询任务结果 | 🔴 必须 |
-| `/api/v1/health` | GET | 服务健康检查 | 🔴 必须 |
-| `/api/v1/asr/history` | GET | 获取历史记录 | 🟡 重要 |
-| `/api/v1/asr/audio/{task_id}` | GET | 下载原始录音 | 🟡 重要 |
-| `/api/v1/asr/queue/status` | GET | 查看队列状态 | 🟡 重要 |
-| `/api/v1/asr/retry/{task_id}` | POST | 重试失败任务 | 🟢 有用 |
-| `/api/v1/asr/task/{task_id}` | DELETE | 删除任务和录音 | 🟢 有用 |
-| `/api/v1/stats` | GET | 系统运行统计 | ⚪ 可选 |
+| `/api/v1/asr/submit` | POST | Submit Transcription Task | 🔴 Must |
+| `/api/v1/asr/result/{task_id}` | GET | Query Task Result | 🔴 Must |
+| `/api/v1/health` | GET | Service Health Check | 🔴 Must |
+| `/api/v1/asr/history` | GET | Get History | 🟡 Important |
+| `/api/v1/asr/audio/{task_id}` | GET | Download Original Audio | 🟡 Important |
+| `/api/v1/asr/queue/status` | GET | View Queue Status | 🟡 Important |
+| `/api/v1/asr/retry/{task_id}` | POST | Retry Failed Task | 🟢 Useful |
+| `/api/v1/asr/task/{task_id}` | DELETE | Delete Task and Audio | 🟢 Useful |
+| `/api/v1/stats` | GET | System Stats | ⚪ Optional |
 
-### 4.2 核心 API 详细设计
+### 4.2 Core API Detailed Design
 
-#### A. 提交任务
+#### A. Submit Task
 ```
 POST /api/v1/asr/submit
 Content-Type: multipart/form-data
 
 Request:
-  - audio: File (必填, 音频文件)
-  - language: str (可选, 默认 "zh")
-  - batch_size: int (可选, 默认 500)
+  - audio: File (Required, audio file)
+  - language: str (Optional, default "zh")
+  - batch_size: int (Optional, default 500)
 
 Response (200):
 {
   "task_id": "2025-12-01_001_abc123",
   "status": "queued",
   "position": 3,
-  "estimated_wait": 45  // 秒
+  "estimated_wait": 45  // seconds
 }
 
 Error (400):
@@ -177,28 +182,28 @@ Error (400):
 }
 ```
 
-#### B. 查询结果
+#### B. Query Result
 ```
 GET /api/v1/asr/result/{task_id}
 
-Response (200) - 处理中:
+Response (200) - Processing:
 {
   "task_id": "abc123",
   "status": "processing",
-  "progress": 30  // 百分比
+  "progress": 30  // Percentage
 }
 
-Response (200) - 完成:
+Response (200) - Done:
 {
   "task_id": "abc123",
   "status": "done",
-  "text": "转录内容...",
+  "text": "Transcription content...",
   "duration": 120.5,
   "created_at": "2025-12-01T10:00:00Z",
   "audio_url": "/api/v1/asr/audio/abc123"
 }
 
-Response (200) - 失败:
+Response (200) - Failed:
 {
   "task_id": "abc123",
   "status": "failed",
@@ -213,7 +218,7 @@ Error (404):
 }
 ```
 
-#### C. 健康检查
+#### C. Health Check
 ```
 GET /api/v1/health
 
@@ -234,7 +239,7 @@ Response (503):
 }
 ```
 
-#### D. 历史记录
+#### D. History
 ```
 GET /api/v1/asr/history?limit=10
 
@@ -245,7 +250,7 @@ Response (200):
     {
       "task_id": "abc123",
       "filename": "2025-12-01_001_abc123.wav",
-      "text": "转录内容...",
+      "text": "Content...",
       "created_at": "2025-12-01T10:00:00Z",
       "duration": 120.5,
       "status": "success",
@@ -256,122 +261,122 @@ Response (200):
 }
 ```
 
-#### E. 队列状态
+#### E. Queue Status
 ```
 GET /api/v1/asr/queue/status
 
 Response (200):
 {
-  "queued": 3,       // 等待中
-  "processing": 2,   // 处理中
-  "failed": 1,       // 失败
-  "workers": 2,      // Worker 数量
-  "workers_busy": 2  // 忙碌的 Worker
+  "queued": 3,       // Waiting
+  "processing": 2,   // Processing
+  "failed": 1,       // Failed
+  "workers": 2,      // Worker Count
+  "workers_busy": 2  // Busy Workers
 }
 ```
 
 ---
 
-## 5. 存储方案设计
+## 5. Storage Scheme Design
 
-### 5.1 音频文件存储（文件系统）
+### 5.1 Audio File Storage (Filesystem)
 
-#### 存储路径
+#### Storage Path
 ```
 src/
 └── storage/
     └── recordings/
         ├── 2025-12-01_001_abc123.wav
         ├── 2025-12-01_002_def456.wav
-        └── ... (最多保留 10 个)
+        └── ... (Max 10 retained)
 ```
 
-#### 文件命名规则
+#### File Naming Rule
 ```
-格式: YYYY-MM-DD_{序号}_{task_id}.{ext}
-示例: 2025-12-01_001_abc123.wav
+Format: YYYY-MM-DD_{Sequence}_{task_id}.{ext}
+Example: 2025-12-01_001_abc123.wav
 ```
 
-#### 自动清理策略
-- **保留数量**: 最近 10 个文件
-- **清理时机**: 每次新上传时检查
-- **清理方法**: 删除最老的文件（通过 Redis Sorted Set 维护索引）
+#### Auto Cleanup Policy
+- **Retention Count**: Last 10 files
+- **Cleanup Timing**: Check on every new upload
+- **Cleanup Method**: Delete oldest files (Index maintained by Redis Sorted Set)
 
-### 5.2 转录结果存储（Redis + JSON）
+### 5.2 Transcription Result Storage (Redis + JSON)
 
-#### Redis 存储（快速查询）
+#### Redis Storage (Fast Query)
 ```
 Key: asr:history:latest
 Type: List
-TTL: 无限期
+TTL: Infinite
 Max Length: 10
 
-Value 示例:
+Value Example:
 [
   '{"task_id":"abc123","file":"...","text":"...","created_at":"...","duration":120.5,"status":"success"}',
   ...
 ]
 ```
 
-#### JSON 文件存储（持久化备份）
+#### JSON File Storage (Persistent Backup)
 ```
 src/
 └── storage/
     └── logs/
-        └── asr_history.jsonl  # JSON Lines 格式
+        └── asr_history.jsonl  # JSON Lines Format
 ```
 
-**文件内容示例** (JSON Lines):
+**File Content Example** (JSON Lines):
 ```jsonl
-{"task_id":"abc123","file":"test.wav","text":"转录内容...","created_at":"2025-12-01T10:00:00Z","duration":120.5,"status":"success","worker_id":1}
+{"task_id":"abc123","file":"test.wav","text":"Content...","created_at":"2025-12-01T10:00:00Z","duration":120.5,"status":"success","worker_id":1}
 {"task_id":"def456","file":"test2.wav","text":"...","created_at":"2025-12-01T11:00:00Z","duration":85.2,"status":"failed","error":"timeout"}
 ```
 
-**查询示例** (使用 `jq`):
+**Query Example** (Using `jq`):
 ```bash
-# 查询所有失败的任务
+# Query all failed tasks
 cat asr_history.jsonl | jq 'select(.status=="failed")'
 
-# 查询今天的任务
+# Query tasks from today
 cat asr_history.jsonl | jq 'select(.created_at | startswith("2025-12-01"))'
 
-# 统计平均时长
+# Stats average duration
 cat asr_history.jsonl | jq -s 'map(.duration) | add/length'
 ```
 
 ---
 
-## 6. 日志方案设计
+## 6. Logging Scheme Design
 
-### 6.1 日志层级
+### 6.1 Log Hierarchy
 
 ```
 src/
 └── storage/
     └── logs/
-        ├── asr_api.log        # API 访问日志 (INFO 级别)
-        ├── asr_worker.log     # Worker 处理日志 (INFO + DEBUG)
-        ├── asr_error.log      # 错误日志 (ERROR + CRITICAL)
-        └── asr_history.jsonl  # 业务数据日志 (结构化数据)
+        ├── asr_api.log        # API Access Log (INFO)
+        ├── asr_worker.log     # Worker Process Log (INFO + DEBUG)
+        ├── asr_error.log      # Error Log (ERROR + CRITICAL)
+        └── asr_history.jsonl  # Business Data Log (Structured)
 ```
 
-### 6.2 日志内容示例
+### 6.2 Log Content Examples
 
-#### API 访问日志 (`asr_api.log`)
+#### API Access Log (`asr_api.log`)
 ```
 [2025-12-01 10:00:00] INFO POST /api/v1/asr/submit - task=abc123 file=test.wav size=2.3MB status=queued
 [2025-12-01 10:00:15] INFO GET /api/v1/asr/result/abc123 - status=processing progress=30%
 [2025-12-01 10:02:30] INFO GET /api/v1/asr/result/abc123 - status=done duration=135s
 ```
 
-#### Worker 处理日志 (`asr_worker.log`)
+#### Worker Process Log (`asr_worker.log`)
 ```
 [2025-12-01 10:00:01] INFO Worker-1 task=abc123 status=started queue_position=3
 [2025-12-01 10:00:15] DEBUG Worker-1 task=abc123 vad_segments=45 batch_size=500
 [2025-12-01 10:02:25] INFO Worker-1 task=abc123 status=completed text_length=1520 rtf=0.015
 ```
 
-#### 错误日志 (`asr_error.log`)
+#### Error Log (`asr_error.log`)
 ```
 [2025-12-01 10:05:30] ERROR Worker-2 task=def456 error="Processing timeout after 600s"
 [2025-12-01 10:05:30] ERROR Worker-2 task=def456 traceback:
@@ -380,13 +385,13 @@ src/
   RuntimeError: CUDA out of memory
 ```
 
-### 6.3 日志配置建议
+### 6.3 Log Config Recommendation
 
 ```python
-# 日志配置示例（不是完整代码）
+# Log Config Example (Not full code)
 LOGGING_CONFIG = {
-    "rotation": "10 MB",        # 单文件大小
-    "retention": "30 days",     # 保留时长
+    "rotation": "10 MB",        # Single file size
+    "retention": "30 days",     # Retention period
     "format": "[{time:YYYY-MM-DD HH:mm:ss}] {level} {message}",
     "level": {
         "api": "INFO",
@@ -398,92 +403,92 @@ LOGGING_CONFIG = {
 
 ---
 
-## 7. 项目结构设计
+## 7. Project Structure Design
 
-### 7.1 推荐目录结构
+### 7.1 Recommended Directory Structure
 
 ```
 ASR_server/
-├── pyproject.toml           # uv 依赖管理
-├── uv.lock                  # 锁定文件
-├── .env.example             # 环境变量模板
-├── README.md                # 项目说明
+├── pyproject.toml           # uv dependency management
+├── uv.lock                  # Lock file
+├── .env.example             # Env var template
+├── README.md                # Project Readme
 │
 ├── src/
 │   ├── __init__.py
 │   │
-│   ├── asr/                 # ASR 核心模块
+│   ├── asr/                 # ASR Core Module
 │   │   ├── __init__.py
-│   │   ├── recognizer.py    # SpeechRecognizer 类
-│   │   ├── config.py        # ASR 配置（模型路径、参数等）
-│   │   └── hotwords.txt     # 热词表
+│   │   ├── recognizer.py    # SpeechRecognizer Class
+│   │   ├── config.py        # ASR Config (Model path, params, etc.)
+│   │   └── hotwords.txt     # Hotwords List
 │   │
-│   ├── api/                 # FastAPI 服务
+│   ├── api/                 # FastAPI Service
 │   │   ├── __init__.py
-│   │   ├── main.py          # FastAPI app 入口
-│   │   ├── routes.py        # API 路由定义
-│   │   ├── models.py        # Pydantic 数据模型
-│   │   ├── tasks.py         # RQ 异步任务定义
-│   │   └── dependencies.py  # 依赖注入（Redis 连接等）
+│   │   ├── main.py          # FastAPI app entry
+│   │   ├── routes.py        # API Route Definitions
+│   │   ├── models.py        # Pydantic Data Models
+│   │   ├── tasks.py         # RQ Async Tasks
+│   │   └── dependencies.py  # DI (Redis connection etc.)
 │   │
-│   ├── utils/               # 工具函数
+│   ├── utils/               # Utility Functions
 │   │   ├── __init__.py
-│   │   ├── file_handler.py  # 文件上传/清理
-│   │   ├── logger.py        # 日志配置
-│   │   └── redis_client.py  # Redis 连接管理
+│   │   ├── file_handler.py  # File Upload/Cleanup
+│   │   ├── logger.py        # Log Config
+│   │   └── redis_client.py  # Redis Connection Management
 │   │
-│   └── storage/             # 数据存储目录
-│       ├── recordings/      # 音频文件 (最多 10 个)
-│       └── logs/            # 日志文件
+│   └── storage/             # Data Storage Dir
+│       ├── recordings/      # Audio Files (Max 10)
+│       └── logs/            # Log Files
 │           ├── asr_api.log
 │           ├── asr_worker.log
 │           ├── asr_error.log
 │           └── asr_history.jsonl
 │
-├── scripts/                 # 辅助脚本
-│   ├── download_models.py   # 模型下载脚本
-│   ├── start_workers.sh     # 启动 RQ Workers
-│   └── clear_old_files.py   # 手动清理旧文件
+├── scripts/                 # Helper Scripts
+│   ├── download_models.py   # Model Download Script
+│   ├── start_workers.sh     # Start RQ Workers
+│   └── clear_old_files.py   # Manual Cleanup Script
 │
-├── tests/                   # 测试（可选）
+├── tests/                   # Tests (Optional)
 │   ├── test_api.py
 │   └── test_recognizer.py
 │
-└── report/                  # 文档
+└── report/                  # Documentation
     ├── LOCAL_DEPLOYMENT_GUIDE.md
-    └── ARCHITECTURE_DESIGN.md   # 本文档
+    └── ARCHITECTURE_DESIGN.md   # This Document
 ```
 
-### 7.2 环境变量配置 (`.env`)
+### 7.2 Env Variable Config (`.env`)
 
 ```bash
-# Redis 配置
+# Redis Config
 REDIS_HOST=localhost
 REDIS_PORT=6379
 REDIS_DB=0
 
-# ASR 配置
+# ASR Config
 ASR_MODEL_PATH=~/.cache/modelscope/hub
 ASR_HOTWORDS_PATH=src/asr/hotwords.txt
 ASR_USE_GPU=true
 ASR_BATCH_SIZE=500
 
-# 存储配置
+# Storage Config
 STORAGE_PATH=src/storage
 MAX_RECORDINGS=10
 MAX_HISTORY_RECORDS=10
 
-# RQ 配置
+# RQ Config
 RQ_QUEUE_NAME=asr-queue
 RQ_WORKER_COUNT=2
-RQ_WORKER_TIMEOUT=600  # 秒
+RQ_WORKER_TIMEOUT=600  # Seconds
 
-# API 配置
+# API Config
 API_HOST=0.0.0.0
 API_PORT=8000
-API_RELOAD=true  # 开发环境 true，生产环境 false
+API_RELOAD=true  # Dev true, Prod false
 
-# 日志配置
+# Log Config
 LOG_LEVEL=INFO
 LOG_ROTATION=10 MB
 LOG_RETENTION=30 days
@@ -491,210 +496,210 @@ LOG_RETENTION=30 days
 
 ---
 
-## 8. 部署配置
+## 8. Deployment Config
 
-### 8.1 系统依赖
+### 8.1 System Dependencies
 
 ```bash
-# 1. Redis (已安装)
+# 1. Redis (Already Installed)
 sudo apt install redis-server  # Ubuntu/Debian
 sudo systemctl enable redis-server
 sudo systemctl start redis-server
 
 # 2. Python 3.10
-python --version  # 确认版本
+python --version  # Confirm version
 
-# 3. uv (如果未安装)
+# 3. uv (If not installed)
 curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
-### 8.2 项目依赖安装
+### 8.2 Project Dependency Installation
 
 ```bash
 cd /home/tiger/Projects/ASR_server
 
-# 安装所有依赖
+# Install all dependencies
 uv sync
 
-# 或者添加新依赖
+# Or add new dependencies
 uv add fastapi uvicorn[standard] redis rq python-multipart python-dotenv
 ```
 
-### 8.3 服务启动流程
+### 8.3 Service Startup Process
 
-#### 开发环境（3 个终端)
+#### Dev Environment (3 Terminals)
 
-**终端 1: Redis (自动启动)**
+**Terminal 1: Redis (Auto Start)**
 ```bash
-# 确认 Redis 运行状态
+# Confirm Redis Status
 systemctl status redis-server
 ```
 
-**终端 2: RQ Workers**
+**Terminal 2: RQ Workers**
 ```bash
 cd /home/tiger/Projects/ASR_server
 
-# 启动 2 个 Worker
+# Start 2 Workers
 rq worker asr-queue --url redis://localhost:6379/0 --name worker-1 --burst &
 rq worker asr-queue --url redis://localhost:6379/0 --name worker-2 --burst &
 
-# 或使用脚本
+# Or use script
 ./scripts/start_workers.sh
 ```
 
-**终端 3: FastAPI 服务**
+**Terminal 3: FastAPI Service**
 ```bash
 cd /home/tiger/Projects/ASR_server
 
-# 开发模式（自动重载）
+# Dev Mode (Auto Reload)
 uvicorn src.api.main:app --reload --host 0.0.0.0 --port 8000
 
-# 访问自动文档
+# Access Auto Docs
 # http://localhost:8000/docs  (Swagger UI)
 # http://localhost:8000/redoc (ReDoc)
 ```
 
-### 8.4 配置参数总结
+### 8.4 Config Parameters Summary
 
-| 配置项 | 值 | 说明 |
+| Config Item | Value | Description |
 |--------|-----|------|
-| **Redis 端口** | 6379 | 默认端口，全局共享 |
-| **API 端口** | 8000 | ASR 服务端口 |
-| **RQ Workers** | 2 个 | 根据 GPU 数量调整 |
-| **Worker 超时** | 600 秒 | 处理长音频需要较长时间 |
-| **Batch Size** | 500 秒 | 显存占用平衡点 |
-| **最大录音数** | 10 个 | 超过自动删除最老的 |
-| **最大历史数** | 10 条 | Redis List 限制长度 |
+| **Redis Port** | 6379 | Default port, globally shared |
+| **API Port** | 8000 | ASR Service Port |
+| **RQ Workers** | 2 | Adjust based on GPU count |
+| **Worker Timeout** | 600s | Long audio requires more time |
+| **Batch Size** | 500s | VRAM usage balance point |
+| **Max Recordings** | 10 | Auto delete oldest when exceeded |
+| **Max History** | 10 | Redis List limit length |
 
 ---
 
-## 9. 性能指标与监控
+## 9. Performance Metrics & Monitoring
 
-### 9.1 性能预期
+### 9.1 Performance Expectations
 
-| 指标 | 预期值 | 说明 |
+| Metric | Expected | Description |
 |------|-------|------|
-| **API 响应时间** | < 100ms | 仅提交任务，不包含转录时间 |
-| **转录速度 (RTF)** | 0.01 ~ 0.05 | 实时率，GPU 加速 |
-| **并发处理能力** | 100 请求/分钟 | 2 个 Worker 足够 |
-| **队列等待时间** | < 60 秒 | 100 并发场景 |
-| **内存占用** | ~3GB | 模型加载 + Redis |
-| **磁盘占用** | < 100MB | 10 个录音 + 日志 |
+| **API Response Time** | < 100ms | Submit task only, excluding transcription time |
+| **Transcription Speed (RTF)** | 0.01 ~ 0.05 | Real Time Factor, GPU Accelerated |
+| **Concurrency** | 100 requests/min | 2 Workers sufficient |
+| **Queue Wait Time** | < 60s | 100 concurrency scenario |
+| **Memory Usage** | ~3GB | Model loading + Redis |
+| **Disk Usage** | < 100MB | 10 recordings + logs |
 
-### 9.2 监控要点
+### 9.2 Monitoring Points
 
-- **Redis 连接状态**: 通过 `/api/v1/health` 检查
-- **Worker 存活状态**: `rq info --url redis://localhost:6379/0`
-- **队列积压情况**: `/api/v1/asr/queue/status`
-- **磁盘空间**: `df -h src/storage/`
-- **日志文件大小**: `du -sh src/storage/logs/`
+- **Redis Connection Status**: Check via `/api/v1/health`
+- **Worker Liveness**: `rq info --url redis://localhost:6379/0`
+- **Queue Backlog**: `/api/v1/asr/queue/status`
+- **Disk Space**: `df -h src/storage/`
+- **Log File Size**: `du -sh src/storage/logs/`
 
 ---
 
-## 10. 后续扩展路径
+## 10. Future Expansion Path
 
-### 10.1 近期扩展（1-3 个月)
+### 10.1 Near Term (1-3 Months)
 
-1. **Bot Manager 集成**
-   - 创建 Telegram Bot 服务（端口 8000）
-   - 实现 Webhook 接收用户消息
-   - 调用 ASR API 处理语音消息
+1. **Bot Manager Integration**
+   - Create Telegram Bot Service (Port 8000)
+   - Implement Webhook to receive user messages
+   - Call ASR API to process voice messages
 
-2. **新增微服务**
-   - TTS 服务（端口 8002）
-   - OCR 服务（端口 8003）
-   - 复制 ASR 的项目结构
+2. **New Microservices**
+   - TTS Service (Port 8002)
+   - OCR Service (Port 8003)
+   - Copy ASR project structure
 
-3. **优化改进**
-   - 添加进度推送（WebSocket）
-   - 实现任务优先级队列
-   - 添加结果缓存（相同音频直接返回）
+3. **Optimizations**
+   - Add Progress Push (WebSocket)
+   - Implement Task Priority Queue
+   - Add Result Cache (Return directly for same audio)
 
-### 10.2 中期扩展（3-6 个月)
+### 10.2 Mid Term (3-6 Months)
 
 1. **API Gateway**
-   - 统一入口（nginx 或 FastAPI）
-   - 路由分发到各微服务
-   - 统一鉴权和限流
+   - Unified Entry (nginx or FastAPI)
+   - Route distribution to microservices
+   - Unified Auth and Rate Limiting
 
-2. **多用户支持**
-   - 添加用户认证（JWT）
-   - 按用户隔离数据
-   - 配额管理
+2. **Multi-user Support**
+   - Add User Auth (JWT)
+   - Isolate Data by User
+   - Quota Management
 
-3. **容器化部署**
-   - Docker Compose 编排多服务
-   - 简化部署和迁移
+3. **Containerized Deployment**
+   - Docker Compose orchestration
+   - Simplify deployment and migration
 
-### 10.3 长期扩展（6+ 个月)
+### 10.3 Long Term (6+ Months)
 
-1. **高可用架构**
-   - Redis 主从复制
-   - 负载均衡
-   - 自动故障转移
+1. **High Availability**
+   - Redis Master-Slave Replication
+   - Load Balancing
+   - Auto Failover
 
-2. **数据持久化**
-   - 迁移到 PostgreSQL
-   - 存储完整历史记录
-   - 支持复杂查询
+2. **Data Persistence**
+   - Migrate to PostgreSQL
+   - Store full history
+   - Support complex queries
 
-3. **云原生部署**
-   - Kubernetes 编排
-   - 自动扩缩容
-   - 监控告警系统
+3. **Cloud Native Deployment**
+   - Kubernetes Orchestration
+   - Auto Scaling
+   - Monitoring & Alerting System
 
 ---
 
-## 11. 常见问题 FAQ
+## 11. FAQ
 
-### Q1: 为什么选 RQ 而不是 Celery？
-**A**: 对于 100 并发场景，RQ 已经足够且配置简单。Celery 功能强大但配置复杂，适合更大规模的生产环境。
+### Q1: Why choose RQ instead of Celery?
+**A**: For 100 concurrency, RQ is sufficient and easy to configure. Celery is powerful but complex, better for larger scale production environments.
 
-### Q2: Redis 挂了怎么办？
+### Q2: What if Redis crashes?
 **A**:
-- 任务队列会丢失（但 JSON 日志保留历史记录）
-- FastAPI 服务会返回 503 错误
-- 重启 Redis 后需要重新提交任务
+- Task queue will be lost (but JSON logs retain history)
+- FastAPI service will return 503 error
+- Need to resubmit tasks after Redis restart
 
-### Q3: 如何备份数据？
+### Q3: How to backup data?
 **A**:
-- **录音文件**: 定期备份 `src/storage/recordings/`
-- **转录结果**: `asr_history.jsonl` 文件包含所有历史记录
-- **Redis 数据**: 可选，使用 `redis-cli --rdb` 备份
+- **Recordings**: Periodically backup `src/storage/recordings/`
+- **Results**: `asr_history.jsonl` contains all history
+- **Redis Data**: Optional, use `redis-cli --rdb` backup
 
-### Q4: 如何升级模型？
+### Q4: How to upgrade models?
 **A**:
-1. 运行 `download_models.py` 下载新模型
-2. 更新 `src/asr/config.py` 中的模型路径
-3. 重启 FastAPI 服务和 Workers
+1. Run `download_models.py` to download new models
+2. Update model path in `src/asr/config.py`
+3. Restart FastAPI Service and Workers
 
-### Q5: 如何查看某个任务的详细日志？
+### Q5: How to check detailed logs for a task?
 **A**:
 ```bash
-# 在 worker 日志中搜索
+# Search in worker log
 grep "task=abc123" src/storage/logs/asr_worker.log
 
-# 在 JSON 历史中查询
+# Query in JSON history
 cat src/storage/logs/asr_history.jsonl | jq 'select(.task_id=="abc123")'
 ```
 
 ---
 
-## 12. 参考资料
+## 12. References
 
-### 官方文档
-- [FastAPI 官方文档](https://fastapi.tiangolo.com/)
-- [Redis Queue (RQ) 文档](https://python-rq.org/)
-- [FunASR 文档](https://github.com/alibaba-damo-academy/FunASR)
+### Official Documentation
+- [FastAPI Docs](https://fastapi.tiangolo.com/)
+- [Redis Queue (RQ) Docs](https://python-rq.org/)
+- [FunASR Docs](https://github.com/alibaba-damo-academy/FunASR)
 
-### 最佳实践
-- [微服务架构设计模式](https://microservices.io/)
-- [异步任务队列设计](https://12factor.net/backing-services)
-- [API 设计规范 (RESTful)](https://restfulapi.net/)
+### Best Practices
+- [Microservices Patterns](https://microservices.io/)
+- [Async Task Queue Design](https://12factor.net/backing-services)
+- [API Design Guide (RESTful)](https://restfulapi.net/)
 
 ---
 
-**文档版本**: v1.0  
-**最后更新**: 2025-12-02  
-**维护者**: tiger  
-**项目路径**: `/home/tiger/Projects/ASR_server`
+**Version**: v1.0
+**Last Updated**: 2025-12-02
+**Maintainer**: tiger
+**Project Path**: `/home/tiger/Projects/ASR_server`

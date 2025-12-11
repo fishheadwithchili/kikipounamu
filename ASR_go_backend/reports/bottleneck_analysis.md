@@ -113,3 +113,26 @@ Goal: Completely solve queuing issue, achieve 100% real-time rate.
 - [ ] **Monitoring**: Enhanced Monitoring
     - [ ] Access Prometheus/Grafana to monitor Redis `asr_chunk_queue` length.
     - [ ] Monitor Worker CPU utilization, implement Load-based Horizontal Pod Autoscaling (HPA).
+
+---
+
+## 6. Resilience Limits (Stress Test Results)
+We conducted "Crazy Tests" (Chaos, Thundering Herd, Zombie) to find the system's breaking points.
+
+### 6.1 Chaos Test (Worker Killing)
+*   **Action**: Randomly killed Python Workers during high load.
+*   **Result**: Go Backend **Survived** (No crash), but **Experience Failed** (Short audio success rate dropped to 0% during downtime).
+*   **Insight**: The system is "Robust" (Gatekeeper doesn't die) but lacks **High Availability** (Tasks fail if Worker dies).
+    *   *Fix*: Needs Kubernetes/Docker Swarm to auto-restart Workers instantly, and Redis Queue persistence to retry failed tasks.
+
+### 6.2 Reconnect Storm (Thundering Herd)
+*   **Action**: 2000 users reconnected instantly.
+*   **Result**: 1000 succeeded, 1000 rejected (HTTP 503).
+*   **Insight**: The `MAX_CONNECTIONS=2000` protection is **Working**.
+    *   *Trade-off*: Rejecting users is better than crashing the server. To support 5000+ users, we must increase `ulimit` and load balance across multiple Go Backends.
+
+### 6.3 Zombie Horde (Slow Loris)
+*   **Action**: 1000 idle connections holding sockets.
+*   **Result**: System held stable.
+*   **Insight**: Go's goroutine-per-connection model handles idle connections effectively. Memory usage is acceptable.
+

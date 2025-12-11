@@ -1,5 +1,9 @@
 #!/bin/bash
-# Start RQ Workers for ASR Queue
+# ⚠️ DEPRECATED: Use start_unified_worker.sh instead
+# This script uses RQ which has been replaced by Redis Streams
+# Will be removed in a future version
+#
+# Start RQ Workers for ASR Queue (DEPRECATED)
 
 # Load environment variables
 if [ -f .env ]; then

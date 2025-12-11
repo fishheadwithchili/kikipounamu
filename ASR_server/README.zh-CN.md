@@ -6,7 +6,7 @@
 
 ## ✨ 特性
 
-- 🚀 **异步处理** - Redis Queue (RQ) 异步任务队列
+- 🚀 **异步处理** - Redis Streams 高并发任务队列
 - 📡 **RESTful API** - 9 个完整的 API 端点
 - 🔥 **高性能** - GPU 加速，RTF < 0.05
 - 📊 **自动管理** - 文件自动清理，历史记录维护
@@ -17,13 +17,13 @@
 
 ```
 ┌─────────────────────────────────────────┐
-│       Redis (全局消息队列+缓存)          │
+│       Redis (Streams + 缓存)            │
 │       端口: 6379                        │
-20: └─────┬───────┬───────────────────────────┘
+└─────▲───────▲───────────────────────────┘
       │       │
       ▼       ▼
 ┌──────────┐ ┌──────────┐ ┌──────────┐
-│ FastAPI  │ │RQ Worker │ │RQ Worker │
+│ FastAPI  │ │UniWorker │ │UniWorker │
 │  :8000   │ │  (1)     │ │  (N)     │
 └──────────┘ └──────────┘ └──────────┘
 ```
@@ -36,17 +36,17 @@
 你可以通过简单的配置，瞬间启动几十个 Worker 并行处理海量任务：
 
 ```bash
-# 修改 scripts/start_workers.sh 或通过环境变量
-export RQ_WORKER_COUNT=10  # 启动 10 个工兵
-./scripts/start_workers.sh
+# 修改 scripts/start_unified_worker.sh 或通过环境变量
+export WORKER_COUNT=10  # 启动 10 个工兵
+./scripts/start_unified_worker.sh
 ```
 
 ### 2. 多机分布式集群 (Distributed Cluster)
 Worker 不必和 API 跑在同一台机器上！你可以在多台 GPU 服务器上运行 Worker，只要它们连接到同一个 Redis：
 
 *   **服务器 A (API)**: 只运行 `uvicorn`，负责快速响应用户请求。
-*   **服务器 B (GPU)**: 运行 `scripts/start_workers.sh`，连接到 A 的 Redis。
-*   **服务器 C (GPU)**: 运行 `scripts/start_workers.sh`，连接到 A 的 Redis。
+*   **服务器 B (GPU)**: 运行 `scripts/start_unified_worker.sh`，连接到 A 的 Redis。
+*   **服务器 C (GPU)**: 运行 `scripts/start_unified_worker.sh`，连接到 A 的 Redis。
 
 这种架构允许你随着业务增长，无限添加计算节点，而无需修改一行代码。
 
@@ -62,17 +62,19 @@ ASR_server/
 │   │   ├── main.py       # 应用入口
 │   │   ├── routes.py     # API 路由
 │   │   ├── models.py     # 数据模型
-│   │   ├── tasks.py      # RQ 任务
 │   │   └── dependencies.py
 │   ├── utils/            # 工具模块
 │   │   ├── redis_client.py
+│   │   ├── streams.py    # Redis Streams
 │   │   ├── file_handler.py
 │   │   └── logger.py
+│   ├── worker/
+│   │   └── unified_worker.py # 统一消费者
 │   └── storage/          # 数据存储
 │       ├── recordings/   # 音频文件
 │       └── logs/         # 日志文件
 ├── scripts/              # 辅助脚本
-│   ├── start_workers.sh
+│   ├── start_unified_worker.sh
 │   └── clear_old_files.py
 ├── tests/                # 测试
 │   └── test_api.py
@@ -97,7 +99,7 @@ sudo service redis-server start
 # 或者: sudo systemctl start redis-server
 
 # 终端 2: 启动 Workers
-./scripts/start_workers.sh
+./scripts/start_unified_worker.sh
 
 # 终端 3: 启动 API 服务
 uvicorn src.api.main:app --reload --port 8000
@@ -178,7 +180,7 @@ tests/
 > [!IMPORTANT]
 > **运行前必读**：负载测试需要完整的后端服务支持。请确保：
 > 1. Redis 服务已启动 (`redis-server`)
-> 2. Worker 已启动 (`./scripts/start_workers.sh`)
+> 2. Worker 已启动 (`./scripts/start_unified_worker.sh`)
 > 3. API 服务运行中 (`uvicorn src.api.main:app`)
 
 **前置条件**: 确保 API 服务已启动 (`uvicorn src.api.main:app`)。
@@ -200,7 +202,10 @@ tests/
 
 ```bash
 # 查看队列状态
-rq info --url redis://localhost:6379/0
+redis-cli XINFO STREAM asr_tasks
+
+# 查看待处理
+redis-cli XPENDING asr_tasks asr_workers
 
 # 查看日志
 tail -f src/storage/logs/asr_api.log
@@ -211,7 +216,7 @@ tail -f src/storage/logs/asr_worker.log
 
 - **Web 框架**: FastAPI 0.115+
 - **ASGI 服务器**: Uvicorn 0.32+
-- **任务队列**: Redis Queue (RQ) 1.16+
+- **任务队列**: Redis Streams (Consumer Groups)
 - **消息存储**: Redis 5.0+
 - **ASR 引擎**: FunASR (ModelScope)
 - **深度学习**: PyTorch 2.0+

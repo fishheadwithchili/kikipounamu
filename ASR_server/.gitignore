@@ -5,6 +5,9 @@ __pycache__/
 *.pid
 
 # Logs
+# Logs
+logs/
+!logs/.gitkeep
 *.log
 *_final.log
 *_startup.log

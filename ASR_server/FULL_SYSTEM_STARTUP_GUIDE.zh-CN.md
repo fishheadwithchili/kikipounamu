@@ -96,8 +96,10 @@ GRANT ALL PRIVILEGES ON DATABASE root TO root;
 
 3.  **启动 Worker**:
     ```bash
-    ./scripts/start_workers.sh
-    # 或者手动: rq worker asr-queue
+    ```bash
+    ./scripts/start_unified_worker.sh
+    # 不建议手动启动统一 Worker
+    ```
     ```
 
 4.  **启动 API 服务**:

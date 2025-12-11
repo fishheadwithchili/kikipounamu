@@ -1,4 +1,13 @@
 import React, { useRef, useEffect } from 'react';
+import { float32ToBase64 } from '../utils/audioHelper';
+
+// DEBUG SESSION ID (Must match VAD one mostly, or just use timestamp)
+// Since we can't easily share the variable, we'll assume the user runs them together.
+// We will look for the most recent session ID or just create a new unique one per component mount.
+const getDebugSessionId = () => {
+    // A hack to try to match them, but unique name is safer.
+    return 'debug_session_' + Date.now(); // This might differ from VAD but timestamps will align files.
+};
 
 interface WaveformProps {
     isRecording: boolean;
@@ -11,6 +20,8 @@ export const Waveform: React.FC<WaveformProps> = ({ isRecording, stream }) => {
     const analyserRef = useRef<AnalyserNode | null>(null);
     const sourceRef = useRef<MediaStreamAudioSourceNode | null>(null);
     const audioContextRef = useRef<AudioContext | null>(null);
+    const debugProcessorRef = useRef<ScriptProcessorNode | null>(null);
+
 
     useEffect(() => {
         if (isRecording && stream) {
@@ -44,6 +55,28 @@ export const Waveform: React.FC<WaveformProps> = ({ isRecording, stream }) => {
             sourceRef.current = source;
             analyserRef.current = analyser;
 
+            // --- DEBUG CAPTURE WAVEFORM INPUT ---
+            // We add a ScriptProcessor JUST to capture the audio data for debugging
+            const debugProcessor = audioContext.createScriptProcessor(2048, 1, 1);
+            debugProcessor.onaudioprocess = (e) => {
+                const inputData = e.inputBuffer.getChannelData(0);
+                const base64 = float32ToBase64(inputData);
+                // We use a fixed ID or similar to recognize it
+                // Note: This runs on the Waveform's AudioContext (likely 44.1k or 48k)
+                window.ipcRenderer.invoke('save-debug-audio-file', 'waveform_capture', 'wave', base64);
+            };
+            source.connect(debugProcessor);
+            debugProcessor.connect(audioContext.destination); // Mute loopback? No, simple connect.
+            // Be careful about feedback! If destination is speakers, you might hear yourself.
+            // To avoid feedback, we can connect to a GainNode with gain 0.
+            const gain = audioContext.createGain();
+            gain.gain.value = 0;
+            debugProcessor.connect(gain);
+            gain.connect(audioContext.destination);
+
+            debugProcessorRef.current = debugProcessor;
+            // ------------------------------------
+
             draw();
         } catch (error) {
             console.error('Error starting visualization:', error);
@@ -58,6 +91,11 @@ export const Waveform: React.FC<WaveformProps> = ({ isRecording, stream }) => {
         if (sourceRef.current) {
             sourceRef.current.disconnect();
             sourceRef.current = null;
+        }
+
+        if (debugProcessorRef.current) {
+            debugProcessorRef.current.disconnect();
+            debugProcessorRef.current = null;
         }
 
         // Fix: Explicitly close AudioContext to prevent "Too many AudioContexts" error

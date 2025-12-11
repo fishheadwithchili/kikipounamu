@@ -9,7 +9,7 @@ High-performance Speech Recognition REST API Service based on FunASR.
 
 ## ✨ Features
 
-- 🚀 **Asynchronous Processing** - Redis Queue (RQ) for async tasks
+- 🚀 **Asynchronous Processing** - Redis Streams for high-concurrency tasks
 - 📡 **RESTful API** - 9 complete API endpoints
 - 🔥 **High Performance** - GPU acceleration, RTF < 0.05
 - 📊 **Auto Management** - Automatic file cleanup, history maintenance
@@ -20,13 +20,13 @@ High-performance Speech Recognition REST API Service based on FunASR.
 
 ```
 ┌─────────────────────────────────────────┐
-│       Redis (Global Queue + Cache)       │
+│       Redis (Streams + Cache)           │
 │       Port: 6379                        │
-20: └─────┬───────┬───────────────────────────┘
+└─────▲───────▲───────────────────────────┘
       │       │
       ▼       ▼
 ┌──────────┐ ┌──────────┐ ┌──────────┐
-│ FastAPI  │ │RQ Worker │ │RQ Worker │
+│ FastAPI  │ │UniWorker │ │UniWorker │
 │  :8000   │ │  (1)     │ │  (N)     │
 └──────────┘ └──────────┘ └──────────┘
 ```
@@ -39,17 +39,17 @@ This project natively supports **Distributed Deployment** and **Dynamic Horizont
 You can instantly launch dozens of Workers to process massive tasks in parallel with simple configuration:
 
 ```bash
-# Modify scripts/start_workers.sh or via environment variable
-export RQ_WORKER_COUNT=10  # Start 10 sappers
-./scripts/start_workers.sh
+# Modify scripts/start_unified_worker.sh or via environment variable
+export WORKER_COUNT=10  # Start 10 unified workers
+./scripts/start_unified_worker.sh
 ```
 
 ### 2. Distributed Cluster
 Workers do not need to run on the same machine as the API! You can run Workers on multiple GPU servers as long as they connect to the same Redis:
 
 *   **Server A (API)**: Runs only `uvicorn`, responsible for quickly responding to user requests.
-*   **Server B (GPU)**: Runs `scripts/start_workers.sh`, connected to Redis on A.
-*   **Server C (GPU)**: Runs `scripts/start_workers.sh`, connected to Redis on A.
+*   **Server B (GPU)**: Runs `scripts/start_unified_worker.sh`, connected to Redis on A.
+*   **Server C (GPU)**: Runs `scripts/start_unified_worker.sh`, connected to Redis on A.
 
 This architecture allows you to add compute nodes infinitely as business grows without modifying a single line of code.
 
@@ -65,17 +65,19 @@ ASR_server/
 │   │   ├── main.py       # App Entry
 │   │   ├── routes.py     # API Routes
 │   │   ├── models.py     # Data Models
-│   │   ├── tasks.py      # RQ Tasks
 │   │   └── dependencies.py
 │   ├── utils/            # Utility Modules
 │   │   ├── redis_client.py
+│   │   ├── streams.py    # Redis Streams
 │   │   ├── file_handler.py
 │   │   └── logger.py
+│   ├── worker/
+│   │   └── unified_worker.py # Unified Consumer
 │   └── storage/          # Data Storage
 │       ├── recordings/   # Audio Files
 │       └── logs/         # Log Files
 ├── scripts/              # Helper Scripts
-│   ├── start_workers.sh
+│   ├── start_unified_worker.sh
 │   └── clear_old_files.py
 ├── tests/                # Tests
 │   └── test_api.py
@@ -100,7 +102,7 @@ sudo service redis-server start
 # Or: sudo systemctl start redis-server
 
 # Terminal 2: Start Workers
-./scripts/start_workers.sh
+./scripts/start_unified_worker.sh
 
 # Terminal 3: Start API Service
 uvicorn src.api.main:app --reload --port 8000
@@ -181,7 +183,7 @@ Used to verify stability and performance under high load.
 > [!IMPORTANT]
 > **Read Before Run**: Load tests require full backend service support. Ensure:
 > 1. Redis service started (`redis-server`)
-> 2. Worker started (`./scripts/start_workers.sh`)
+> 2. Worker started (`./scripts/start_unified_worker.sh`)
 > 3. API service running (`uvicorn src.api.main:app`)
 
 **Prerequisite**: Ensure API service started (`uvicorn src.api.main:app`).
@@ -202,8 +204,11 @@ Access system built-in dashboard during load test to view real-time data:
 ## 📊 Monitoring
 
 ```bash
-# View Queue Status
-rq info --url redis://localhost:6379/0
+# View Stream Status
+redis-cli XINFO STREAM asr_tasks
+
+# View Pending
+redis-cli XPENDING asr_tasks asr_workers
 
 # View Logs
 tail -f src/storage/logs/asr_api.log
@@ -214,7 +219,7 @@ tail -f src/storage/logs/asr_worker.log
 
 - **Web Framework**: FastAPI 0.115+
 - **ASGI Server**: Uvicorn 0.32+
-- **Task Queue**: Redis Queue (RQ) 1.16+
+- **Task Queue**: Redis Streams (Consumer Groups)
 - **Message Store**: Redis 5.0+
 - **ASR Engine**: FunASR (ModelScope)
 - **Deep Learning**: PyTorch 2.0+

@@ -95,8 +95,10 @@ GRANT ALL PRIVILEGES ON DATABASE root TO root;
 
 3.  **Start Worker**:
     ```bash
-    ./scripts/start_workers.sh
-    # Or manually: rq worker asr-queue
+    ```bash
+    ./scripts/start_unified_worker.sh
+    # Manual start not recommended for unified worker
+    ```
     ```
 
 4.  **Start API Service**:

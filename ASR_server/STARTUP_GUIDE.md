@@ -40,28 +40,23 @@ uv sync
 source .venv/bin/activate
 ```
 
-### Terminal 2: Start RQ Workers
-
+### Terminal 2: Start Unified Workers
+    
 ```bash
 cd /home/tiger/Projects/ASR_server
 
-# Start 1 Worker (Will load ASR model, takes a few minutes)
-./scripts/start_workers.sh
-
-# If manual start:
-# rq worker asr-queue --url redis://localhost:6379/0 --name worker-1 --burst &
+# Start Unified Workers (Consumer Group)
+./scripts/start_unified_worker.sh
 ```
 
 **Expected Output:**
 ```
-🚀 Starting 1 RQ Workers for queue: asr-queue
-📡 Redis: redis://localhost:6379/0
-Starting worker-1...
-✅ All workers started
-
-# Worker will load model:
-🔄 正在加载 ASR 模型资源，请稍候...
-✅ ASR 模型加载完毕，服务就绪。
+🚀 Redis Streams Unified Workers
+📡 Stream: asr_tasks
+👥 Group: asr_workers
+...
+worker-1: 🔄 Loading ASR model...
+worker-1: ✅ Model loaded, ready to process.
 ```
 
 ### Terminal 3: Start FastAPI Service
@@ -150,7 +145,7 @@ curl http://localhost:8000/api/v1/asr/result/{task_id}
 
 ### Q1: API Returns 502 Bad Gateway
 *   **Check Redis**: Ensure Redis service is started (`sudo systemctl status redis`).
-*   **Check Worker**: Ensure at least one Worker is running (`./scripts/start_workers.sh`).
+*   **Check Worker**: Ensure at least one Worker is running (`./scripts/start_unified_worker.sh`).
 
 ### Q2: CUDA Out of Memory
 *   Reduce `ASR_BATCH_SIZE` in `.env`.
@@ -186,17 +181,17 @@ tests/test_api.py::test_submit_invalid_format PASSED
 
 ## 📊 Monitoring and Management
 
-### View RQ Queue Status
+### View Stream Status
 
 ```bash
-# View all queue info
-rq info --url redis://localhost:6379/0
+# View Stream Info
+redis-cli XINFO STREAM asr_tasks
 
-# View Worker Status
-rq info --url redis://localhost:6379/0 --only-workers
+# View Pending Messages
+redis-cli XPENDING asr_tasks asr_workers
 
-# Empty failed queue
-rq empty failed --url redis://localhost:6379/0
+# View Consumer Status
+redis-cli XINFO CONSUMERS asr_tasks asr_workers
 ```
 
 ### View Logs
@@ -248,11 +243,9 @@ redis-cli ping  # Should return PONG
 
 **Solution**:
 ```bash
-# Ensure in project root
-pwd  # Should be /home/tiger/Projects/ASR_server
-
-# Start Worker with full path
-rq worker asr-queue --url redis://localhost:6379/0 --path $(pwd)
+# Start Unified Worker with python
+export PYTHONPATH=$PYTHONPATH:$(pwd)
+python3 src/worker/unified_worker.py --name debug-worker
 ```
 
 ### Q3: Model Load Failed

@@ -1,6 +1,13 @@
 import { BrowserWindow } from 'electron';
 import WebSocket from 'ws';
 import { v4 as uuidv4 } from 'uuid';
+import dotenv from 'dotenv';
+import path from 'path';
+
+// Load .env from project root
+dotenv.config({ path: path.join(process.cwd(), '.env') });
+
+const USER_ID = process.env.VITE_USER_ID || 'anonymous';
 
 export class ASRClient {
     private ws: WebSocket | null = null;
@@ -97,7 +104,8 @@ export class ASRClient {
         // Send start message
         this.ws.send(JSON.stringify({
             action: 'start',
-            session_id: this.sessionId
+            session_id: this.sessionId,
+            user_id: USER_ID
         }));
 
         this.mainWindow.webContents.send('asr-processing', { status: 'recording' });

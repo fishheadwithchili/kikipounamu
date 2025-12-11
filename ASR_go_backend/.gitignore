@@ -3,6 +3,8 @@ asr-backend
 asr-backend.exe
 
 # Logs
+logs/
+!logs/.gitkeep
 *.log
 go_*.log
 backend.log

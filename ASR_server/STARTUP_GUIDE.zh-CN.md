@@ -37,28 +37,23 @@ uv sync
 source .venv/bin/activate
 ```
 
-### 终端 2: 启动 RQ Workers
+### 终端 2: 启动 Unified Workers
 
 ```bash
 cd /home/tiger/Projects/ASR_server
 
-# 启动 1 个 Worker (会加载 ASR 模型，需要几分钟)
-./scripts/start_workers.sh
-
-# 如果手动启动:
-# rq worker asr-queue --url redis://localhost:6379/0 --name worker-1 &
+# 启动统一 Worker (Consumer Group 模式)
+./scripts/start_unified_worker.sh
 ```
 
 **预期输出:**
 ```
-🚀 Starting 1 RQ Workers for queue: asr-queue
-📡 Redis: redis://localhost:6379/0
-Starting worker-1...
-✅ All workers started
-
-# Worker 会加载模型:
-🔄 正在加载 ASR 模型资源，请稍候...
-✅ ASR 模型加载完毕，服务就绪。
+🚀 Redis Streams Unified Workers
+📡 Stream: asr_tasks
+👥 Group: asr_workers
+...
+worker-1: 🔄 正在加载 ASR 模型资源...
+worker-1: ✅ ASR 模型加载完毕，服务就绪。
 ```
 
 ### 终端 3: 启动 FastAPI 服务
@@ -147,7 +142,7 @@ curl http://localhost:8000/api/v1/asr/result/{task_id}
 
 ### Q1: API 返回 502 Bad Gateway
 *   **检查 Redis**: 确保 Redis 服务已启动 (`sudo systemctl status redis`).
-*   **检查 Worker**: 确保至少有一个 Worker 正在运行 (`./scripts/start_workers.sh`).
+*   **检查 Worker**: 确保至少有一个 Worker 正在运行 (`./scripts/start_unified_worker.sh`).
 
 ### Q2: CUDA Out of Memory
 *   在 `.env` 中调小 `ASR_BATCH_SIZE`.
@@ -183,17 +178,17 @@ tests/test_api.py::test_submit_invalid_format PASSED
 
 ## 📊 监控和管理
 
-### 查看 RQ 队列状态
+### 查看 Stream 状态
 
 ```bash
-# 查看所有队列信息
-rq info --url redis://localhost:6379/0
+# 查看队列信息
+redis-cli XINFO STREAM asr_tasks
 
-# 查看 Worker 状态
-rq info --url redis://localhost:6379/0 --only-workers
+# 查看待处理消息
+redis-cli XPENDING asr_tasks asr_workers
 
-# 清空失败队列
-rq empty failed --url redis://localhost:6379/0
+# 查看消费者状态
+redis-cli XINFO CONSUMERS asr_tasks asr_workers
 ```
 
 ### 查看日志
@@ -245,11 +240,9 @@ redis-cli ping  # 应返回 PONG
 
 **解决**:
 ```bash
-# 确保在项目根目录
-pwd  # 应该是 /home/tiger/Projects/ASR_server
-
-# 使用完整路径启动 Worker
-rq worker asr-queue --url redis://localhost:6379/0 --path $(pwd)
+# 手动启动 Worker
+export PYTHONPATH=$PYTHONPATH:$(pwd)
+python3 src/worker/unified_worker.py --name debug-worker
 ```
 
 ### Q3: 模型加载失败
@@ -292,7 +285,7 @@ Ctrl+C
 # 2. 停止 Workers (终端 2)
 Ctrl+C
 # 或
-pkill -f 'rq worker'
+pkill -f unified_worker.py
 
 # 3. (可选) 停止 Redis
 sudo systemctl stop redis-server

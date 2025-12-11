@@ -52,7 +52,7 @@ model = AutoModel(
 
 在开始之前，请确保已安装以下软件：
 
-*   **Redis**: 用于 Python 后端的任务队列。
+*   **Redis**: 用于 Python 后端的任务流 (Task Stream)。
 *   **PostgreSQL**: 用于 Go 后端的历史记录存储。
 *   **Python 3.8+**: 运行 ASR_server。
 *   **Go 1.21+**: 运行 ASR_go_backend。
@@ -95,7 +95,8 @@ GRANT ALL PRIVILEGES ON DATABASE root TO root;
 
 3.  **启动 Worker**:
     ```bash
-    rq worker -c src.config &
+    # 统一 Worker (Redis Streams)
+    ./scripts/start_unified_worker.sh
     ```
 
 4.  **启动 API 服务**:

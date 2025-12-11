@@ -24,14 +24,14 @@ This project adopts the **Async Producer-Consumer Model**, achieving complete de
 
 *   **Gateway (Go Backend)**:
     *   **Role**: High-performance gateway responsible for connection maintenance, protocol conversion, and data forwarding.
-    *   **Mechanism**: Receive audio slice -> `RPush` to Redis Queue -> Return immediately. **Does not block** waiting for inference results.
+    *   **Mechanism**: Receive audio slice -> `XADD` to Redis Stream -> Return immediately. **Does not block** waiting for inference results.
     *   **Performance**: In load tests, CPU usage remains extremely stable when maintaining 500 concurrent connections on a single node.
 *   **Message Broker (Redis)**:
     *   **Role**: Infinite capacity Buffer and message bus.
     *   **Mechanism**: Uses Pub/Sub to achieve real-time precise pushing of results to specific WebSocket sessions.
 *   **Worker (Python ASR)**:
     *   **Role**: Pure computing node (Stateless).
-    *   **Mechanism**: Preemptive task acquisition from Redis -> Inference -> Publish result.
+    *   **Mechanism**: Consumer Group processing from Redis Stream -> Inference -> Publish result.
     *   **Scalability**: Supports seamless **Horizontal Scaling**. If 500 concurrent streams cause queuing, simply start more Worker containers to linearly improve processing capability.
 
 ## 🛠️ Tech Stack

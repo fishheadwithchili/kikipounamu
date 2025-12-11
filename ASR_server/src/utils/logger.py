@@ -47,10 +47,15 @@ def setup_logging():
     # Remove default handler
     logger.remove()
     
+    # Validation for retention (handle numeric only strings from .env issues)
+    retention = config.retention
+    if str(retention).strip().isdigit():
+        retention = f"{retention} days"
+    
     # Common options for all file handlers
     file_opts = {
         "rotation": config.rotation,
-        "retention": config.retention,
+        "retention": retention,
         "serialize": config.json_format,
         "enqueue": True,  # Async logging for high concurrency
         "backtrace": True,

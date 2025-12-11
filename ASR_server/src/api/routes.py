@@ -6,15 +6,14 @@ from typing import Optional
 from fastapi import APIRouter, UploadFile, File, HTTPException, Depends, Query
 from fastapi.responses import FileResponse
 from redis import Redis
-from rq import Queue
-from rq.job import Job
+from rq import Queue, Worker  # Keep for health check during transition
 
 from .models import (
     SubmitResponse, TaskResult, HistoryResponse, HistoryRecord,
     QueueStatus, HealthResponse, StatsResponse, ErrorResponse
 )
 from .dependencies import get_redis
-from .tasks import process_asr_task
+from ..utils.streams import publish_task
 from ..utils.file_handler import file_handler
 from ..utils.redis_client import redis_client
 from ..utils.logger import log_api
@@ -70,25 +69,16 @@ async def submit_task(
         if deleted:
             log_api(f"Cleaned up {len(deleted)} old files")
         
-        # Create RQ task
-        queue = Queue('asr-queue', connection=redis)
-        
-        # OOM Prevention: Limit Queue Size
-        MAX_QUEUE_SIZE = 100000 # Unlocked for destructive test
-        if len(queue) >= MAX_QUEUE_SIZE:
-             log_api(f"Queue full ({len(queue)} >= {MAX_QUEUE_SIZE}), rejecting task {task_id}", level="WARNING")
-             raise HTTPException(status_code=503, detail="Server overloaded, please try again later")
-
-        job = queue.enqueue(
-            process_asr_task,
+        # Publish to Redis Streams (replaces RQ Queue)
+        publish_task(
+            task_type="batch",
             task_id=task_id,
-            audio_path=audio_path,
-            job_timeout=600  # 10 minutes timeout
+            payload={
+                "audio_path": audio_path,
+                "language": language,
+                "batch_size": batch_size
+            }
         )
-        
-        # Get queue position
-        position = len(queue)
-        estimated_wait = position * 30  # rough estimate: 30s per task
         
         # Save initial status
         redis_client.save_task_result(task_id, {
@@ -97,11 +87,12 @@ async def submit_task(
             "created_at": "",
         })
         
+        # Note: position is not easily determined with Streams, use 0
         return SubmitResponse(
             task_id=task_id,
             status="queued",
-            position=position,
-            estimated_wait=estimated_wait
+            position=0,
+            estimated_wait=30  # Default estimate
         )
         
     except Exception as e:
@@ -236,30 +227,27 @@ async def download_audio(task_id: str):
 @router.get("/asr/queue/status", response_model=QueueStatus, tags=["System"])
 async def queue_status(redis: Redis = Depends(get_redis)):
     """
-    Get RQ queue status
+    Get Redis Streams queue status
     
-    Returns number of queued, processing, failed tasks and worker info
+    Returns stream length, pending messages, and consumer info
     """
     try:
-        from rq import Queue
-        from rq.registry import StartedJobRegistry, FailedJobRegistry
+        from ..utils.streams import streams_client
         
-        queue = Queue('asr-queue', connection=redis)
-        started_registry = StartedJobRegistry('asr-queue', connection=redis)
-        failed_registry = FailedJobRegistry('asr-queue', connection=redis)
+        # Get stream info
+        stream_info = streams_client.get_stream_info()
+        pending = streams_client.get_pending_count()
+        consumer_info = streams_client.get_consumer_info()
         
-        # Get worker info
-        from rq import Worker
-        # Use raw client for RQ operations to avoid decoding errors
-        workers = Worker.all(connection=redis_client.raw_client)
-        workers_busy = len([w for w in workers if w.get_current_job()])
+        # Count active consumers
+        total_consumers = sum(g.get("consumers", 0) for g in consumer_info)
         
         return QueueStatus(
-            queued=len(queue),
-            processing=len(started_registry),
-            failed=len(failed_registry),
-            workers=len(workers),
-            workers_busy=workers_busy
+            queued=stream_info.get("length", 0),
+            processing=pending,  # Pending = being processed
+            failed=0,  # Streams don't track failed separately
+            workers=total_consumers,
+            workers_busy=pending  # Approximate
         )
     except Exception as e:
         log_api(f"GET /api/v1/asr/queue/status error: {e}", level="ERROR")
@@ -292,13 +280,11 @@ async def retry_task(task_id: str, redis: Redis = Depends(get_redis)):
     if not audio_path or not os.path.exists(audio_path):
         raise HTTPException(status_code=404, detail="Audio file not found")
     
-    # Re-enqueue task
-    queue = Queue('asr-queue', connection=redis)
-    job = queue.enqueue(
-        process_asr_task,
+    # Re-publish to Redis Streams
+    publish_task(
+        task_type="batch",
         task_id=task_id,
-        audio_path=audio_path,
-        job_timeout=600
+        payload={"audio_path": audio_path, "language": "zh"}
     )
     
     # Update status
@@ -310,7 +296,7 @@ async def retry_task(task_id: str, redis: Redis = Depends(get_redis)):
     return SubmitResponse(
         task_id=task_id,
         status="queued",
-        position=len(queue)
+        position=0
     )
 
 

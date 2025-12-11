@@ -5,11 +5,11 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"time"
 
 	"github.com/fishheadwithchili/asr-go-backend/internal/config"
 	"github.com/fishheadwithchili/asr-go-backend/internal/db"
 	"github.com/fishheadwithchili/asr-go-backend/internal/model"
+	"github.com/fishheadwithchili/asr-go-backend/internal/streams"
 	"github.com/fishheadwithchili/asr-go-backend/pkg/logger"
 	"go.uber.org/zap"
 )
@@ -26,38 +26,22 @@ func NewASRService(cfg *config.Config) *ASRService {
 	}
 }
 
-// PushChunkToRedis 仅负责将任务推送到 Redis 队列 (Fire and Forget)
+// PushChunkToRedis 仅负责将任务推送到 Redis Streams (Fire and Forget)
 func (s *ASRService) PushChunkToRedis(sessionID string, chunkIndex int, audioDataBase64 string) error {
 	// 1. 解码 base64 音频 (验证格式)
-	audioData, err := base64.StdEncoding.DecodeString(audioDataBase64)
+	_, err := base64.StdEncoding.DecodeString(audioDataBase64)
 	if err != nil {
 		return fmt.Errorf("base64 decode failed: %w", err)
 	}
 
-	// 2. 构造任务
-	task := map[string]interface{}{
-		"session_id":  sessionID,
-		"chunk_index": chunkIndex,
-		"audio_data":  base64.StdEncoding.EncodeToString(audioData), // Redis 传递需要 encoding
-		"timestamp":   time.Now().UnixMilli(),
-	}
-
-	taskJSON, err := json.Marshal(task)
-	if err != nil {
-		return fmt.Errorf("json marshal failed: %w", err)
-	}
-
-	redisCli := db.GetRedis()
 	ctx := context.Background()
 
-	// 3. 推送到 Redis 队列
-	// Queue name: asr_chunk_queue
-	err = redisCli.RPush(ctx, "asr_chunk_queue", taskJSON).Err()
+	// 2. 使用 Redis Streams XADD 代替 RPUSH
+	_, err = streams.PublishStreamChunk(ctx, sessionID, chunkIndex, audioDataBase64)
 	if err != nil {
-		return fmt.Errorf("redis rpush failed: %w", err)
+		return fmt.Errorf("stream publish failed: %w", err)
 	}
 
-	// logger.Debug("Task pushed to Redis", zap.String("session_id", sessionID), zap.Int("chunk", chunkIndex))
 	return nil
 }
 

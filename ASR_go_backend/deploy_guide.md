@@ -51,7 +51,7 @@ model = AutoModel(
 
 Before starting, ensure the following software is installed:
 
-*   **Redis**: Task queue for Python backend.
+*   **Redis**: Task Stream for Python backend.
 *   **PostgreSQL**: History storage for Go backend.
 *   **Python 3.8+**: Run ASR_server.
 *   **Go 1.21+**: Run ASR_go_backend.
@@ -95,7 +95,8 @@ GRANT ALL PRIVILEGES ON DATABASE root TO root;
 
 3.  **Start Worker**:
     ```bash
-    rq worker -c src.config &
+    # Unified Worker (Redis Streams)
+    ./scripts/start_unified_worker.sh
     ```
 
 4.  **Start API Service**:

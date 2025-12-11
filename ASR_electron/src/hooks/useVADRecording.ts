@@ -13,6 +13,10 @@ import { useState, useRef, useCallback, useEffect } from 'react';
 import { FunASRVAD } from '../services/funasrVAD';
 import { float32ToWav, float32ToBase64 } from '../utils/audioHelper';
 
+// DEBUG SESSION ID
+const currentDebugSessionId = 'debug_session_' + Date.now();
+
+
 // Define VAD Modes
 export type VADMode = 'vad' | 'time_limit' | 'unlimited';
 
@@ -145,6 +149,15 @@ export function useVADRecording(
 
     // 处理音频块
     const processAudioChunk = useCallback(async (inputBuffer: Float32Array) => {
+        // --- DEBUG CAPTURE VAD INPUT ---
+        try {
+            const base64 = float32ToBase64(inputBuffer);
+            window.ipcRenderer.invoke('save-debug-audio-file', currentDebugSessionId, 'vad', base64);
+        } catch (e) {
+            console.error('Debug save failed', e);
+        }
+        // -------------------------------
+
         if (!vadRef.current?.ready) return;
 
         try {

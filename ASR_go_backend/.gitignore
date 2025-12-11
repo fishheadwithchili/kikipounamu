@@ -1,0 +1,25 @@
+# Binaries
+asr-backend
+asr-backend.exe
+
+# Logs
+*.log
+go_*.log
+backend.log
+
+# Metrics and Charts
+top_*.txt
+chart_*.txt
+
+# Tests
+tests/*.wav
+
+# Environment
+.env
+
+# Storage (keep directories but ignore content)
+storage/recordings/*
+!storage/recordings/.gitkeep
+storage/temp/*
+!storage/temp/.gitkeep
+

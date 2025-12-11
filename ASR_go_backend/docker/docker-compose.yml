@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  # Go ASR 后端
+  asr-backend:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    ports:
+      - "8001:8001"
+    environment:
+      - PORT=8001
+      - FUNASR_ADDR=funasr:10095
+      - REDIS_ADDR=redis:6379
+    depends_on:
+      - redis
+      - funasr
+    restart: unless-stopped
+
+  # FunASR 离线识别服务
+  funasr:
+    image: registry.cn-hangzhou.aliyuncs.com/funasr_repo/funasr:funasr-runtime-sdk-cpu-0.4.5
+    ports:
+      - "10095:10095"
+    volumes:
+      - funasr-models:/workspace/models
+    environment:
+      - FUNASR_MODE=offline
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+
+  # Redis 缓存
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    restart: unless-stopped
+
+volumes:
+  funasr-models:
+  redis-data:

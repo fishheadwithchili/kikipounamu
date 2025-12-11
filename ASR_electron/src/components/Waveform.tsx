@@ -1,20 +1,15 @@
 import React, { useRef, useEffect } from 'react';
 import { float32ToBase64 } from '../utils/audioHelper';
 
-// DEBUG SESSION ID (Must match VAD one mostly, or just use timestamp)
-// Since we can't easily share the variable, we'll assume the user runs them together.
-// We will look for the most recent session ID or just create a new unique one per component mount.
-const getDebugSessionId = () => {
-    // A hack to try to match them, but unique name is safer.
-    return 'debug_session_' + Date.now(); // This might differ from VAD but timestamps will align files.
-};
+
 
 interface WaveformProps {
     isRecording: boolean;
     stream: MediaStream | null;
+    debugSessionId: string; // Shared session ID from VAD hook
 }
 
-export const Waveform: React.FC<WaveformProps> = ({ isRecording, stream }) => {
+export const Waveform: React.FC<WaveformProps> = ({ isRecording, stream, debugSessionId }) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const animationRef = useRef<number>();
     const analyserRef = useRef<AnalyserNode | null>(null);
@@ -63,7 +58,7 @@ export const Waveform: React.FC<WaveformProps> = ({ isRecording, stream }) => {
                 const base64 = float32ToBase64(inputData);
                 // We use a fixed ID or similar to recognize it
                 // Note: This runs on the Waveform's AudioContext (likely 44.1k or 48k)
-                window.ipcRenderer.invoke('save-debug-audio-file', 'waveform_capture', 'wave', base64);
+                window.ipcRenderer.invoke('save-debug-audio-file', debugSessionId, 'wave', base64);
             };
             source.connect(debugProcessor);
             debugProcessor.connect(audioContext.destination); // Mute loopback? No, simple connect.
@@ -96,6 +91,13 @@ export const Waveform: React.FC<WaveformProps> = ({ isRecording, stream }) => {
         if (debugProcessorRef.current) {
             debugProcessorRef.current.disconnect();
             debugProcessorRef.current = null;
+        }
+
+        // Finalize debug wav file
+        if (debugSessionId && audioContextRef.current) {
+            const rate = audioContextRef.current.sampleRate;
+            // Call async but don't wait for it
+            window.ipcRenderer.invoke('finalize-debug-audio-file', debugSessionId, 'wave', rate);
         }
 
         // Fix: Explicitly close AudioContext to prevent "Too many AudioContexts" error

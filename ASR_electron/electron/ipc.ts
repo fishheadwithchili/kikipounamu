@@ -292,3 +292,32 @@ ipcMain.handle('save-debug-audio-file', async (_event, sessionId: string, type: 
     fs.appendFileSync(filePath, buffer);
     return { success: true };
 });
+
+ipcMain.handle('finalize-debug-audio-file', async (_event, sessionId: string, type: 'vad' | 'wave', sampleRate: number) => {
+    try {
+        const rawFileName = `${sessionId}_${type}.raw`;
+        const rawFilePath = path.join(DEBUG_DIR, rawFileName);
+
+        if (!fs.existsSync(rawFilePath)) {
+            return { success: false, error: 'Raw file not found' };
+        }
+
+        const wavFileName = `${sessionId}_${type}.wav`;
+        const wavFilePath = path.join(DEBUG_DIR, wavFileName);
+
+        const rawBuffer = fs.readFileSync(rawFilePath);
+        const wavHeader = createWavHeader(rawBuffer.length, sampleRate);
+        const finalBuffer = Buffer.concat([wavHeader, rawBuffer]);
+
+        fs.writeFileSync(wavFilePath, finalBuffer);
+
+        // Optional: Delete raw file after successful conversion to save space
+        // fs.unlinkSync(rawFilePath); 
+
+        console.log(`[DebugAudio] Finalized WAV: ${wavFilePath}`);
+        return { success: true, filePath: wavFilePath };
+    } catch (error) {
+        console.error('[DebugAudio] Finalize failed:', error);
+        return { success: false, error: String(error) };
+    }
+});

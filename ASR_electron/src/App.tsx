@@ -402,6 +402,7 @@ function App() {
           isLoading={isToggling}
           queueCount={queueCount}
           stream={vad.stream}
+          debugSessionId={vad.debugSessionId}
         />
       </div>
       <StatusBar status={status} />

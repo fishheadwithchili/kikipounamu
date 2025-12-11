@@ -14,7 +14,7 @@ import { FunASRVAD } from '../services/funasrVAD';
 import { float32ToWav, float32ToBase64 } from '../utils/audioHelper';
 
 // DEBUG SESSION ID
-const currentDebugSessionId = 'debug_session_' + Date.now();
+
 
 
 // Define VAD Modes
@@ -32,6 +32,7 @@ interface VADRecordingResult {
     stopRecording: () => void;
     onChunkReady: (callback: (chunkIndex: number, audioData: ArrayBuffer, rawPCM: Float32Array) => void) => void;
     stream: MediaStream | null; // Shared stream for Visualizer
+    debugSessionId: string; // Shared debug session ID for synchronized audio capture
 }
 
 // VAD 配置
@@ -97,7 +98,9 @@ export function useVADRecording(
     const speechFramesRef = useRef(0);
 
     // Debug Logging State
+    // Debug Logging State
     const lastLogTimeRef = useRef<number>(0);
+    const debugSessionIdRef = useRef<string>('');
 
     const logDebug = useCallback((message: string) => {
         window.ipcRenderer.invoke('write-debug-log', message);
@@ -149,14 +152,8 @@ export function useVADRecording(
 
     // 处理音频块
     const processAudioChunk = useCallback(async (inputBuffer: Float32Array) => {
-        // --- DEBUG CAPTURE VAD INPUT ---
-        try {
-            const base64 = float32ToBase64(inputBuffer);
-            window.ipcRenderer.invoke('save-debug-audio-file', currentDebugSessionId, 'vad', base64);
-        } catch (e) {
-            console.error('Debug save failed', e);
-        }
-        // -------------------------------
+        // NOTE: Debug capture for VAD is placed INSIDE the VAD logic block (after unlimited mode returns)
+        // This ensures that only when VAD intelligent slicing is actually running, the audio is captured.
 
         if (!vadRef.current?.ready) return;
 
@@ -201,6 +198,17 @@ export function useVADRecording(
 
             // --- VAD MODE ---
             const speechProb = await vadRef.current.detect(inputBuffer);
+
+            // --- DEBUG CAPTURE: VAD intelligent slicing is running ---
+            if (debugSessionIdRef.current) {
+                try {
+                    const base64 = float32ToBase64(inputBuffer);
+                    window.ipcRenderer.invoke('save-debug-audio-file', debugSessionIdRef.current, 'vad', base64);
+                } catch (e) {
+                    console.error('Debug save failed', e);
+                }
+            }
+            // --------------------------------------------------------
 
             // Log VAD result
             logDebug(`[VAD-Detect] Prob=${speechProb.toFixed(4)} | Amp=${maxAmp.toFixed(4)}`);
@@ -302,6 +310,7 @@ export function useVADRecording(
             speechBufferRef.current = [];
             silenceFramesRef.current = 0;
             speechFramesRef.current = 0;
+            debugSessionIdRef.current = `debug_session_${Date.now()}`;
 
             // 获取麦克风
             const stream = await navigator.mediaDevices.getUserMedia({
@@ -444,6 +453,13 @@ export function useVADRecording(
         } else {
             console.warn('⚠️ 停止录音时缓冲区为空 (VAD 可能未检测到语音)');
         }
+
+        // Finalize VAD debug audio (if any was recorded)
+        if (debugSessionIdRef.current) {
+            const sessionId = debugSessionIdRef.current;
+            window.ipcRenderer.invoke('finalize-debug-audio-file', sessionId, 'vad', SAMPLE_RATE);
+            debugSessionIdRef.current = '';
+        }
         vadRef.current?.reset();
         setIsRecording(false);
         setIsSpeaking(false);
@@ -478,6 +494,7 @@ export function useVADRecording(
         setVadMode,
         setTimeLimit,
         sessionId,
-        stream: streamState // Reactive state for Waveform visualization
+        stream: streamState, // Reactive state for Waveform visualization
+        debugSessionId: debugSessionIdRef.current // Shared debug session ID for synchronized audio capture
     };
 }

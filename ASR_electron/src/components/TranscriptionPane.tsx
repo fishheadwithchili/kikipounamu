@@ -15,6 +15,7 @@ interface TranscriptionPaneProps {
     isLoading?: boolean;
     queueCount?: number;       // Number of background tasks
     stream?: MediaStream | null; // Shared stream
+    debugSessionId?: string;   // Shared debug session ID
 }
 
 
@@ -29,7 +30,8 @@ export const TranscriptionPane: React.FC<TranscriptionPaneProps> = ({
     processingStatus = 'idle',
     isLoading = false,
     queueCount = 0,
-    stream = null
+    stream = null,
+    debugSessionId = ''
 }) => {
     const endRef = useRef<HTMLDivElement>(null);
     const [copyFeedback, setCopyFeedback] = useState(false);
@@ -438,7 +440,7 @@ export const TranscriptionPane: React.FC<TranscriptionPaneProps> = ({
 
                         {/* Waveform */}
                         <div style={{ height: '36px', width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                            {isRecording ? <Waveform isRecording={isRecording} stream={stream} /> : null}
+                            {isRecording ? <Waveform isRecording={isRecording} stream={stream} debugSessionId={debugSessionId} /> : null}
                         </div>
 
                         {/* Record Button Container */}

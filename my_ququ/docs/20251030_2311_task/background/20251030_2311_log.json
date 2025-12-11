@@ -1,0 +1,18 @@
+{
+  "task_id": "20251030_2311_task",
+  "created_at": "2025-10-30 23:11:00",
+  "updated_at": "2025-10-30 23:11:00",
+  "version": "1.0",
+  "summary": "为蛐蛐项目创建桌面快捷方式，实现无黑窗口启动和智能进程管理",
+  "final_decision": "使用 VBS 脚本创建桌面快捷方式，通过批处理脚本自动激活 venv 环境并启动开发服务器，隐藏命令行窗口，智能清理旧进程避免端口冲突",
+  "key_requirements": [
+    "在桌面创建快捷方式，名称为 Ququ",
+    "点击快捷方式后不显示命令行黑窗口",
+    "自动激活 .venv 虚拟环境",
+    "运行 pnpm run dev 启动开发服务器",
+    "智能清理本项目的旧进程，不影响其他 Electron 项目",
+    "启动日志保存到文件以便排查问题"
+  ],
+  "content": "# 需求背景\n\n用户希望在桌面创建一个快捷方式，直接启动蛐蛐（Ququ）开发环境，避免每次手动激活 venv 环境和运行命令。\n\n## 核心需求\n\n1. **便捷启动**：双击桌面快捷方式即可启动\n2. **隐藏窗口**：不显示命令行黑窗口\n3. **自动化**：自动激活 Python 虚拟环境\n4. **进程管理**：避免端口冲突（5173 端口被占用）\n5. **精准清理**：只清理本项目的进程，不影响其他 Electron 应用\n\n## 方案对比\n\n### 方案 A：直接创建 .bat 文件快捷方式\n\n**优点**：\n- 简单直接\n- 可以看到启动日志\n\n**缺点**：\n- ❌ 会显示命令行黑窗口\n- ❌ 用户明确不想看到黑窗口\n\n### 方案 B：使用 VBS 脚本隐藏窗口（最终方案）✅\n\n**优点**：\n- ✅ 完全隐藏命令行窗口\n- ✅ Electron 应用界面正常显示\n- ✅ 可以设置快捷方式图标\n- ✅ 日志重定向到文件，方便排查问题\n\n**缺点**：\n- 需要两层脚本（VBS 调用 BAT）\n\n## 技术实现\n\n### 文件结构\n\n1. **create-desktop-shortcut.vbs**：快捷方式创建脚本\n   - 在桌面创建 Ququ.lnk\n   - 指向 start-ququ-hidden.vbs\n   - 设置图标为 assets/icon.ico\n\n2. **start-ququ-hidden.vbs**：隐藏窗口启动脚本\n   - 调用 start-ququ.bat\n   - 窗口样式设置为隐藏（参数 0）\n\n3. **start-ququ.bat**：核心启动脚本\n   - 智能进程清理（只针对本项目）\n   - 激活 .venv 环境\n   - 运行 pnpm run dev\n   - 日志重定向到 ququ-dev.log\n\n### 智能进程清理逻辑\n\n**问题**：初版使用 `taskkill /F /IM electron.exe` 会杀死所有 Electron 进程，用户有其他 Electron 项目在运行。\n\n**解决方案**：\n1. **清理占用 5173 端口的进程**（Vite 开发服务器）\n   ```bat\n   for /f \"tokens=5\" %%a in ('netstat -aon ^| findstr :5173') do taskkill /F /PID %%a\n   ```\n\n2. **清理命令行包含 \"ququ\" 的 Electron 进程**\n   ```bat\n   for /f \"tokens=2\" %%a in ('wmic process where \"commandline like '%%ququ%%' and name='electron.exe'\" get processid /format:list ^| findstr \"=\"') do taskkill /F /PID %%a\n   ```\n\n这样只会清理本项目的进程，不影响其他 Electron 应用。\n\n### 日志管理\n\n启动日志重定向到 `ququ-dev.log`：\n```bat\npnpm run dev >> ququ-dev.log 2>&1\n```\n\n用户需要排查问题时可以查看此文件。\n\n## 最终决策\n\n采用 **VBS + BAT 双层脚本** 方案：\n- VBS 负责隐藏窗口和创建快捷方式\n- BAT 负责核心启动逻辑和进程管理\n- 日志重定向确保问题可追溯\n- 智能进程清理避免端口冲突且不影响其他项目\n\n## 文档更新\n\nREADME.md 新增章节 **3.5. 创建桌面快捷方式（Windows 可选）**，包含：\n- 一键创建说明\n- 特性介绍\n- 工作原理\n- 相关文件说明\n- 使用提示\n\n## 清理工作\n\n删除多余脚本：\n- start-dev.cmd（旧的启动脚本）\n- test-encoding.js（临时测试文件）"
+}
+

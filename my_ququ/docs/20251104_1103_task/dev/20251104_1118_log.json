@@ -1,0 +1,20 @@
+{
+  "task_id": "20251104_1103_task",
+  "log_id": "20251104_1118_dev",
+  "type": "bugfix",
+  "created_at": "2025-11-04 11:18:01",
+  "based_on_solution_version": "2025-11-04 11:03:18",
+  "target_module": "MODULE-002",
+  "completed_tasks": [
+    "修复 FFmpeg 路径问题（pnpm 环境下 ffmpeg-static 不可用）"
+  ],
+  "files_changed": [
+    "src/helpers/audioSegmenter.js"
+  ],
+  "next_step": null,
+  "issues": [
+    "pnpm 环境下 ffmpeg-static 包未正确下载二进制文件",
+    "错误：spawn ffmpeg.exe ENOENT"
+  ],
+  "content": "src/20251104_1118_content.md"
+}

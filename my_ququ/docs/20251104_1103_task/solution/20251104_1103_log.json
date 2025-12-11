@@ -1,0 +1,141 @@
+{
+  "task_id": "20251104_1103_task",
+  "solution_id": "20251104_1103_solution",
+  "created_at": "2025-11-04 11:03:18",
+  "based_on_background_version": "2025-11-04 11:03:18",
+  "version": "1.0",
+  "goal": "为蛐蛐应用实现本地录音保留机制和长录音分段处理功能，确保录音可追溯性并优化内存占用",
+  "architecture_graph": {
+    "nodes": [
+      {
+        "id": "node_1",
+        "type": "input",
+        "label": "录音完成",
+        "pos": [100, 100]
+      },
+      {
+        "id": "node_2",
+        "type": "process",
+        "label": "保存到本地 recordings/",
+        "pos": [300, 100]
+      },
+      {
+        "id": "node_3",
+        "type": "process",
+        "label": "检测音频时长",
+        "pos": [500, 100]
+      },
+      {
+        "id": "node_4",
+        "type": "process",
+        "label": "分段处理 (>3分钟)",
+        "pos": [700, 50]
+      },
+      {
+        "id": "node_5",
+        "type": "process",
+        "label": "直接转换 (≤3分钟)",
+        "pos": [700, 150]
+      },
+      {
+        "id": "node_6",
+        "type": "process",
+        "label": "FunASR 转录",
+        "pos": [900, 100]
+      },
+      {
+        "id": "node_7",
+        "type": "process",
+        "label": "保存到数据库",
+        "pos": [1100, 100]
+      },
+      {
+        "id": "node_8",
+        "type": "output",
+        "label": "显示结果 + 提示",
+        "pos": [1300, 100]
+      }
+    ],
+    "edges": [
+      {
+        "source": "node_1",
+        "target": "node_2",
+        "label": "音频数据"
+      },
+      {
+        "source": "node_2",
+        "target": "node_3",
+        "label": "录音文件路径"
+      },
+      {
+        "source": "node_3",
+        "target": "node_4",
+        "label": "时长 > 180秒"
+      },
+      {
+        "source": "node_3",
+        "target": "node_5",
+        "label": "时长 ≤ 180秒"
+      },
+      {
+        "source": "node_4",
+        "target": "node_6",
+        "label": "分段音频 + 进度"
+      },
+      {
+        "source": "node_5",
+        "target": "node_6",
+        "label": "完整音频"
+      },
+      {
+        "source": "node_6",
+        "target": "node_7",
+        "label": "转录文本 + 录音路径"
+      },
+      {
+        "source": "node_7",
+        "target": "node_8",
+        "label": "保存结果"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "id": "MODULE-001",
+      "name": "录音文件管理模块",
+      "priority": 1,
+      "status": "pending",
+      "desc": "创建、保存、清理本地录音文件"
+    },
+    {
+      "id": "MODULE-002",
+      "name": "音频分段处理模块",
+      "priority": 2,
+      "status": "pending",
+      "desc": "检测时长、分割音频、拼接文本结果"
+    },
+    {
+      "id": "MODULE-003",
+      "name": "FunASR 集成调整",
+      "priority": 3,
+      "status": "pending",
+      "desc": "集成录音保存和分段处理逻辑"
+    },
+    {
+      "id": "MODULE-004",
+      "name": "数据库扩展",
+      "priority": 4,
+      "status": "pending",
+      "desc": "添加录音文件路径字段"
+    },
+    {
+      "id": "MODULE-005",
+      "name": "UI 进度显示",
+      "priority": 5,
+      "status": "pending",
+      "desc": "显示分段处理进度和录音保存提示"
+    }
+  ],
+  "related_projects": [],
+  "content": "src/20251104_1103_content.md"
+}

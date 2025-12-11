@@ -78,6 +78,27 @@ function App() {
   // -------------------------
 
   const handleModeChange = useCallback((mode: VADMode) => {
+    if (mode === 'vad') {
+      // Warning Dialog as requested
+      const message =
+        "⚠️ VAD Mode Warning / VAD 模式警告\n\n" +
+        "Expectation / 期待:\n" +
+        "Real-time audio segmentation whilst speaking.\n" +
+        "用户说话时进行实时语音切分。\n\n" +
+        "Bug Encountered / 遇到的问题:\n" +
+        "The VAD model output dimension is 248 (raw logits), but the code expects 2 (probabilities). This mismatch causes the VAD to fail to detect speech.\n" +
+        "VAD 模型输出维度是 248（原始 logits），但代码期望的是 2（概率）。这个不匹配导致 VAD 无法检测到语音。\n\n" +
+        "Action Required / 需要的行动:\n" +
+        "Needs a developer capable of fixing the ONNX tensor shape mismatch.\n" +
+        "需要有能力的人来修复 ONNX 张量形状不匹配的问题。\n\n" +
+        "The system will now revert to the previous mode.\n" +
+        "系统将恢复到之前的模式。";
+
+      window.alert(message);
+      // Do not update state, effectively reverting/staying on previous mode
+      return;
+    }
+
     setVadModeState(mode);
     vad.setVadMode(mode);
   }, [vad]);

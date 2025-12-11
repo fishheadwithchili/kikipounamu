@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FunASR VAD 真实模型测试</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #e0e0e0;
+        }
+
+        h1 {
+            color: #4CAF50;
+            text-align: center;
+        }
+
+        .info {
+            background: #2a2a2a;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #3a3a3a;
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .label {
+            font-weight: bold;
+            color: #888;
+        }
+
+        .value {
+            color: #4CAF50;
+            font-family: monospace;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        input[type="file"] {
+            flex: 1;
+            padding: 10px;
+            background: #2a2a2a;
+            border: 2px solid #3a3a3a;
+            border-radius: 6px;
+            color: #e0e0e0;
+            cursor: pointer;
+        }
+
+        button {
+            padding: 12px 24px;
+            font-size: 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        .start-btn {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .start-btn:hover:not(:disabled) {
+            background: #45a049;
+        }
+
+        .stop-btn {
+            background: #f44336;
+            color: white;
+        }
+
+        .stop-btn:hover:not(:disabled) {
+            background: #da190b;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .progress {
+            background: #2a2a2a;
+            height: 30px;
+            border-radius: 6px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50, #8BC34A);
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .log {
+            background: #0a0a0a;
+            padding: 15px;
+            border-radius: 6px;
+            max-height: 500px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            margin-top: 20px;
+        }
+
+        .log-entry {
+            padding: 4px 0;
+            border-bottom: 1px solid #2a2a2a;
+        }
+
+        .log-speech {
+            color: #4CAF50;
+        }
+
+        .log-silence {
+            color: #999;
+        }
+
+        .log-chunk {
+            color: #2196F3;
+            font-weight: bold;
+        }
+
+        .log-error {
+            color: #f44336;
+        }
+
+        .log-info {
+            color: #FFC107;
+        }
+
+        .log-warn {
+            color: #FF9800;
+        }
+
+        .chunks-summary {
+            background: #2a2a2a;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .chunk-card {
+            background: #1a1a1a;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid #4CAF50;
+        }
+
+        .chunk-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4CAF50;
+            margin-bottom: 10px;
+        }
+
+        .chunk-detail {
+            font-size: 12px;
+            color: #888;
+            margin: 5px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🎤 FunASR VAD 真实模型测试</h1>
+
+    <div class="info">
+        <div class="info-item">
+            <span class="label">VAD 状态:</span>
+            <span class="value" id="vadStatus">未初始化</span>
+        </div>
+        <div class="info-item">
+            <span class="label">模型路径:</span>
+            <span class="value" id="modelPath">/models/model.onnx</span>
+        </div>
+        <div class="info-item">
+            <span class="label">CMVN 路径:</span>
+            <span class="value" id="cmvnPath">/models/vad.mvn</span>
+        </div>
+        <div class="info-item">
+            <span class="label">测试状态:</span>
+            <span class="value" id="testStatus">等待音频文件</span>
+        </div>
+        <div class="info-item">
+            <span class="label">检测到切片:</span>
+            <span class="value" id="chunkCount">0</span>
+        </div>
+        <div class="info-item">
+            <span class="label">处理进度:</span>
+            <span class="value" id="progressText">0%</span>
+        </div>
+    </div>
+
+    <div class="controls">
+        <input type="file" id="audioFile" accept=".wav" />
+        <button class="start-btn" id="startBtn" onclick="startTest()" disabled>开始测试</button>
+        <button class="stop-btn" id="stopBtn" onclick="stopTest()" disabled>停止测试</button>
+    </div>
+
+    <div class="progress">
+        <div class="progress-bar" id="progressBar" style="width: 0%">0%</div>
+    </div>
+
+    <div id="chunksSummary" class="chunks-summary" style="display: none;"></div>
+
+    <div class="log" id="log"></div>
+
+    <script type="module">
+        import { FunASRVAD } from './src/services/funasrVAD.js';
+
+        const VAD_CONFIG = {
+            speechThreshold: 0.1,
+            silenceThreshold: 0.35,
+            minSpeechDurationMs: 200,
+            minSilenceDurationMs: 500,
+        };
+
+        const SAMPLE_RATE = 16000;
+        const BUFFER_SIZE = 2048;
+        const BUFFER_SIZE_MS = Math.floor(BUFFER_SIZE * 1000 / SAMPLE_RATE);
+
+        let vad = null;
+        let audioData = null;
+        let isRunning = false;
+        let chunks = [];
+
+        // 初始化 VAD
+        window.addEventListener('DOMContentLoaded', async () => {
+            log('🔄 正在初始化 FunASR VAD 模型...', 'info');
+            document.getElementById('vadStatus').textContent = '加载中...';
+
+            try {
+                vad = new FunASRVAD(VAD_CONFIG);
+                await vad.init('/models/model.onnx', '/models/vad.mvn');
+
+                document.getElementById('vadStatus').textContent = '✅ 已就绪';
+                log('✅ FunASR VAD 模型加载完成', 'info');
+                log(`   - 语音阈值: ${VAD_CONFIG.speechThreshold}`, 'info');
+                log(`   - 静音阈值: ${VAD_CONFIG.silenceThreshold}`, 'info');
+                log(`   - 静音触发: ${VAD_CONFIG.minSilenceDurationMs}ms\n`, 'info');
+
+                document.getElementById('audioFile').disabled = false;
+            } catch (err) {
+                document.getElementById('vadStatus').textContent = '❌ 失败';
+                log('❌ VAD 初始化失败: ' + err.message, 'error');
+                console.error(err);
+            }
+        });
+
+        // 音频文件选择
+        document.getElementById('audioFile').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            log(`📂 读取音频文件: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`, 'info');
+            document.getElementById('testStatus').textContent = '加载音频...';
+
+            try {
+                const arrayBuffer = await file.arrayBuffer();
+                const audioContext = new AudioContext({ sampleRate: SAMPLE_RATE });
+                const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+
+                // 转换为 Float32Array mono
+                const channelData = audioBuffer.getChannelData(0);
+                audioData = new Float32Array(channelData);
+
+                const durationSec = audioData.length / SAMPLE_RATE;
+                log(`✅ 音频加载完成: ${audioData.length} 样本, ${durationSec.toFixed(2)}秒`, 'info');
+
+                document.getElementById('testStatus').textContent = '就绪';
+                document.getElementById('startBtn').disabled = false;
+
+                await audioContext.close();
+            } catch (err) {
+                log('❌ 音频加载失败: ' + err.message, 'error');
+                console.error(err);
+            }
+        });
+
+        // 开始测试
+        window.startTest = async function () {
+            if (!vad || !audioData) return;
+
+            isRunning = true;
+            chunks = [];
+            document.getElementById('startBtn').disabled = true;
+            document.getElementById('stopBtn').disabled = false;
+            document.getElementById('audioFile').disabled = true;
+            document.getElementById('testStatus').textContent = '测试中...';
+            document.getElementById('chunksSummary').style.display = 'none';
+            document.getElementById('chunksSummary').innerHTML = '';
+
+            log('\n════════════════════════════════════════════════════════', 'info');
+            log('🎯 开始 VAD 测试 (使用真实 FunASR ONNX 模型)', 'info');
+            log('════════════════════════════════════════════════════════\n', 'info');
+
+            let speechBuffer = [];
+            let silenceFrames = 0;
+            let speechFrames = 0;
+            let isSpeaking = false;
+            let chunkCount = 0;
+
+            const totalFrames = Math.floor(audioData.length / BUFFER_SIZE);
+
+            for (let i = 0; i < totalFrames && isRunning; i++) {
+                const start = i * BUFFER_SIZE;
+                const end = Math.min(start + BUFFER_SIZE, audioData.length);
+                const chunk = audioData.slice(start, end);
+
+                if (chunk.length < BUFFER_SIZE) break;
+
+                try {
+                    // 使用真实的 FunASR VAD 模型
+                    const speechProb = await vad.detect(chunk);
+
+                    // 更新进度
+                    const progress = ((i / totalFrames) * 100).toFixed(1);
+                    document.getElementById('progressBar').style.width = progress + '%';
+                    document.getElementById('progressBar').textContent = progress + '%';
+                    document.getElementById('progressText').textContent = progress + '%';
+
+                    if (speechProb >= VAD_CONFIG.speechThreshold) {
+                        // 检测到语音
+                        speechFrames++;
+                        silenceFrames = 0;
+
+                        if (!isSpeaking && speechFrames >= 2) {
+                            isSpeaking = true;
+                            const timestamp = (i * BUFFER_SIZE / SAMPLE_RATE).toFixed(2);
+                            log(`🔊 [${timestamp}s] 开始说话 (prob=${speechProb.toFixed(3)})`, 'speech');
+                        }
+
+                        speechBuffer.push(chunk);
+
+                    } else if (speechProb < VAD_CONFIG.silenceThreshold) {
+                        // 检测到静音
+                        silenceFrames++;
+                        speechFrames = 0;
+
+                        // VAD 模式：始终缓冲
+                        speechBuffer.push(chunk);
+
+                        // 检查是否需要切分
+                        const silenceDurationMs = silenceFrames * BUFFER_SIZE_MS;
+                        if (silenceDurationMs >= VAD_CONFIG.minSilenceDurationMs && isSpeaking) {
+                            const timestamp = (i * BUFFER_SIZE / SAMPLE_RATE).toFixed(2);
+
+                            if (speechBuffer.length > 0) {
+                                const totalSamples = speechBuffer.reduce((sum, buf) => sum + buf.length, 0);
+                                const durationSec = (totalSamples / SAMPLE_RATE).toFixed(2);
+                                const sizeKB = (totalSamples * 4 / 1024).toFixed(1);
+
+                                chunkCount++;
+                                document.getElementById('chunkCount').textContent = chunkCount;
+
+                                log(`🔇 [${timestamp}s] 检测到静音 ${silenceDurationMs}ms，执行切分`, 'silence');
+                                log(`✂️  音频块 #${chunkCount} | ${totalSamples} 样本 | ${durationSec}s | ${sizeKB}KB`, 'chunk');
+
+                                chunks.push({
+                                    index: chunkCount,
+                                    timestamp: parseFloat(timestamp),
+                                    samples: totalSamples,
+                                    duration: parseFloat(durationSec),
+                                    sizeKB: parseFloat(sizeKB)
+                                });
+
+                                speechBuffer = [];
+                                silenceFrames = 0;
+                            }
+
+                            isSpeaking = false;
+                        }
+                    }
+                } catch (err) {
+                    log('❌ VAD 处理错误: ' + err.message, 'error');
+                    console.error(err);
+                }
+
+                // 让出控制权，避免阻塞 UI
+                if (i % 100 === 0) {
+                    await new Promise(resolve => setTimeout(resolve, 0));
+                }
+            }
+
+            // 处理剩余缓冲
+            if (speechBuffer.length > 0) {
+                const totalSamples = speechBuffer.reduce((sum, buf) => sum + buf.length, 0);
+                const durationSec = (totalSamples / SAMPLE_RATE).toFixed(2);
+                const sizeKB = (totalSamples * 4 / 1024).toFixed(1);
+
+                chunkCount++;
+                document.getElementById('chunkCount').textContent = chunkCount;
+
+                log(`✂️  [最后] 音频块 #${chunkCount} | ${totalSamples} 样本 | ${durationSec}s | ${sizeKB}KB`, 'chunk');
+
+                chunks.push({
+                    index: chunkCount,
+                    timestamp: 0,
+                    samples: totalSamples,
+                    duration: parseFloat(durationSec),
+                    sizeKB: parseFloat(sizeKB)
+                });
+            }
+
+            // 显示总结
+            log('\n════════════════════════════════════════════════════════', 'info');
+            log(`✅ 测试完成！`, 'info');
+            log(`   总切片数: ${chunkCount}`, 'info');
+            log(`   总帧数: ${totalFrames}`, 'info');
+            log(`   音频时长: ${(audioData.length / SAMPLE_RATE).toFixed(2)}s`, 'info');
+
+            if (chunks.length > 0) {
+                const avgDuration = chunks.reduce((sum, c) => sum + c.duration, 0) / chunks.length;
+                log(`   平均切片时长: ${avgDuration.toFixed(2)}s`, 'info');
+            }
+            log('════════════════════════════════════════════════════════\n', 'info');
+
+            // 显示切片卡片
+            displayChunksSummary();
+
+            document.getElementById('testStatus').textContent = '完成';
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('stopBtn').disabled = true;
+            document.getElementById('audioFile').disabled = false;
+            isRunning = false;
+
+            vad.reset();
+        };
+
+        // 停止测试
+        window.stopTest = function () {
+            isRunning = false;
+            log('🛑 测试已停止', 'warn');
+            document.getElementById('testStatus').textContent = '已停止';
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('stopBtn').disabled = true;
+            document.getElementById('audioFile').disabled = false;
+            vad?.reset();
+        };
+
+        // 显示切片总结
+        function displayChunksSummary() {
+            const container = document.getElementById('chunksSummary');
+            container.innerHTML = '';
+
+            if (chunks.length === 0) return;
+
+            container.style.display = 'grid';
+
+            chunks.forEach(chunk => {
+                const card = document.createElement('div');
+                card.className = 'chunk-card';
+                card.innerHTML = `
+                    <div class="chunk-number">#${chunk.index}</div>
+                    <div class="chunk-detail">⏱️ ${chunk.duration}s</div>
+                    <div class="chunk-detail">📊 ${chunk.samples} 样本</div>
+                    <div class="chunk-detail">💾 ${chunk.sizeKB} KB</div>
+                    ${chunk.timestamp > 0 ? `<div class="chunk-detail">🕐 ${chunk.timestamp}s</div>` : ''}
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // 日志函数
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('log');
+            const entry = document.createElement('div');
+            entry.className = `log-entry log-${type}`;
+            const timestamp = new Date().toLocaleTimeString();
+            entry.textContent = `[${timestamp}] ${message}`;
+            logDiv.appendChild(entry);
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VAD 测试</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #e0e0e0;
+        }
+        h1 {
+            color: #4CAF50;
+            text-align: center;
+        }
+        .status {
+            background: #2a2a2a;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #3a3a3a;
+        }
+        .status-item:last-child {
+            border-bottom: none;
+        }
+        .label {
+            font-weight: bold;
+            color: #888;
+        }
+        .value {
+            color: #4CAF50;
+            font-family: monospace;
+        }
+        .controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        button {
+            padding: 12px 24px;
+            font-size: 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .start-btn {
+            background: #4CAF50;
+            color: white;
+        }
+        .start-btn:hover {
+            background: #45a049;
+        }
+        .stop-btn {
+            background: #f44336;
+            color: white;
+        }
+        .stop-btn:hover {
+            background: #da190b;
+        }
+        .stop-btn:disabled, .start-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .log {
+            background: #0a0a0a;
+            padding: 15px;
+            border-radius: 6px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            margin-top: 20px;
+        }
+        .log-entry {
+            padding: 4px 0;
+            border-bottom: 1px solid #2a2a2a;
+        }
+        .log-speech { color: #4CAF50; }
+        .log-silence { color: #999; }
+        .log-chunk { color: #2196F3; font-weight: bold; }
+        .log-error { color: #f44336; }
+        .log-info { color: #FFC107; }
+        
+        .prob-bar {
+            width: 100%;
+            height: 20px;
+            background: #2a2a2a;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+        .prob-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50, #8BC34A);
+            transition: width 0.1s;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎤 VAD 拆分能力测试</h1>
+    
+    <div class="status">
+        <div class="status-item">
+            <span class="label">VAD 状态:</span>
+            <span class="value" id="vadStatus">未初始化</span>
+        </div>
+        <div class="status-item">
+            <span class="label">录音状态:</span>
+            <span class="value" id="recordStatus">未开始</span>
+        </div>
+        <div class="status-item">
+            <span class="label">语音概率:</span>
+            <span class="value" id="speechProb">0.000</span>
+        </div>
+        <div class="prob-bar">
+            <div class="prob-fill" id="probFill" style="width: 0%"></div>
+        </div>
+        <div class="status-item">
+            <span class="label">是否说话:</span>
+            <span class="value" id="isSpeaking">否</span>
+        </div>
+        <div class="status-item">
+            <span class="label">检测到音频块:</span>
+            <span class="value" id="chunkCount">0</span>
+        </div>
+        <div class="status-item">
+            <span class="label">录音时长:</span>
+            <span class="value" id="duration">0s</span>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button class="start-btn" id="startBtn" onclick="startTest()">开始测试</button>
+        <button class="stop-btn" id="stopBtn" onclick="stopTest()" disabled>停止测试</button>
+    </div>
+
+    <div class="log" id="log"></div>
+
+    <script type="module">
+        import { FunASRVAD } from './src/services/funasrVAD.js';
+
+        const VAD_CONFIG = {
+            speechThreshold: 0.2,
+            silenceThreshold: 0.35,
+            minSpeechDurationMs: 200,
+            minSilenceDurationMs: 500,
+        };
+
+        const SAMPLE_RATE = 16000;
+        const BUFFER_SIZE = 2048;
+        const BUFFER_SIZE_MS = Math.floor(BUFFER_SIZE * 1000 / SAMPLE_RATE);
+
+        let vad = null;
+        let audioContext = null;
+        let processor = null;
+        let stream = null;
+        let speechBuffer = [];
+        let silenceFrames = 0;
+        let speechFrames = 0;
+        let isSpeaking = false;
+        let chunkCount = 0;
+        let startTime = 0;
+        let durationTimer = null;
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            log('正在初始化 FunASR VAD...', 'info');
+            document.getElementById('vadStatus').textContent = '加载中...';
+            
+            try {
+                vad = new FunASRVAD(VAD_CONFIG);
+                await vad.init('/models/model.onnx', '/models/vad.mvn');
+                
+                document.getElementById('vadStatus').textContent = '✅ 已就绪';
+                log('✅ FunASR VAD 初始化完成', 'info');
+                document.getElementById('startBtn').disabled = false;
+            } catch (err) {
+                document.getElementById('vadStatus').textContent = '❌ 失败';
+                log('❌ VAD 初始化失败: ' + err.message, 'error');
+            }
+        });
+
+        async function processAudioChunk(inputBuffer) {
+            if (!vad?.ready) return;
+
+            try {
+                const speechProb = await vad.detect(inputBuffer);
+                
+                // Update UI
+                document.getElementById('speechProb').textContent = speechProb.toFixed(3);
+                document.getElementById('probFill').style.width = (speechProb * 100) + '%';
+
+                if (speechProb >= VAD_CONFIG.speechThreshold) {
+                    // 语音
+                    speechFrames++;
+                    silenceFrames = 0;
+
+                    if (speechFrames % 5 === 0) {
+                        log(`🎤 语音概率: ${speechProb.toFixed(3)}`, 'speech');
+                    }
+
+                    if (!isSpeaking && speechFrames >= 2) {
+                        isSpeaking = true;
+                        document.getElementById('isSpeaking').textContent = '✅ 是';
+                        log(`🔊 检测到语音开始 (prob=${speechProb.toFixed(3)})`, 'speech');
+                    }
+
+                    speechBuffer.push(inputBuffer.slice());
+
+                } else if (speechProb < VAD_CONFIG.silenceThreshold) {
+                    // 静音
+                    silenceFrames++;
+                    speechFrames = 0;
+
+                    if (Math.random() < 0.1) {
+                        log(`🔈 静音概率: ${speechProb.toFixed(3)}`, 'silence');
+                    }
+
+                    // VAD 模式：只在说话时缓冲
+                    if (isSpeaking) {
+                        speechBuffer.push(inputBuffer.slice());
+                    }
+
+                    // 检查是否需要切分
+                    const silenceDurationMs = silenceFrames * BUFFER_SIZE_MS;
+                    if (silenceDurationMs >= VAD_CONFIG.minSilenceDurationMs && isSpeaking) {
+                        log(`🔇 检测到静音 ${silenceDurationMs}ms，执行切分`, 'chunk');
+                        
+                        if (speechBuffer.length > 0) {
+                            const totalLength = speechBuffer.reduce((sum, buf) => sum + buf.length, 0);
+                            const durationSec = (totalLength / SAMPLE_RATE).toFixed(2);
+                            
+                            chunkCount++;
+                            document.getElementById('chunkCount').textContent = chunkCount;
+                            
+                            log(`✂️ 音频块 #${chunkCount} - ${totalLength} 样本 (${durationSec}s)`, 'chunk');
+                            
+                            speechBuffer = [];
+                            silenceFrames = 0;
+                        }
+                        
+                        isSpeaking = false;
+                        document.getElementById('isSpeaking').textContent = '否';
+                    }
+                }
+            } catch (err) {
+                log('❌ VAD 处理错误: ' + err.message, 'error');
+            }
+        }
+
+        window.startTest = async function() {
+            log('🎬 开始录音测试...', 'info');
+            document.getElementById('startBtn').disabled = true;
+            document.getElementById('stopBtn').disabled = false;
+            
+            speechBuffer = [];
+            silenceFrames = 0;
+            speechFrames = 0;
+            isSpeaking = false;
+            chunkCount = 0;
+            
+            document.getElementById('recordStatus').textContent = '⏺️ 录音中';
+            document.getElementById('isSpeaking').textContent = '否';
+            document.getElementById('chunkCount').textContent = '0';
+            
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({
+                    audio: {
+                        sampleRate: SAMPLE_RATE,
+                        channelCount: 1,
+                        echoCancellation: true,
+                        noiseSuppression: true,
+                        autoGainControl: true,
+                    }
+                });
+
+                audioContext = new AudioContext({ sampleRate: SAMPLE_RATE });
+                const source = audioContext.createMediaStreamSource(stream);
+                processor = audioContext.createScriptProcessor(BUFFER_SIZE, 1, 1);
+
+                processor.onaudioprocess = (event) => {
+                    const inputData = event.inputBuffer.getChannelData(0);
+                    processAudioChunk(new Float32Array(inputData));
+                };
+
+                source.connect(processor);
+                processor.connect(audioContext.destination);
+
+                startTime = Date.now();
+                durationTimer = setInterval(() => {
+                    const elapsed = Math.floor((Date.now() - startTime) / 1000);
+                    document.getElementById('duration').textContent = elapsed + 's';
+                }, 1000);
+
+                log('✅ 录音已开始', 'info');
+            } catch (err) {
+                log('❌ 麦克风访问失败: ' + err.message, 'error');
+                document.getElementById('startBtn').disabled = false;
+                document.getElementById('stopBtn').disabled = true;
+            }
+        };
+
+        window.stopTest = function() {
+            log('🛑 停止录音...', 'info');
+            
+            if (durationTimer) {
+                clearInterval(durationTimer);
+                durationTimer = null;
+            }
+
+            if (processor) {
+                processor.disconnect();
+                processor = null;
+            }
+
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                stream = null;
+            }
+
+            if (audioContext) {
+                audioContext.close();
+                audioContext = null;
+            }
+
+            // 处理剩余缓冲
+            if (speechBuffer.length > 0) {
+                const totalLength = speechBuffer.reduce((sum, buf) => sum + buf.length, 0);
+                const durationSec = (totalLength / SAMPLE_RATE).toFixed(2);
+                
+                chunkCount++;
+                document.getElementById('chunkCount').textContent = chunkCount;
+                
+                log(`✂️ [停止] 最后音频块 #${chunkCount} - ${totalLength} 样本 (${durationSec}s)`, 'chunk');
+                speechBuffer = [];
+            } else {
+                log('⚠️ 停止时缓冲区为空', 'info');
+            }
+
+            vad?.reset();
+            
+            document.getElementById('recordStatus').textContent = '已停止';
+            document.getElementById('isSpeaking').textContent = '否';
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('stopBtn').disabled = true;
+            
+            log('✅ 测试完成', 'info');
+        };
+
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('log');
+            const entry = document.createElement('div');
+            entry.className = `log-entry log-${type}`;
+            const timestamp = new Date().toLocaleTimeString();
+            entry.textContent = `[${timestamp}] ${message}`;
+            logDiv.appendChild(entry);
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+    </script>
+</body>
+</html>

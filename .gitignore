@@ -1,5 +1,4 @@
 .DS_Store
 *.log
 # Temporarily ignore other microservices
-ASR_electron/
 ASR_pc_front/

@@ -13,7 +13,7 @@ class LogConfig(BaseSettings):
     retention: str = "30 days"
     json_format: bool = False
     
-    model_config = SettingsConfigDict(env_prefix="LOG_", env_file=".env")
+    model_config = SettingsConfigDict(env_prefix="LOG_", env_file=".env", extra="ignore")
 
 
 class InterceptHandler(logging.Handler):
@@ -61,7 +61,7 @@ def setup_logging():
     logger.add(
         sys.stdout,
         format="<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level: <8}</level> | <level>{message}</level> | {extra}",
-        level=config.level,
+        level=config.level.upper(),
         colorize=True,
         enqueue=True  # Async for console too to prevent blocking
     )

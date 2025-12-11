@@ -1,65 +1,67 @@
-# ASR微服务鉴权与SaaS架构构想
+# ASR Microservice Authentication & SaaS Architecture Concept
 
-**创建日期**: 2025-12-11
-**状态**: 构想 (Idea/Concept) - 非当前待办事项 (Not Todo)
-**背景**: 本ASR服务作为TG Bot庞大工作流中的一个节点，未来可能作为SaaS服务的一部分。
+> **Languages**: [English](AUTHENTICATION_AND_SAAS_ARCHITECTURE.md) | [简体中文](AUTHENTICATION_AND_SAAS_ARCHITECTURE.zh-CN.md)
+
+**Date**: 2025-12-11
+**Status**: Concept - Not Todo
+**Context**: This ASR service acts as a node in the large workflow of TG Bot, and may become part of a SaaS service in the future.
 
 ---
 
-## 1. 核心问题
+## 1. Core Question
 
-在微服务架构中，ASR节点本身是否需要实现用户登录和鉴权逻辑？
-- **当前需求**: 仅作为内部节点，由TG Bot后端调用。
-- **未来需求**: 可能作为开放的SaaS节点分发给其他开发者，或者构建上级路由平台。
-- **纠结点**: 现在是否需要在ASR服务内部做用户权限管理？
+In a microservice architecture, does the ASR node itself need to implement user login and authentication logic?
+- **Current Requirement**: Internal node only, called by TG Bot backend.
+- **Future Requirement**: May be distributed as an open SaaS node to other developers, or build a superior routing platform.
+- **Dilemma**: Should we implement user permission management inside the ASR service now?
 
-## 2. 业界调研与架构模式
+## 2. Industry Research & Architecture Patterns
 
-针对ASR作为工作流节点的场景，业界主要有三种处理模式：
+For scenarios where ASR is a workflow node, there are three main industry patterns:
 
-### 模式一：API Gateway 集中式鉴权 (推荐) ⭐
+### Pattern 1: API Gateway Centralized Auth (Recommended) ⭐
 
-**核心思路**: 
-- 在上游统一网关层（如 Nginx, Kong, Traefik, 或 TG Bot 后端）处理所有鉴权。
-- 内部微服务（ASR）处于 "Trust Zone"（信任区），专注于业务逻辑，**不做鉴权**。
+**Core Idea**:
+- Handle all authentication at the upstream Unified Gateway Layer (e.g., Nginx, Kong, Traefik, or TG Bot Backend).
+- Internal microservices (ASR) sit in the "Trust Zone" and focus on business logic, **No Auth**.
 
-**流程**:
+**Flow**:
 ```mermaid
 graph TD
-    User[用户/外部开发者] -->|Token/Key| Gateway[API Gateway / TG SaaS后端]
-    Gateway -->|验证通过| ASR[ASR 服务 (纯业务)]
-    Gateway -->|验证失败| Reject[拒绝访问]
+    User[User/External Dev] -->|Token/Key| Gateway[API Gateway / TG SaaS Backend]
+    Gateway -->|Auth Pass| ASR[ASR Service (Pure Biz)]
+    Gateway -->|Auth Fail| Reject[Reject Access]
 ```
 
-**优点**:
-- **解耦**: ASR代码保持纯粹，无需引入复杂的用户表、JWT校验等逻辑。
-- **性能**: 内部调用无鉴权开销。
-- **灵活**: 未来开放平台时，只需在网关层添加多租户或API Key验证逻辑，ASR服务本身无需改动。
+**Pros**:
+- **Decoupled**: ASR code remains pure, no need for complex user tables, JWT validation logic.
+- **Performance**: No auth overhead for internal calls.
+- **Flexible**: When opening platform in future, just add Multi-tenant or API Key logic at Gateway layer, ASR service needs no change.
 
-### 模式二：Service Mesh (零信任架构)
+### Pattern 2: Service Mesh (Zero Trust)
 
-**核心思路**:
-- 使用 Istio/Linkerd 等服务网格，强制所有服务间通信使用 mTLS 加密和身份验证。
-- **评价**: 安全性极高，但引入Kubernetes和Sidecar代理的运维成本过高，对于当前阶段属于**过度设计**。
+**Core Idea**:
+- Use Istio/Linkerd etc. service mesh to enforce mTLS encryption and identity verification for all inter-service communication.
+- **Evaluation**: Extremely secure, but high ops cost for Kubernetes and Sidecar proxies, considered **Over-design** for current stage.
 
-### 模式三：网络隔离 (最小闭环)
+### Pattern 3: Network Isolation (Minimal Loop)
 
-**核心思路**:
-- ASR服务仅监听内网端口 (e.g., Docker Network)，不对公网暴露。
-- 依靠网络防火墙保证安全。
+**Core Idea**:
+- ASR service only listens on intranet port (e.g., Docker Network), not exposed to public.
+- Rely on network firewall for security.
 
-## 3. 决策结论
+## 3. Decision Conclusion
 
-**当前阶段 (Internal Node)**:
-1.  **ASR服务代码保持零鉴权**: 不在代码中添加任何 `Login`, `User`, `Token` 逻辑。
-2.  **依赖上游**: 所有用户身份、权限管理完全由 **TG Bot 后端** 负责。
-3.  **安全措施**: 部署时确保 ASR 服务仅在 Docker 内网或 VPC 内可访问，严禁暴露 8000 端口到公网。
+**Current Stage (Internal Node)**:
+1.  **ASR Code Zero Auth**: No `Login`, `User`, `Token` logic in code.
+2.  **Rely on Upstream**: All user identity, permission management fully handled by **TG Bot Backend**.
+3.  **Security Measures**: Ensure ASR service is only accessible within Docker Network or VPC, strictly forbid exposing port 8000 to public.
 
-**未来阶段 (SaaS Platform)**:
-1.  **引入网关**: 在 ASR 前面架设 Nginx 或专业 API Gateway。
-2.  **网关鉴权**: 在网关层实现 API Key 校验、计费统计、限流。
-3.  **多租户隔离**: ASR 服务可以接收网关透传的 `X-Tenant-ID` 或 `X-User-ID` 头信息用于日志记录，但本身仍不负责鉴权逻辑。
+**Future Stage (SaaS Platform)**:
+1.  **Introduce Gateway**: Set up Nginx or Pro API Gateway in front of ASR.
+2.  **Gateway Auth**: Implement API Key validation, billing, rate limiting at Gateway layer.
+3.  **Multi-tenant Isolation**: ASR service can receive `X-Tenant-ID` or `X-User-ID` headers passed by Gateway for logging, but still not responsible for auth logic.
 
-## 4. 总结
+## 4. Summary
 
-业界最佳实践是将鉴权逻辑上移至网关或聚合层，保持底层微服务（ASR）的无状态和纯粹性。这符合 "关注点分离" 原则，也为未来扩展留出了最大的灵活性。
+Industry best practice is to move auth logic up to the Gateway or Aggregation layer, keeping underlying microservices (ASR) stateless and pure. This aligns with "Separation of Concerns" principle and leaves maximum flexibility for future expansion.

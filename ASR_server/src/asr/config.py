@@ -2,7 +2,7 @@
 import os
 from pathlib import Path
 from typing import Optional
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class ASRConfig(BaseSettings):
@@ -29,10 +29,12 @@ class ASRConfig(BaseSettings):
     max_recordings: int = 10
     max_history_records: int = 10
     
-    class Config:
-        env_prefix = "ASR_"
-        env_file = ".env"
-        env_file_encoding = "utf-8"
+    model_config = SettingsConfigDict(
+        env_prefix="ASR_",
+        env_file=".env",
+        env_file_encoding="utf-8",
+        extra="ignore"
+    )
 
 
 # Global configuration instance

@@ -1,5 +1,8 @@
 # Scaling Architecture Comparison: Process-based vs. Kubernetes
 
+> **Languages**: [English](SCALING_ARCHITECTURE_COMPARISON.md) | [简体中文](SCALING_ARCHITECTURE_COMPARISON.zh-CN.md)
+
+
 ## Context
 The current `ASR_server` project utilizes a producer-consumer model for processing ASR tasks. The architecture decouples the API server from the processing workers using Redis and RQ (Redis Queue).
 

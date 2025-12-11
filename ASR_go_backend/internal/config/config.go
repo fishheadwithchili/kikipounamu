@@ -1,8 +1,12 @@
 package config
 
 import (
+	"log"
 	"os"
-	"strconv"
+	"sync"
+
+	"github.com/fsnotify/fsnotify"
+	"github.com/spf13/viper"
 )
 
 type Config struct {
@@ -10,6 +14,8 @@ type Config struct {
 	FunASRAddr     string
 	RedisAddr      string
 	WorkerPoolSize int
+	MaxConnections int
+	LogLevel       string
 
 	// PostgreSQL 配置
 	DBHost     string
@@ -22,24 +28,82 @@ type Config struct {
 	MaxAudioFilesPerUser int
 }
 
+var (
+	globalCfg *Config
+	cfgMu     sync.RWMutex
+)
+
 func Load() *Config {
-	dbPort, _ := strconv.Atoi(getEnv("DB_PORT", "5432"))
-	maxFiles, _ := strconv.Atoi(getEnv("MAX_AUDIO_FILES_PER_USER", "10"))
+	viper.SetConfigName("config")
+	viper.SetConfigType("yaml")
+	viper.AddConfigPath(".")
+	viper.AddConfigPath("./config")
 
-	return &Config{
-		Port:                 getEnv("PORT", "8080"),
-		FunASRAddr:           getEnv("FUNASR_ADDR", "localhost:8000"),
-		RedisAddr:            getEnv("REDIS_ADDR", "localhost:6379"),
-		WorkerPoolSize:       4,
-		MaxAudioFilesPerUser: maxFiles,
+	// Environment variables
+	viper.AutomaticEnv()
 
-		// PostgreSQL - 默认配置
-		DBHost:     getEnv("DB_HOST", "localhost"),
-		DBPort:     dbPort,
-		DBUser:     getEnv("DB_USER", "root"),
-		DBPassword: getEnv("DB_PASSWORD", "123456"),
-		DBName:     getEnv("DB_NAME", "root"),
+	// Defaults
+	viper.SetDefault("PORT", "8080")
+	viper.SetDefault("FUNASR_ADDR", "localhost:8000")
+	viper.SetDefault("REDIS_ADDR", "localhost:6379")
+	viper.SetDefault("WORKER_POOL_SIZE", 200)
+	viper.SetDefault("MAX_CONNECTIONS", 1000)
+	viper.SetDefault("LOG_LEVEL", "info")
+	viper.SetDefault("MAX_AUDIO_FILES_PER_USER", 10)
+	viper.SetDefault("DB_HOST", "localhost")
+	viper.SetDefault("DB_PORT", 5432)
+	viper.SetDefault("DB_USER", "root")
+	viper.SetDefault("DB_PASSWORD", "123456")
+	viper.SetDefault("DB_NAME", "root")
+
+	// Read config file (if exists)
+	if err := viper.ReadInConfig(); err != nil {
+		if _, ok := err.(viper.ConfigFileNotFoundError); !ok {
+			log.Printf("Error reading config file: %v", err)
+		}
 	}
+
+	updateGlobalConfig()
+
+	// Watch for changes
+	viper.OnConfigChange(func(e fsnotify.Event) {
+		log.Printf("Config file changed: %s", e.Name)
+		updateGlobalConfig()
+	})
+	viper.WatchConfig()
+
+	return GetConfig()
+}
+
+func updateGlobalConfig() {
+	cfg := &Config{
+		Port:           viper.GetString("PORT"),
+		FunASRAddr:     viper.GetString("FUNASR_ADDR"),
+		RedisAddr:      viper.GetString("REDIS_ADDR"),
+		WorkerPoolSize: viper.GetInt("WORKER_POOL_SIZE"),
+		MaxConnections: viper.GetInt("MAX_CONNECTIONS"),
+		LogLevel:       viper.GetString("LOG_LEVEL"),
+
+		DBHost:     viper.GetString("DB_HOST"),
+		DBPort:     viper.GetInt("DB_PORT"),
+		DBUser:     viper.GetString("DB_USER"),
+		DBPassword: viper.GetString("DB_PASSWORD"),
+		DBName:     viper.GetString("DB_NAME"),
+
+		MaxAudioFilesPerUser: viper.GetInt("MAX_AUDIO_FILES_PER_USER"),
+	}
+
+	cfgMu.Lock()
+	globalCfg = cfg
+	cfgMu.Unlock()
+
+	log.Printf("Config updated. MaxConnections: %d, LogLevel: %s", cfg.MaxConnections, cfg.LogLevel)
+}
+
+func GetConfig() *Config {
+	cfgMu.RLock()
+	defer cfgMu.RUnlock()
+	return globalCfg
 }
 
 func getEnv(key, defaultValue string) string {

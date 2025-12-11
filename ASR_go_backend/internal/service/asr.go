@@ -3,112 +3,132 @@ package service
 import (
 	"context"
 	"encoding/base64"
-	"sync"
+	"encoding/json"
+	"fmt"
+	"time"
 
-	"github.com/fishheadwithchili/asr-go-backend/internal/client"
 	"github.com/fishheadwithchili/asr-go-backend/internal/config"
 	"github.com/fishheadwithchili/asr-go-backend/internal/db"
 	"github.com/fishheadwithchili/asr-go-backend/internal/model"
 	"github.com/fishheadwithchili/asr-go-backend/pkg/logger"
-	"github.com/fishheadwithchili/asr-go-backend/pkg/pool"
 	"go.uber.org/zap"
 )
 
 // ASRService ASR 处理服务
 type ASRService struct {
-	cfg        *config.Config
-	asrClient  *client.ASRClient
-	workerPool *pool.WorkerPool
-	mu         sync.Mutex
+	cfg *config.Config
 }
 
 // NewASRService 创建 ASR 服务
 func NewASRService(cfg *config.Config) *ASRService {
-	asrClient := client.NewASRClient("http://" + cfg.FunASRAddr)
-	workerPool := pool.NewWorkerPool(cfg.WorkerPoolSize)
-
-	svc := &ASRService{
-		cfg:        cfg,
-		asrClient:  asrClient,
-		workerPool: workerPool,
+	return &ASRService{
+		cfg: cfg,
 	}
-
-	// 启动 worker pool
-	workerPool.Start(func(task interface{}) interface{} {
-		chunkTask := task.(*model.ChunkTask)
-		return svc.processChunkInternal(chunkTask)
-	})
-
-	logger.Info("ASR 服务启动", zap.Int("worker_count", cfg.WorkerPoolSize))
-	return svc
 }
 
-// ProcessChunk 处理单个音频块
-func (s *ASRService) ProcessChunk(sessionID string, chunkIndex int, audioDataBase64 string) (*model.ChunkResult, error) {
-	// 解码 base64 音频
+// PushChunkToRedis 仅负责将任务推送到 Redis 队列 (Fire and Forget)
+func (s *ASRService) PushChunkToRedis(sessionID string, chunkIndex int, audioDataBase64 string) error {
+	// 1. 解码 base64 音频 (验证格式)
 	audioData, err := base64.StdEncoding.DecodeString(audioDataBase64)
 	if err != nil {
-		return nil, err
+		return fmt.Errorf("base64 decode failed: %w", err)
 	}
 
-	task := &model.ChunkTask{
-		SessionID:  sessionID,
-		ChunkIndex: chunkIndex,
-		AudioData:  audioData,
-		ResultChan: make(chan *model.ChunkResult, 1),
+	// 2. 构造任务
+	task := map[string]interface{}{
+		"session_id":  sessionID,
+		"chunk_index": chunkIndex,
+		"audio_data":  base64.StdEncoding.EncodeToString(audioData), // Redis 传递需要 encoding
+		"timestamp":   time.Now().UnixMilli(),
 	}
 
-	// 提交到 worker pool
-	s.workerPool.Submit(task)
+	taskJSON, err := json.Marshal(task)
+	if err != nil {
+		return fmt.Errorf("json marshal failed: %w", err)
+	}
 
-	// 等待结果
-	result := <-task.ResultChan
-	return result, result.Error
+	redisCli := db.GetRedis()
+	ctx := context.Background()
+
+	// 3. 推送到 Redis 队列
+	// Queue name: asr_chunk_queue
+	err = redisCli.RPush(ctx, "asr_chunk_queue", taskJSON).Err()
+	if err != nil {
+		return fmt.Errorf("redis rpush failed: %w", err)
+	}
+
+	// logger.Debug("Task pushed to Redis", zap.String("session_id", sessionID), zap.Int("chunk", chunkIndex))
+	return nil
 }
 
-// processChunkInternal 内部处理逻辑
-func (s *ASRService) processChunkInternal(task *model.ChunkTask) *model.ChunkResult {
-	result := &model.ChunkResult{
-		ChunkIndex: task.ChunkIndex,
+// SubscribeResults 订阅结果频道并返回一个 channel
+func (s *ASRService) SubscribeResults(sessionID string) (<-chan *model.ChunkResult, func(), error) {
+	redisCli := db.GetRedis()
+	ctx := context.Background()
+
+	// Channel name: asr_result_<session_id>
+	resultChannel := fmt.Sprintf("asr_result_%s", sessionID)
+	pubsub := redisCli.Subscribe(ctx, resultChannel)
+
+	// 验证订阅连接 (可选)
+	// _, err := pubsub.Receive(ctx)
+	// if err != nil {
+	// 	pubsub.Close()
+	// 	return nil, nil, fmt.Errorf("redis subscribe failed: %w", err)
+	// }
+
+	ch := pubsub.Channel()
+	outCh := make(chan *model.ChunkResult, 100) // Buffer a bit
+
+	// 取消函数
+	cancel := func() {
+		pubsub.Close()
+		// close(outCh) // Do not close here to avoid panic on send
 	}
 
-	// 调用 ASR_server 识别
-	text, duration, err := s.asrClient.Recognize(task.AudioData)
-	if err != nil {
-		result.Error = err
-		logger.Error("FunASR 识别失败",
-			zap.String("session_id", task.SessionID),
-			zap.Int("chunk", task.ChunkIndex),
-			zap.Error(err))
-	} else {
-		result.Text = text
-		result.Duration = duration
-		logger.Debug("FunASR 识别成功",
-			zap.String("session_id", task.SessionID),
-			zap.Int("chunk", task.ChunkIndex),
-			zap.String("text_preview", truncate(text, 50)))
-	}
+	// 启动后台协程读取 Redis 消息并转换
+	go func() {
+		defer close(outCh) // Close when input channel closed
+		for msg := range ch {
+			var result map[string]interface{}
+			if err := json.Unmarshal([]byte(msg.Payload), &result); err != nil {
+				logger.Error("Result unmarshal failed", zap.Error(err))
+				continue
+			}
 
-	// 发送结果
-	task.ResultChan <- result
-	return result
+			chunkRes := &model.ChunkResult{
+				ChunkIndex: int(result["chunk_index"].(float64)),
+				Text:       result["text"].(string),
+				Duration:   result["duration"].(float64),
+			}
+
+			if errMsg, ok := result["error"].(string); ok && errMsg != "" {
+				chunkRes.Error = fmt.Errorf(errMsg)
+			}
+
+			// Non-blocking send or drop if full (though we shouldn't drop results)
+			// Blocking send is safer for correctness, but consumer must be fast.
+			outCh <- chunkRes
+		}
+	}()
+
+	return outCh, cancel, nil
 }
 
 // GetHealthStatus 获取健康状态
 func (s *ASRService) GetHealthStatus() *model.HealthStatus {
-	// 检查数据库连接
-	dbReady := db.GetPool() != nil && db.GetPool().Ping(context.Background()) == nil
+	redisCli := db.GetRedis()
+	redisReady := redisCli != nil && redisCli.Ping(context.Background()).Err() == nil
 
 	return &model.HealthStatus{
 		Status:       "ready",
-		FunASRReady:  s.asrClient.IsReady(),
-		RedisReady:   dbReady, // 使用 PostgreSQL 检查替代 Redis
-		WorkersReady: s.workerPool.ActiveWorkers(),
+		FunASRReady:  true,
+		RedisReady:   redisReady,
+		WorkersReady: 0,
 	}
 }
 
 // Shutdown 关闭服务
 func (s *ASRService) Shutdown() {
-	s.workerPool.Stop()
-	logger.Info("ASR 服务已关闭")
+	logger.Info("ASR 服务已关闭 (Redis Mode)")
 }

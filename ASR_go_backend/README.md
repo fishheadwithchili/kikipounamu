@@ -1,72 +1,96 @@
-# ASR Go Backend (高并发调度服务)
+# ASR Go Backend (High Concurrency Scheduling Service)
 
-这是一个基于 Go 语言开发的高性能 ASR（语音识别）后端调度服务。它作为前端与底层 Python ASR 推理服务之间的桥梁，提供实时 WebSocket 流式处理、任务并发调度以及数据持久化功能。
+> **Languages**: [English](README.md) | [简体中文](README.zh-CN.md)
 
-## 🌟 核心特性
+> [!NOTE]
+> This project is designed for high-performance ASR (Automatic Speech Recognition) scheduling.
 
-*   **⚡ 高并发架构**：内置 Goroutine Worker Pool，高效处理并发音频分块请求。
-*   **📡 实时通信**：基于 WebSocket 的全双工通信，支持流式音频上传和结果推送。
-*   **🗄️ 数据持久化**：集成 **PostgreSQL**，完整记录会话历史、音频分块详情和识别结果。
-*   **🛡️ 健壮性设计**：支持优雅关闭、错误处理和自动恢复。
-*   **🔌 易于集成**：提供 RESTful API 用于历史记录查询和会话管理。
+This is a high-performance ASR backend scheduling service developed in **Go**. It acts as a bridge between the frontend and the underlying Python ASR inference service, providing real-time WebSocket streaming, concurrent task scheduling, and data persistence.
 
-## 🛠️ 技术栈
+## 🌟 Core Features
 
-*   **语言**: Go 1.21+
-*   **Web 框架**: Gin
+*   **⚡ High Concurrency Architecture**: Based on the **Async Producer-Consumer Model**, the Go gateway handles connection maintenance, while Python Workers handle computation, decoupled via Redis.
+*   **📡 Real-time Communication**: **WebSocket**-based full-duplex communication supporting streaming audio upload and result pushing.
+*   **🚀 Extreme Performance**: The Go backend single node easily supports **500+ concurrent** connections, supporting horizontal scaling of Workers to improve throughput.
+*   **🗄️ Data Persistence**: Integrated **PostgreSQL** to fully record session history, audio chunk details, and recognition results.
+*   **🛡️ Robust Design**:
+    *   Connection pool management to prevent resource exhaustion.
+    *   Graceful shutdown and automatic error recovery.
+    *   Complete concurrency safety mechanisms (non-blocking).
+
+## 🏗️ Architecture
+
+This project adopts the **Async Producer-Consumer Model**, achieving complete decoupling between the gateway layer and the computing layer.
+
+*   **Gateway (Go Backend)**:
+    *   **Role**: High-performance gateway responsible for connection maintenance, protocol conversion, and data forwarding.
+    *   **Mechanism**: Receive audio slice -> `RPush` to Redis Queue -> Return immediately. **Does not block** waiting for inference results.
+    *   **Performance**: In load tests, CPU usage remains extremely stable when maintaining 500 concurrent connections on a single node.
+*   **Message Broker (Redis)**:
+    *   **Role**: Infinite capacity Buffer and message bus.
+    *   **Mechanism**: Uses Pub/Sub to achieve real-time precise pushing of results to specific WebSocket sessions.
+*   **Worker (Python ASR)**:
+    *   **Role**: Pure computing node (Stateless).
+    *   **Mechanism**: Preemptive task acquisition from Redis -> Inference -> Publish result.
+    *   **Scalability**: Supports seamless **Horizontal Scaling**. If 500 concurrent streams cause queuing, simply start more Worker containers to linearly improve processing capability.
+
+## 🛠️ Tech Stack
+
+*   **Language**: Go 1.21+
+*   **Web Framework**: Gin
 *   **WebSocket**: Gorilla WebSocket
-*   **数据库**: PostgreSQL 14+ (pgx driver)
-*   **配置管理**: 环境变量
+*   **Database**: PostgreSQL 14+ (pgx driver)
+*   **Configuration**: Environment Variables
 
-## 🚀 部署与启动
+## 🚀 Deployment & Startup
 
-### 1. 环境准备
+### 1. Prerequisites
 
-确保服务器已安装：
+Ensure the server has installed:
 *   **Go** (>= 1.21)
 *   **PostgreSQL** (>= 14)
 
-### 2. 数据库配置
+### 2. Database Configuration
 
-创建一个名为 `root` (或其他名称) 的数据库，并确保有用户权限。
+Create a database named `root` (or other name) and ensure user permissions.
 
 ```bash
-# 示例：创建数据库（命令行）
+# Example: Create database (command line)
 createdb -U postgres root
 ```
 
-*注意：系统会自动创建所需的 `asr_sessions` 和 `asr_chunks` 表。*
+*Note: The system will automatically create the required `asr_sessions` and `asr_chunks` tables.*
 
-### 3. 安装依赖
+### 3. Install Dependencies
 
 ```bash
 go mod tidy
 ```
 
-### 4. 配置文件 (环境变量)
+### 4. Configuration (Environment Variables)
 
-可以通过设置环境变量来配置服务：
+You can configure the service via environment variables:
 
-| 变量名 | 默认值 | 说明 |
+| Variable | Default | Description |
 | :--- | :--- | :--- |
-| `PORT` | `8080` | 服务监听端口 |
-| `FUNASR_ADDR` | `localhost:8000` | 底层 Python ASR_server 地址 |
-| `DB_HOST` | `localhost` | 数据库主机 |
-| `DB_PORT` | `5432` | 数据库端口 |
-| `DB_USER` | `root` | 数据库用户名 |
-| `DB_PASSWORD` | `123456` | 数据库密码 |
-| `DB_NAME` | `root` | 数据库名称 |
+| `PORT` | `8080` | Service listening port |
+| `FUNASR_ADDR` | `localhost:8000` | Underlying Python ASR_server address |
+| `DB_HOST` | `localhost` | Database host |
+| `DB_PORT` | `5432` | Database port |
+| `DB_USER` | `root` | Database username |
+| `DB_PASSWORD` | `123456` | Database password |
+| `DB_NAME` | `root` | Database name |
 
-### 5. 启动服务
+### 5. Start Service
 
 ```bash
-# 1. 启动 PostgreSQL 数据库
+# 1. Start PostgreSQL
 sudo service postgresql start
 
-# 2. 确保数据库存在 (如果报错 exist 则忽略)
+# 2. Ensure database exists
 sudo -u postgres createdb root
 
-# 3. 设置环境变量并启动服务
+# 3. Set env vars and start service
 export DB_USER=root
 export DB_PASSWORD=123456
 export DB_NAME=root
@@ -74,48 +98,103 @@ export DB_NAME=root
 go run cmd/server/main.go
 ```
 
-或者编译后运行：
+Or build and run:
 
 ```bash
 go build -o asr-backend cmd/server/main.go
 ./asr-backend
 ```
 
-## 🔌 API 接口文档
+## 🚀 Performance & Scalability
 
-### 1. WebSocket (实时识别)
+Based on the 2025-12-11 large-scale **Load Test Report** (see `reports/`):
+
+*   **High Concurrency**: Passed stress tests under **500 concurrent channels**. The Go backend service remained 100% stable with no crashes or memory leaks.
+*   **Bottleneck Analysis**:
+    *   System throughput bottleneck lies in **Python Worker computing power**.
+    *   Go backend acts only as a traffic entry point with extremely low resource consumption.
+    *   When concurrency > Worker processing capability, tasks queue in Redis, RTF increases temporarily, but the service **does not refuse connections** and does not crash.
+*   **Stability Enhancements**:
+    *   Fixed Redis "Too Many Open Files" issue (via connection pool optimization).
+    *   Fixed concurrent race condition deadlocks.
+    *   Verified graceful degradation capability under extreme pressure.
+
+## 🔌 API Documentation
+
+### 1. WebSocket (Real-time Recognition)
 
 *   **URL**: `ws://<server_ip>:8080/ws/asr`
-*   **协议**:
-    *   **客户端发送**:
-        *   `{"action": "start", "session_id": "uuid"}`: 开始会话
-        *   `{"action": "chunk", "session_id": "...", "chunk_index": 0, "audio_data": "base64..."}`: 发送音频块 (WebM/WAV)
-        *   `{"action": "finish", "session_id": "..."}`: 结束会话
-    *   **服务端返回**:
+*   **Protocol**:
+    *   **Client Sends**:
+        *   `{"action": "start", "session_id": "uuid"}`: Start session
+        *   `{"action": "chunk", "session_id": "...", "chunk_index": 0, "audio_data": "base64..."}`: Send audio chunk (WebM/WAV)
+        *   `{"action": "finish", "session_id": "..."}`: End session
+    *   **Server Returns**:
         *   `{"type": "ack", "status": "session_started", ...}`
-        *   `{"type": "chunk_result", "chunk_index": 0, "text": "识别结果"}`
-        *   `{"type": "final_result", "text": "完整识别结果"}`
+        *   `{"type": "chunk_result", "chunk_index": 0, "text": "Result text"}`
+        *   `{"type": "final_result", "text": "Complete result text"}`
 
-### 2. REST API (管理与查询)
+### 2. REST API (Management & Query)
 
-*   `GET /api/v1/health`: 健康检查 (包含 DB、Redis、AI 服务状态)
-*   `GET /api/v1/history?limit=50`: 获取最近的历史会话
-*   `GET /api/v1/session/:id`: 获取特定会话详情
-*   `DELETE /api/v1/session/:id`: 删除会话
-*   `GET /api/v1/stats`: 获取服务统计 (Proxy to AI Service)
-*   `GET /api/v1/asr/queue/status`: 获取队列状态 (Proxy to AI Service)
+*   `GET /api/v1/health`: Health check (Includes DB, Redis, AI Service status)
+*   `GET /api/v1/history?limit=50`: Get recent history sessions
+*   `GET /api/v1/session/:id`: Get specific session details
+*   `DELETE /api/v1/session/:id`: Delete session
+*   `GET /api/v1/stats`: Get service stats (Proxy to AI Service)
+*   `GET /api/v1/asr/queue/status`: Get queue status (Proxy to AI Service)
 
-## 📂 目录结构
+## 📂 Directory Structure
 
 ```
 .
 ├── cmd/
-│   └── server/         # 程序入口
+│   └── server/         # Entry point
 ├── internal/
-│   ├── config/         # 配置管理
-│   ├── db/             # 数据库操作 (PostgreSQL)
-│   ├── handler/        # HTTP 和 WebSocket 处理
-│   ├── service/        # 核心业务逻辑 (Session, ASR调度)
-│   └── model/          # 数据模型
+│   ├── config/         # Configuration
+│   ├── db/             # Database operations (PostgreSQL)
+│   ├── handler/        # HTTP and WebSocket handlers
+│   ├── service/        # Core business logic (Session, ASR scheduling)
+│   └── model/          # Data models
 └── go.mod
 ```
+
+## 🧪 Load Testing System
+
+This project includes a high-performance load testing tool built-in to simulate high concurrent WebSocket requests and test system stability.
+**New Feature**: The test tool integrates a smart **Spin Loop Retry Mechanism**, which automatically waits and retries when high concurrent connections are temporarily refused, simulating real client behavior and avoiding invalid flood attacks.
+
+### 1. Build/Run Test Tool
+
+Tool located in `cmd/loadtester/`.
+
+```bash
+# Run test
+go run cmd/loadtester/main.go [options]
+```
+
+### 2. Common Arguments
+
+*   `-c <int>`: Concurrent connections (Default `500`, i.e., high concurrency stress test mode)
+*   `-d <duration>`: Test duration (e.g., `30s`, `5m`, `30m`, `1h`)
+*   `-mode <string>`: Audio length mode
+    *   `short`: Use default short audio (Recommended for high concurrency)
+    *   `medium`: Auto-generate and use 30 min audio (Function/Stability test)
+    *   `long`: Auto-generate and use 1 hour audio (Extreme stability test)
+*   `-server <addr>`: Target backend address (Default `localhost:8080`)
+
+### 3. Usage Examples
+
+**High Concurrency Short Audio Stress Test (500 Concurrency):**
+```bash
+go run cmd/loadtester/main.go -mode short -c 500 -d 1m
+```
+
+**Long Audio Stability Test (Single Connection 1 Hour):**
+```bash
+go run cmd/loadtester/main.go -mode long -c 1 -d 1h
+```
+
+**A `loadtest_report.md` will be generated after the test.**
+
+> [!NOTE]
+> When running long audio tests, the tool uses ffmpeg to generate temporary large files and cleans them up after testing. Ensure ffmpeg is installed.

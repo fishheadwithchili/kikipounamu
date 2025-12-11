@@ -1,5 +1,8 @@
 # Memory Leak Verification & Stress Test Guide
 
+> **Languages**: [English](STRESS_TEST_GUIDE.md) | [简体中文](STRESS_TEST_GUIDE.zh-CN.md)
+
+
 ## 🎯 Purpose
 
 This test suite verifies:

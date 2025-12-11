@@ -11,7 +11,7 @@ class RedisConfig(BaseSettings):
     port: int = 6379
     db: int = 0
     
-    model_config = SettingsConfigDict(env_prefix="REDIS_", env_file=".env")
+    model_config = SettingsConfigDict(env_prefix="REDIS_", env_file=".env", extra="ignore")
 
 
 class RedisClient:

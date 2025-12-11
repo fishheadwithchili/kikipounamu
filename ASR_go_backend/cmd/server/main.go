@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"sync/atomic"
 	"syscall"
 
 	"github.com/fishheadwithchili/asr-go-backend/internal/config"
@@ -16,12 +17,17 @@ import (
 )
 
 func main() {
-	// 初始化 Logger
-	logger.Init("development") // 或从 config 读取
-	defer logger.Sync()
-
 	// 加载配置
 	cfg := config.Load()
+
+	// 初始化 Logger
+	// Default to development if not set, but respect config
+	env := "production"
+	if os.Getenv("GO_ENV") == "development" {
+		env = "development"
+	}
+	logger.Init(env, cfg.LogLevel)
+	defer logger.Sync()
 
 	// 初始化数据库
 	if err := db.Init(cfg); err != nil {
@@ -30,12 +36,46 @@ func main() {
 		defer db.Close()
 	}
 
+	// 初始化 Redis
+	if err := db.InitRedis(cfg); err != nil {
+		logger.Fatal("🔴 Redis 连接失败", zap.Error(err))
+	} else {
+		defer db.CloseRedis()
+	}
+
 	// 初始化服务
 	asrService := service.NewASRService(cfg)
 	sessionService := service.NewSessionService(cfg)
 
 	// 创建路由
 	router := gin.Default()
+
+	// Limit concurrent connections
+	// Dynamic limit using atomic counter
+	var activeConnections atomic.Int32
+
+	router.Use(func(c *gin.Context) {
+		// Get latest config
+		maxConn := config.GetConfig().MaxConnections
+
+		// Check limit
+		current := activeConnections.Add(1)
+		defer activeConnections.Add(-1)
+
+		if int(current) > maxConn {
+			// Limit reached
+			logger.Warn("Too many connections, rejecting request",
+				zap.String("ip", c.ClientIP()),
+				zap.Int("current", int(current)),
+				zap.Int("max", maxConn))
+
+			c.JSON(http.StatusServiceUnavailable, gin.H{"error": "Too many connections, please try again later"})
+			c.Abort()
+			return
+		}
+
+		c.Next()
+	})
 
 	// CORS 中间件
 	router.Use(func(c *gin.Context) {

@@ -1,93 +1,95 @@
-# Performance Testing Framework - 使用指南
+# Performance Testing Framework - User Guide
 
-## 📦 框架组成
+> **Languages**: [English](testing_framework_guide.md) | [简体中文](testing_framework_guide.zh-CN.md)
 
-我已经为你创建了一套**可复用的性能测试框架**，包含以下组件：
+## 📦 Framework Composition
 
-### 1. 应用级资源追踪 ([tasks.py](file:///home/tiger/Projects/ASR_server/src/api/tasks.py))
-**位置：** [/home/tiger/Projects/ASR_server/src/api/tasks.py](file:///home/tiger/Projects/ASR_server/src/api/tasks.py)
+I have created a **Reusable Performance Testing Framework** for you, containing the following components:
 
-**功能：** Worker 内部自动记录每个任务的：
-- 内存起始/结束/峰值/增量
-- CPU 用户态/系统态时间
+### 1. Application Level Resource Tracking ([tasks.py](file:///home/tiger/Projects/ASR_server/src/api/tasks.py))
+**Location:** [/home/tiger/Projects/ASR_server/src/api/tasks.py](file:///home/tiger/Projects/ASR_server/src/api/tasks.py)
+
+**Function:** Worker internally automatically records each task's:
+- Memory Start/End/Peak/Delta
+- CPU User/System Time
 - RTF (Real-Time Factor)
 
-**输出：** 自动记录到 worker 日志
+**Output:** Automatically recorded to worker logs
 
-### 2. 系统级监控工具 ([pidstat_monitor.py](file:///home/tiger/Projects/ASR_go_backend/tests/pidstat_monitor.py))
-**位置：** [/home/tiger/Projects/ASR_go_backend/tests/pidstat_monitor.py](file:///home/tiger/Projects/ASR_go_backend/tests/pidstat_monitor.py)
+### 2. System Level Monitoring Tool ([pidstat_monitor.py](file:///home/tiger/Projects/ASR_go_backend/tests/pidstat_monitor.py))
+**Location:** [/home/tiger/Projects/ASR_go_backend/tests/pidstat_monitor.py](file:///home/tiger/Projects/ASR_go_backend/tests/pidstat_monitor.py)
 
-**功能：** 使用 [pidstat](file:///home/tiger/Projects/ASR_go_backend/tests/log_parser.py#16-52) 捕获所有进程（包括 fork 的子进程）的 CPU 和内存使用
+**Function:** Uses [pidstat](file:///home/tiger/Projects/ASR_go_backend/tests/log_parser.py#16-52) to capture CPU and memory usage of all processes (including forked child processes)
 
-**用法：**
+**Usage:**
 ```python
 from pidstat_monitor import PidStatMonitor
 
 with PidStatMonitor("output.log", interval=1):
-    # 你的测试代码
+    # Your test code
     pass
 ```
 
-### 3. 日志解析器 ([log_parser.py](file:///home/tiger/Projects/ASR_go_backend/tests/log_parser.py))
-**位置：** [/home/tiger/Projects/ASR_go_backend/tests/log_parser.py](file:///home/tiger/Projects/ASR_go_backend/tests/log_parser.py)
+### 3. Log Parser ([log_parser.py](file:///home/tiger/Projects/ASR_go_backend/tests/log_parser.py))
+**Location:** [/home/tiger/Projects/ASR_go_backend/tests/log_parser.py](file:///home/tiger/Projects/ASR_go_backend/tests/log_parser.py)
 
-**功能：**
-- 解析 pid stat日志提取 CPU/内存数据
-- 解析 worker 日志提取 RTF、内存指标
-- 生成 Mermaid 折线图代码
-- 生成性能摘要
+**Function:**
+- Parses pid stat logs to extract CPU/Memory data
+- Parses worker logs to extract RTF, memory metrics
+- Generates Mermaid line chart code
+- Generates performance summary
 
-### 4. 综合测试运行器 ([performance_test_runner.py](file:///home/tiger/Projects/ASR_go_backend/tests/performance_test_runner.py))
-**位置：** [/home/tiger/Projects/ASR_go_backend/tests/performance_test_runner.py](file:///home/tiger/Projects/ASR_go_backend/tests/performance_test_runner.py)
+### 4. Integrated Test Runner ([performance_test_runner.py](file:///home/tiger/Projects/ASR_go_backend/tests/performance_test_runner.py))
+**Location:** [/home/tiger/Projects/ASR_go_backend/tests/performance_test_runner.py](file:///home/tiger/Projects/ASR_go_backend/tests/performance_test_runner.py)
 
-**功能：** 一键运行完整性能测试流程
+**Function:** One-click run complete performance test flow
 
-## 🚀 使用方法
+## 🚀 Usage Methods
 
-### 方式一：自动化测试（推荐）
+### Method 1: Automated Test (Recommended)
 
-**1. 启动服务**（在单独的终端）：
+**1. Start Services** (In separate terminal):
 ```bash
 cd /home/tiger/Projects/ASR_server
 
-# Terminal 1: 启动 ASR Server
+# Terminal 1: Start ASR Server
 uvicorn src.main:app --port 8000
 
-# Terminal 2: 启动 RQ Worker  
+# Terminal 2: Start RQ Worker  
 rq worker asr-queue
 ```
 
-**2. 运行测试**：
+**2. Run Test**:
 ```bash
 cd /home/tiger/Projects/ASR_go_backend
-python3 tests/performance_test_runner.py [音频文件路径]
+python3 tests/performance_test_runner.py [audio_file_path]
 
-# 默认使用 long_audio_test.wav
+# Default uses long_audio_test.wav
 python3 tests/performance_test_runner.py
 ```
 
-**3. 查看报告**：
+**3. View Report**:
 ```
 tests/results/performance_report.md
 ```
 
-### 方式二：手动分步测试
+### Method 2: Manual Step-by-Step Test
 
-**1. 启动 pidstat 监控**：
+**1. Start pidstat monitoring**:
 ```bash
 pidstat -u -r -h -p ALL 1 > pidstat.log &
 PIDSTAT_PID=$!
 ```
 
-**2. 提交测试任务**：
+**2. Submit Test Task**:
 ```bash
 curl -X POST http://localhost:8000/api/v1/asr/submit \
   -F "audio=@/home/tiger/Projects/ASR_pc_front/recording/long_audio_test.wav"
 ```
 
-记录返回的 `task_id`。
+Record returned `task_id`.
 
-**3. 轮询等待完成**：
+**3. Poll Wait for Completion**:
 ```bash
 while true; do
   curl http://localhost:8000/api/v1/asr/result/{task_id}
@@ -95,12 +97,12 @@ while true; do
 done
 ```
 
-**4. 停止监控**：
+**4. Stop Monitoring**:
 ```bash
 kill $PIDSTAT_PID
 ```
 
-**5. 生成报告**：
+**5. Generate Report**:
 ```python
 from log_parser import LogParser
 
@@ -112,33 +114,33 @@ print(parser.generate_summary())
 print(parser.generate_mermaid_charts())
 ```
 
-## 📊 报告解读
+## 📊 Interpreting Report
 
-### 关键指标
+### Key Metrics
 
 **1. RTF (Real-Time Factor)**
-- **含义：** `processing_time / audio_duration`
-- **结论：**
-  - `RTF < 1.0` ✅ **加速有效** - 比实时快
-  - `RTF > 1.0` ⚠️  比实时慢
+- **Meaning:** `processing_time / audio_duration`
+- **Conclusion:**
+  - `RTF < 1.0` ✅ **Acceleration Effective** - Faster than real-time
+  - `RTF > 1.0` ⚠️  Slower than real-time
 
 **2. Memory Delta**
-- **含义：** 任务前后内存变化
-- **结论：**
-  - `接近 0` ✅ **OOM 防护有效** - 无内存泄漏
-  - `持续增长` ⚠️  可能有内存泄漏
+- **Meaning:** Memory change before and after task
+- **Conclusion:**
+  - `Close to 0` ✅ **OOM Protection Effective** - No memory leak
+  - `Continuous Growth` ⚠️  Possible memory leak
 
 **3. Peak Memory**
-- **含义：** 任务执行期间的内存峰值
-- **结论：**
-  - `< 500MB` ✅ 单任务内存可控
-  - `> 1GB` ⚠️  可能触发 OOM
+- **Meaning:** Memory peak during task execution
+- **Conclusion:**
+  - `< 500MB` ✅ Single task memory controllable
+  - `> 1GB` ⚠️  Excessive memory usage, risk of OOM
 
-**4. CPU 折线图**
-- **期望：** 有明显的处理峰值（不是全程 0%）
-- **如果全 0%：** 监控失效或任务太快
+**4. CPU Line Chart**
+- **Expectation:** Obvious processing peaks (Not flat 0%)
+- **If flat 0%:** Monitoring failed or task too fast
 
-##示例报告
+### Example Report
 
 ```markdown
 ## Performance Summary
@@ -158,17 +160,17 @@ xychart-beta
 \`\`\`
 ```
 
-这样你就可以真正看到：
-- ✅ CPU 确实有使用（证明监控有效）
-- ✅ RTF < 1 （证明加速机制有效）
-- ✅ 内存稳定 （证明 OOM 防护有效）
+This way you can truly see:
+- ✅ CPU is indeed used (Proves monitoring effective)
+- ✅ RTF < 1 (Proves acceleration mechanism effective)
+- ✅ Memory stable (Proves OOM protection effective)
 
-## 🔄 以后复用
+## 🔄 Reuse in Future
 
-每次需要性能测试时：
+Whenever performance test is needed:
 ```bash
 cd /home/tiger/Projects/ASR_go_backend
-python3 tests/performance_test_runner.py [你的音频文件]
+python3 tests/performance_test_runner.py [your_audio_file]
 ```
 
-报告自动生成在 `tests/results/performance_report.md`。
+Report automatically generated at `tests/results/performance_report.md`.

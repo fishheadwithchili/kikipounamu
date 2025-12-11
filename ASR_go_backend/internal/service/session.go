@@ -244,8 +244,6 @@ func (s *SessionService) WaitAndMerge(sessionID string) (string, float64) {
 	state.lastActive = time.Now()
 	state.mu.Unlock()
 
-	state.mu.Unlock()
-
 	logger.Debug("🔍 WaitAndMerge start",
 		zap.String("session_id", sessionID),
 		zap.Int("pending", pending),

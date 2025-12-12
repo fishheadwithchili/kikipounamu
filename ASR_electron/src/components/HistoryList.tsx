@@ -76,7 +76,7 @@ export const HistoryList: React.FC<HistoryListProps> = ({
                             margin: 0,
                             fontSize: '16px'
                         }}>
-                            ASR Pro
+                            Kikipounamu
                         </h2>
                         <p style={{
                             fontSize: '10px',
@@ -85,7 +85,7 @@ export const HistoryList: React.FC<HistoryListProps> = ({
                             letterSpacing: '0.2em',
                             textTransform: 'uppercase',
                             margin: '0'
-                        }}>Version 2.0</p>
+                        }}>Version 1.0</p>
                         <ConnectionIndicator status={connectionStatus} />
                     </div>
                 </div>

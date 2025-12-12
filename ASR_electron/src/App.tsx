@@ -187,10 +187,17 @@ function App() {
     });
 
     const cleanupResult = window.ipcRenderer.on('asr-result', (_event, data: any) => {
-      if (data.text) {
-        if (data.is_final) {
-          window.ipcRenderer.invoke('write-debug-log', `[App-Result] FINAL: "${data.text.substring(0, 50)}..."`);
-          // FINAL RESULT
+      // Handle final result first - MUST decrement queue even if text is empty
+      if (data.is_final) {
+        window.ipcRenderer.invoke('write-debug-log', `[App-Result] FINAL: "${(data.text || '').substring(0, 50)}..."`);
+
+        // Update Queue - Use chunk_count from backend if available
+        const processedCount = data.chunk_count || 1;
+        setQueueCount(prev => Math.max(0, prev - processedCount));
+        setProcessingStatus('done');
+
+        // Only add to segments/history if there's actual text
+        if (data.text) {
           const newItem = {
             timestamp: new Date().toLocaleTimeString(),
             text: data.text
@@ -205,19 +212,17 @@ function App() {
           // 3. Clear interim
           setInterimText('');
 
-          // 4. Update Queue - Use chunk_count from backend if available
-          const processedCount = data.chunk_count || 1;
-          setQueueCount(prev => Math.max(0, prev - processedCount));
-          setProcessingStatus('done');
-
           if (autoPaste) {
             window.ipcRenderer.invoke('insert-text', data.text);
           }
         } else {
-          // INTERIM RESULT
-          window.ipcRenderer.invoke('write-debug-log', `[App-Result] INTERIM: "${data.text.substring(0, 50)}..."`);
-          setInterimText(data.text);
+          // Empty result - just clear interim
+          setInterimText('');
         }
+      } else if (data.text) {
+        // INTERIM RESULT (only if there's text)
+        window.ipcRenderer.invoke('write-debug-log', `[App-Result] INTERIM: "${data.text.substring(0, 50)}..."`);
+        setInterimText(data.text);
       }
     });
 

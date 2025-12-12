@@ -167,9 +167,18 @@ export function setupIpc(asrClient: ASRClient) {
     ipcMain.handle('finalize-temp-recording', async (_event, sessionId: string, saveDirectory: string | null) => {
         console.log(`[CrashProtect] Finalizing session: ${sessionId}`);
         const stream = activeStreams.get(sessionId);
+
+        // 1. Ensure stream is finished writing
         if (stream) {
-            stream.end();
+            // Remove from active map immediately to prevent new writes
             activeStreams.delete(sessionId);
+
+            // Wrap end() in promise to ensure flush completion
+            await new Promise<void>((resolve) => {
+                stream.end(() => {
+                    resolve();
+                });
+            });
         }
 
         const tempFileName = `temp_recording_${sessionId}.raw`;
@@ -178,12 +187,6 @@ export function setupIpc(asrClient: ASRClient) {
         if (!fs.existsSync(tempFilePath)) {
             return { success: false, error: 'Temp file not found' };
         }
-
-        // If saveDirectory is null, we discard? 
-        // No, if saveDirectory is null, we want to save to Default location (Documents).
-        // If we want to discard, we should explicitly call 'discard-temp-recording'.
-        // But App.tsx logic might pass null if it wants default path.
-        // Let's mimic 'save-audio-file' behavior.
 
         try {
             const targetDir = saveDirectory || path.join(app.getPath('documents'), 'ASR_Recordings');
@@ -195,18 +198,18 @@ export function setupIpc(asrClient: ASRClient) {
             const filename = `recording-${timestamp}.wav`;
             const finalPath = path.join(targetDir, filename);
 
-            // Read raw data
-            const rawBuffer = fs.readFileSync(tempFilePath);
+            // 2. Use Async file operations to avoid blocking Main Thread
+            const rawBuffer = await fs.promises.readFile(tempFilePath);
 
             // Add WAV header
             const wavHeader = createWavHeader(rawBuffer.length, 16000);
             const finalBuffer = Buffer.concat([wavHeader, rawBuffer]);
 
-            fs.writeFileSync(finalPath, finalBuffer);
+            await fs.promises.writeFile(finalPath, finalBuffer);
             logger.info('Finalized temp recording', { sessionId, path: finalPath, size: finalBuffer.length });
 
             // Delete temp
-            fs.unlinkSync(tempFilePath);
+            await fs.promises.unlink(tempFilePath);
 
             return { success: true, filePath: finalPath };
         } catch (err: any) {

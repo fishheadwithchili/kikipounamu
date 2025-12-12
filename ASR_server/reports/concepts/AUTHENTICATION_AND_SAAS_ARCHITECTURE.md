@@ -13,7 +13,7 @@
 In a microservice architecture, does the ASR node itself need to implement user login and authentication logic?
 - **Current Requirement**: Internal node only, called by TG Bot backend.
 - **Future Requirement**: May be distributed as an open SaaS node to other developers, or build a superior routing platform.
-- **Dilemma**: Should we implement user permission management inside the ASR service now?
+- **Dilemma**: Should I implement user permission management inside the ASR service now?
 
 ## 2. Industry Research & Architecture Patterns
 

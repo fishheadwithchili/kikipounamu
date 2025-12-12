@@ -26,7 +26,7 @@ During system startup, despite all services appearing green (running):
     Output: `0 queues, 0 jobs total`. The workers were `idle`.
 
 2.  **Checked Redis Native Keys**:
-    Since RQ was empty, we checked if data was landing *anywhere* in Redis.
+    Since RQ was empty, I checked if data was landing *anywhere* in Redis.
     ```bash
     redis-cli KEYS "*"
     redis-cli LLEN asr_chunk_queue

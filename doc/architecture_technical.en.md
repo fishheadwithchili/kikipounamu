@@ -106,7 +106,7 @@ Testing showed massive **Timeouts** at 500 concurrency. This is not a code bug b
 ## 6. Deployment & Security Strategy
 
 ### 6.1 Hybrid Deployment
-Addressing the "Docker Tax" (complex GPU drivers, large image sizes) for AI projects, we defined a tiered deployment strategy:
+Addressing the "Docker Tax" (complex GPU drivers, large image sizes) for AI projects, I defined a tiered deployment strategy:
 *   **Infrastructure**: Redis and PostgreSQL recommended running in **Docker** for consistency and isolation.
 *   **Computing**: Python Worker recommended running on **Bare Metal**, directly calling host CUDA drivers to avoid complex NVIDIA Container Toolkit configuration, utilizing `uv` for efficient environment management.
 
@@ -185,4 +185,4 @@ Based on current limitations and business expectations:
 
 ---
 
-> **Conclusion**: Project kikipounamu's architecture has withstood high-concurrency combat tests. Through rational layering and technology selection, we have built a modern ASR platform capable of supporting current business while possessing strong horizontal scalability.
+> **Conclusion**: Project kikipounamu's architecture has withstood high-concurrency combat tests. Through rational layering and technology selection, I have built a modern ASR platform capable of supporting current business while possessing strong horizontal scalability.

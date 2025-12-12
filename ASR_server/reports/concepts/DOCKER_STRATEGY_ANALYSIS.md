@@ -5,7 +5,7 @@
 **Hardware**: RTX 5060 Ti (Blackwell), CUDA 12.8, PyTorch 2.9.1+
 
 ## 1. Problem Statement
-The project currently runs on "naked metal" (directly on host). We evaluated the necessity and timing of introducing Docker, specifically addressing:
+The project currently runs on "naked metal" (directly on host). I evaluated the necessity and timing of introducing Docker, specifically addressing:
 1.  **PostgreSQL Persistence**: Concerns about data safety and version incompatibility in Docker.
 2.  **Resource Usage**: How to prevent Docker containers from consuming resources when idle.
 3.  **AI/CUDA Complexity**: Whether Docker adds unnecessary overhead for cutting-edge hardware environments.

@@ -20,7 +20,7 @@
 *   **Phenomenon**: Manual `uv pip install` works, but `uv lock` fails:
     > `No solution found... torch depends on pytorch-triton...`
 *   **Cause**:
-    1.  **Explicit Index Isolation**: We set nightly source as `explicit = true`, causing `uv` not to search there for `torch`'s dependencies (like `pytorch-triton`) automatically.
+    1.  **Explicit Index Isolation**: I set nightly source as `explicit = true`, causing `uv` not to search there for `torch`'s dependencies (like `pytorch-triton`) automatically.
     2.  **Undeclared Indirect Dependency**: `pytorch-triton` is an indirect dependency of `torch`, but only exists in nightly source. Without explicitly telling `uv` where to find it, resolution fails.
     3.  **Platform Diff**: `pytorch-triton` in Nightly often only provides Linux version, causing `uv` to fail when trying to resolve for all platforms (including Windows/macOS).
 

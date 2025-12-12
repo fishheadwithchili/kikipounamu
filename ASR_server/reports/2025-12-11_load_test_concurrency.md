@@ -3,7 +3,7 @@
 > **Languages**: [English](2025-12-11_load_test_concurrency.md) | [简体中文](2025-12-11_load_test_concurrency.zh-CN.md)
 
 ## 1. Background
-To verify the stability and logging system performance of `ASR_go_backend` under high concurrency, we developed a dedicated load testing tool (`cmd/loadtester`) and set a target of 500 concurrent connections. During this process, we encountered and solved multiple issues regarding configuration and tool implementation.
+To verify the stability and logging system performance of `ASR_go_backend` under high concurrency, I developed a dedicated load testing tool (`cmd/loadtester`) and set a target of 500 concurrent connections. During this process, I encountered and solved multiple issues regarding configuration and tool implementation.
 
 ## 2. Issues & Solutions
 

@@ -27,7 +27,7 @@ Since `2.9.1 > 2.7.0`, `uv` automatically selected this newer version.
 ```
 
 ### 3. Actual Environment Verification
-We ran check commands in your environment, results:
+I ran check commands in your environment, results:
 - **PyTorch Version**: `2.9.1+cu128`
 - **CUDA Version**: `12.8`
 
@@ -36,7 +36,7 @@ The CUDA components you are concerned about **have also been cached by uv**.
 
 In this PyTorch version, CUDA libraries are no longer bundled in the main `torch` package, but installed as separate dependencies (`nvidia-*`).
 
-We found these dependencies in `uv.lock`:
+I found these dependencies in `uv.lock`:
 - `nvidia-cuda-runtime-cu12`
 - `nvidia-cudnn-cu12`
 - `nvidia-cublas-cu12`

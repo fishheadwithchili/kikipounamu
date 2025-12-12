@@ -20,7 +20,7 @@ I designed and executed a **Destructive Stress Test**, aimed at exploring the ph
 
 **Conclusion: System is very strong, did not crash (Stable), and successfully withstood high pressure test.**
 
-*   **Queue Backlog Verification**: After fixing API bottleneck, Redis queue instantly piled up **401 tasks**. This proves we successfully exerted pressure on background Workers beyond their processing capability (which is the purpose of stress test).
+*   **Queue Backlog Verification**: After fixing API bottleneck, Redis queue instantly piled up **401 tasks**. This proves I successfully exerted pressure on background Workers beyond their processing capability (which is the purpose of stress test).
 *   **Resource Usage**:
     *   **Memory**: Peak only **4.93 GB** (System has 32GB). Memory management (GC + malloc_trim) works normally, no OOM.
     *   **CPU**: CPU usage was high during the storm, but system response was normal.

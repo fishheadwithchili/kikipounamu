@@ -8,7 +8,7 @@ This guide is based on FunASR official documentation and best practices, customi
 
 ## 1. Solution Architecture
 
-We adopt **"Three-in-One" Modular Architecture** to ensure best recognition accuracy and readability:
+I adopt **"Three-in-One" Modular Architecture** to ensure best recognition accuracy and readability:
 
 | Component | Model Name | Size | Role |
 | :--- | :--- | :--- | :--- |

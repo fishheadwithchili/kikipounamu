@@ -59,7 +59,7 @@ FunASR VAD 输出的 `speechProb` 应该理解为:
 
 ```typescript
 } else {
-    // vad mode: only buffer if we were speaking (hangover)
+    // vad mode: only buffer if speech was active (hangover)
     if (isSpeaking) {
         speechBufferRef.current.push(inputBuffer.slice());
     }

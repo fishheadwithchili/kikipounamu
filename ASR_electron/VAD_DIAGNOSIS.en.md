@@ -57,7 +57,7 @@ From log `🔈 VAD Silence Prob: 0.004`:
 
 ```typescript
 } else {
-    // vad mode: only buffer if we were speaking (hangover)
+    // vad mode: only buffer if speech was active (hangover)
     if (isSpeaking) {
         speechBufferRef.current.push(inputBuffer.slice());
     }

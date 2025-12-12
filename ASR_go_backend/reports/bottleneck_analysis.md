@@ -117,7 +117,7 @@ Goal: Completely solve queuing issue, achieve 100% real-time rate.
 ---
 
 ## 6. Resilience Limits (Stress Test Results)
-We conducted "Crazy Tests" (Chaos, Thundering Herd, Zombie) to find the system's breaking points.
+I conducted "Crazy Tests" (Chaos, Thundering Herd, Zombie) to find the system's breaking points.
 
 ### 6.1 Chaos Test (Worker Killing)
 *   **Action**: Randomly killed Python Workers during high load.
@@ -129,7 +129,7 @@ We conducted "Crazy Tests" (Chaos, Thundering Herd, Zombie) to find the system's
 *   **Action**: 2000 users reconnected instantly.
 *   **Result**: 1000 succeeded, 1000 rejected (HTTP 503).
 *   **Insight**: The `MAX_CONNECTIONS=2000` protection is **Working**.
-    *   *Trade-off*: Rejecting users is better than crashing the server. To support 5000+ users, we must increase `ulimit` and load balance across multiple Go Backends.
+    *   *Trade-off*: Rejecting users is better than crashing the server. To support 5000+ users, I must increase `ulimit` and load balance across multiple Go Backends.
 
 ### 6.3 Zombie Horde (Slow Loris)
 *   **Action**: 1000 idle connections holding sockets.

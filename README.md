@@ -1,6 +1,8 @@
-<img src="ASR_electron/src/icon/icon_128.png" align="right" width="128" height="128">
+<div align="center">
+  <img src="ASR_electron/src/icon/icon_128.png" width="128" height="128">
+</div>
 
-# KikiPounamu (ASR System)
+<h1 align="center">KikiPounamu (ASR System)</h1>
 
 > Enterprise-grade distributed microservices ASR system. Features dynamic scaling and high-concurrency resilience. Built on Event-Driven Architecture with Go, Redis Streams & Python.
 
@@ -19,7 +21,7 @@
 
 This project is developed and tested in the following specific environment.
 
-*   **OS**: Windows 11 + WSL2 (Ubuntu 22.04.5 LTS)
+*   **OS**: WSL2 (Ubuntu 22.04.5 LTS) on Windows 11
 *   **Python**: 3.10.12
 *   **Go**: 1.24.5
 *   **Redis**: 6.0.16

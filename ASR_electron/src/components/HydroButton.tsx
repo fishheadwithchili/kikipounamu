@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 
 const ANIMATION_TIMING = {
     FAST: 50,   // ms for impact
@@ -26,37 +26,46 @@ export const HydroButton = React.memo(({
     ...props
 }: HydroButtonProps) => {
     const [transformStyle, setTransformStyle] = useState<React.CSSProperties>({});
+    const [isPressed, setIsPressed] = useState(false);
     const buttonRef = useRef<HTMLButtonElement>(null);
 
     const handleMouseDown = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
         if (disabled) return;
+        setIsPressed(true);
         const btn = e.currentTarget;
         const rect = btn.getBoundingClientRect();
         const centerX = rect.width / 2;
         const centerY = rect.height / 2;
 
-        // Calculate distance from center to determine tilt angle
         const x = e.clientX - rect.left - centerX;
         const y = e.clientY - rect.top - centerY;
 
-        // Max tilt set to 12 degrees for visible but subtle effect
         const rotateX = -1 * ((y / centerY) * 12);
         const rotateY = (x / centerX) * 12;
 
         setTransformStyle({
-            // Fast transition (0.05s) for immediate "impact" feel
             transition: `transform ${ANIMATION_TIMING.FAST}ms ease-out`,
             transform: `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(0.96) translateY(4px)`,
         });
     }, [disabled]);
 
     const handleMouseUp = useCallback(() => {
+        setIsPressed(false);
         setTransformStyle({
-            // Slower, elastic bezier curve for "buoyant" release feel
             transition: `transform ${ANIMATION_TIMING.SLOW}ms cubic-bezier(0.34, 1.56, 0.64, 1)`,
             transform: 'perspective(800px) rotateX(0deg) rotateY(0deg) scale(1) translateY(0)',
         });
     }, []);
+
+    useEffect(() => {
+        if (isPressed) {
+            setTransformStyle({
+                transition: `transform ${ANIMATION_TIMING.SLOW}ms cubic-bezier(0.34, 1.56, 0.64, 1)`,
+                transform: 'perspective(800px) rotateX(0deg) rotateY(0deg) scale(1) translateY(0)',
+            });
+            setIsPressed(false);
+        }
+    }, [children]);
 
     const baseStyle: React.CSSProperties = {
         transitionProperty: 'box-shadow',
@@ -65,6 +74,10 @@ export const HydroButton = React.memo(({
         background: 'transparent',
         cursor: disabled ? 'not-allowed' : 'pointer',
         ...style,
+    };
+
+    const finalStyle: React.CSSProperties = {
+        ...baseStyle,
         ...transformStyle,
     };
 
@@ -72,7 +85,7 @@ export const HydroButton = React.memo(({
         <button
             ref={buttonRef}
             className={className}
-            style={baseStyle}
+            style={finalStyle}
             onMouseDown={handleMouseDown}
             onMouseUp={handleMouseUp}
             onMouseLeave={handleMouseUp}

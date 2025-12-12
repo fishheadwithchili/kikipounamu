@@ -135,7 +135,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                                             cursor: 'pointer',
                                             textAlign: 'left',
                                             width: '100%',
-                                            transition: 'all 0.2s',
+                                            transition: 'background-color 0.2s, border-color 0.2s, box-shadow 0.2s',
                                             boxShadow: isActive ? '0 0 15px rgba(59, 130, 246, 0.15)' : 'none'
                                         }}
                                         onMouseEnter={e => !isActive && (e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)')}
@@ -166,30 +166,32 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                             })}
                         </div>
 
-                        {/* Time Limit Input */}
-                        {currentMode === 'time_limit' && (
-                            <div style={{ marginTop: '12px', marginLeft: '32px' }}>
-                                <input
-                                    type="number"
-                                    min="10"
-                                    max="3600"
-                                    value={timeLimit}
-                                    onChange={(e) => setTimeLimit(parseInt(e.target.value) || 60)}
-                                    style={{
-                                        backgroundColor: 'rgba(0, 0, 0, 0.2)',
-                                        border: '1px solid rgba(255, 255, 255, 0.1)',
-                                        borderRadius: '12px',
-                                        padding: '10px',
-                                        color: 'white',
-                                        width: '100%',
-                                        outline: 'none',
-                                        transition: 'all 0.2s'
-                                    }}
-                                    onFocus={e => e.target.style.borderColor = 'rgba(59, 130, 246, 0.5)'}
-                                    onBlur={e => e.target.style.borderColor = 'rgba(255, 255, 255, 0.1)'}
-                                />
-                            </div>
-                        )}
+                        {/* Time Limit Input - 始终显示，非time_limit模式时灰掉 */}
+                        <div style={{ marginTop: '12px', paddingLeft: '32px' }}>
+                            <input
+                                type="number"
+                                min="10"
+                                max="3600"
+                                value={timeLimit}
+                                onChange={(e) => setTimeLimit(parseInt(e.target.value) || 60)}
+                                disabled={currentMode !== 'time_limit'}
+                                style={{
+                                    backgroundColor: 'rgba(0, 0, 0, 0.2)',
+                                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                                    borderRadius: '12px',
+                                    padding: '10px',
+                                    color: currentMode === 'time_limit' ? 'white' : 'rgba(255, 255, 255, 0.3)',
+                                    width: '100%',
+                                    boxSizing: 'border-box',
+                                    outline: 'none',
+                                    transition: 'color 0.2s, border-color 0.2s',
+                                    opacity: currentMode === 'time_limit' ? 1 : 0.5,
+                                    cursor: currentMode === 'time_limit' ? 'text' : 'not-allowed'
+                                }}
+                                onFocus={e => currentMode === 'time_limit' && (e.target.style.borderColor = 'rgba(59, 130, 246, 0.5)')}
+                                onBlur={e => e.target.style.borderColor = 'rgba(255, 255, 255, 0.1)'}
+                            />
+                        </div>
                     </div>
 
                     {/* Path & Limits */}
@@ -210,6 +212,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                                 onChange={(e) => setMaxTextHistory(parseInt(e.target.value) || 10)}
                                 style={{
                                     width: '100%',
+                                    boxSizing: 'border-box',
                                     backgroundColor: 'rgba(0, 0, 0, 0.2)',
                                     border: '1px solid rgba(255, 255, 255, 0.1)',
                                     borderRadius: '12px',
@@ -237,6 +240,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                                 onChange={(e) => setMaxAudioHistory(parseInt(e.target.value) || 5)}
                                 style={{
                                     width: '100%',
+                                    boxSizing: 'border-box',
                                     backgroundColor: 'rgba(0, 0, 0, 0.2)',
                                     border: '1px solid rgba(255, 255, 255, 0.1)',
                                     borderRadius: '12px',
@@ -268,6 +272,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                                 onChange={(e) => setSavePath(e.target.value)}
                                 style={{
                                     flex: 1,
+                                    boxSizing: 'border-box',
                                     backgroundColor: 'rgba(0, 0, 0, 0.2)',
                                     border: '1px solid rgba(255, 255, 255, 0.1)',
                                     borderRadius: '12px',

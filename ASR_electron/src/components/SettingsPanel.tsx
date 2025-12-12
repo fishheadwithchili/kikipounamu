@@ -78,8 +78,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                             {[
                                 { value: 'unlimited', label: 'Unlimited (No Auto-Cut)', desc: 'Best for long stream dictation' },
-                                { value: 'time_limit', label: 'Time Limit', desc: 'Forces a cut after set duration' },
-                                { value: 'vad', label: 'Smart VAD', desc: 'Cuts on silence > 500ms' }
+                                { value: 'time_limit', label: 'Time Limit', desc: 'Forces a cut after set duration' }
                             ].map((option) => (
                                 <div
                                     key={option.value}

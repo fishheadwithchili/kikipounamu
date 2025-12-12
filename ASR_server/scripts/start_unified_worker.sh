@@ -4,6 +4,9 @@
 
 set -e
 
+# Ensure we are in the project root directory
+cd "$(dirname "$0")/.."
+
 # Load environment variables
 if [ -f .env ]; then
     export $(cat .env | grep -v '^#' | xargs)
@@ -22,10 +25,23 @@ echo "👥 Group: $GROUP_NAME"
 echo "🔢 Workers: $WORKER_COUNT"
 echo ""
 
-# Check if venv exists
-if [ -d "venv" ]; then
-    echo "📦 Activating virtual environment..."
+# Check if venv exists (prefer .venv created by uv)
+if [ -d ".venv" ]; then
+    echo "📦 Activating virtual environment (.venv)..."
+    source .venv/bin/activate
+elif [ -d "venv" ]; then
+    echo "📦 Activating virtual environment (venv)..."
     source venv/bin/activate
+fi
+
+# Auto-install dependencies
+echo "📦 Checking and updating dependencies..."
+if command -v uv >/dev/null 2>&1; then
+    echo "   Using uv to sync dependencies..."
+    uv sync
+else
+    echo "⚠️ 'uv' not found. Falling back to pip..."
+    pip install -e .
 fi
 
 # Trap to cleanup background jobs on exit

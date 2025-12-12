@@ -53,7 +53,7 @@ func Load() *Config {
 	viper.SetDefault("MAX_AUDIO_FILES_PER_USER", 10)
 	viper.SetDefault("DB_HOST", "localhost")
 	viper.SetDefault("DB_PORT", 5432)
-	viper.SetDefault("DB_USER", "root")
+	viper.SetDefault("DB_USER", "postgres")
 	viper.SetDefault("DB_PASSWORD", "123456")
 	viper.SetDefault("DB_NAME", "katydid")
 	viper.SetDefault("AUTO_CREATE_DB", true)

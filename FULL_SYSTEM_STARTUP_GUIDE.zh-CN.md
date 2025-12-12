@@ -72,12 +72,13 @@ sudo service postgresql start
 ```
 
 ### 1. 数据库配置
-由于项目默认使用 `root` 用户，建议创建对应角色:
+项目已配置为使用 `postgres` 用户（密码 `123456`）连接。
+后端启动时会自动创建名为 `katydid` 的数据库，无需手动创建。
 
-```sql
-CREATE USER root WITH PASSWORD '123456';
-CREATE DATABASE root OWNER root;
-GRANT ALL PRIVILEGES ON DATABASE root TO root;
+确保 `postgres` 用户密码正确：
+```bash
+# 修改 postgres 用户密码为 123456
+echo "ALTER USER postgres WITH PASSWORD '123456';" | sudo -u postgres psql
 ```
 
 ---
@@ -86,7 +87,7 @@ GRANT ALL PRIVILEGES ON DATABASE root TO root;
 
 1.  **进入目录**:
     ```bash
-    cd /home/tiger/Projects/ASR_server
+    cd /home/tiger/Projects/Katydid/ASR_server
     ```
 
 2.  **设置 GPU 环境变量 (如果代码支持)**:
@@ -104,54 +105,21 @@ GRANT ALL PRIVILEGES ON DATABASE root TO root;
 
 4.  **启动 API 服务**:
     ```bash
-    uvicorn src.api.main:app --host 0.0.0.0 --port 8000
+    ./scripts/start_api_server.sh
+    # API 服务将在 http://0.0.0.0:8000 启动
     ```
 
 ---
 
 ## 🐹 3. 部署 ASR_go_backend (Go)
 
-### 1. 编译 Go 服务
+### 1. 启动服务 (自动处理依赖、编译和运行)
+
+直接运行启动脚本即可，它会自动检查依赖、编译代码并启动服务：
 
 ```bash
-cd /home/tiger/Projects/ASR_go_backend
-go mod tidy
-go build -o asr-backend cmd/server/main.go
-```
-
-### 2. 配置 Systemd 服务 (可选)
-
-创建 `/etc/systemd/system/asr-backend.service`:
-
-```ini
-[Unit]
-Description=ASR Go Backend Service
-After=network.target postgresql.service
-
-[Service]
-Type=simple
-User=tiger
-WorkingDirectory=/home/tiger/Projects/ASR_go_backend
-ExecStart=/home/tiger/Projects/ASR_go_backend/asr-backend
-Restart=always
-Environment="PORT=8080"
-Environment="DB_USER=root"
-Environment="DB_PASSWORD=123456"
-Environment="DB_NAME=root"
-Environment="FUNASR_ADDR=localhost:8000"
-
-[Install]
-WantedBy=multi-user.target
-```
-
-### 3. 启动
-
-```bash
-# 直接启动
-./asr-backend
-
-# 或者作为服务启动
-sudo systemctl start asr-backend
+cd /home/tiger/Projects/Katydid/ASR_go_backend
+./scripts/start_backend.sh
 ```
 
 ## 🌐 Nginx 反向代理 (可选)
@@ -184,20 +152,16 @@ server {
 
 ## ⚛️ 4. 部署 ASR_electron (Electron/React)
 
-1.  **进入目录**:
-    ```bash
-    cd /home/tiger/Projects/ASR_electron
-    ```
+### 1. 启动应用 (自动处理依赖)
 
-2.  **安装依赖**:
-    ```bash
-    pnpm install
-    ```
+直接运行启动脚本即可，它会自动检查并安装所需的系统依赖（可能需要输入 sudo 密码）：
 
-3.  **启动**:
-    ```bash
-    pnpm dev
-    ```
+直接运行启动脚本即可：
+
+```bash
+cd /home/tiger/Projects/Katydid/ASR_electron
+./scripts/start_electron.sh
+```
 
 ---
 

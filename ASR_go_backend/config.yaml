@@ -7,6 +7,6 @@ LOG_LEVEL: "info"
 MAX_AUDIO_FILES_PER_USER: 10
 DB_HOST: "localhost"
 DB_PORT: 5432
-DB_USER: "root"
+DB_USER: "postgres"
 DB_PASSWORD: "123456"
-DB_NAME: "root"
+DB_NAME: "katydid"

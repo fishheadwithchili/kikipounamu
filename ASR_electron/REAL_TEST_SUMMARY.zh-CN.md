@@ -1,5 +1,7 @@
 # VAD 真实测试总结
 
+> **语言**: [English](REAL_TEST_SUMMARY.en.md) | [简体中文](REAL_TEST_SUMMARY.zh-CN.md)
+
 ## 问题识别
 
 经过尝试创建 Node.js 自动化测试，我发现了一些关键点：

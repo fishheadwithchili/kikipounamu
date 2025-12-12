@@ -1,5 +1,7 @@
 # VAD 问题诊断报告
 
+> **语言**: [English](VAD_DIAGNOSIS.en.md) | [简体中文](VAD_DIAGNOSIS.zh-CN.md)
+
 ## 问题现象
 
 1. **一直显示 processing** - 音频发送后一直在处理状态

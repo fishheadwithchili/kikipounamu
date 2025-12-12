@@ -1,5 +1,7 @@
 # FunASR VAD 真实模型测试指南
 
+> **语言**: [English](REAL_VAD_TEST_GUIDE.en.md) | [简体中文](REAL_VAD_TEST_GUIDE.zh-CN.md)
+
 ## 测试环境
 
 已启动的服务：

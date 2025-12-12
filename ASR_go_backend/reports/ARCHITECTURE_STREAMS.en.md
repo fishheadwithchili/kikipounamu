@@ -1,6 +1,8 @@
 # Redis Streams Architecture
 
-> 统一 ASR_server (Python) 和 ASR_go_backend (Go) 的高并发任务处理架构
+> **Language**: [English](ARCHITECTURE_STREAMS.en.md) | [简体中文](ARCHITECTURE_STREAMS.zh-CN.md)
+
+> Unified ASR_server (Python) and ASR_go_backend (Go) High Concurrency Task Processing Architecture
 
 ## Why Redis Streams?
 

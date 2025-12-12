@@ -1,5 +1,7 @@
 # Electron Logging System Guide
 
+> **Language**: [English](LOGGING_GUIDE.en.md) | [简体中文](LOGGING_GUIDE.zh-CN.md)
+
 This document describes the logging system implemented for the ASR Electron application using `electron-log`.
 
 ## Overview

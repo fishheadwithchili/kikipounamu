@@ -1,5 +1,7 @@
 # VAD 测试报告
 
+> **语言**: [English](VAD_TEST_REPORT.en.md) | [简体中文](VAD_TEST_REPORT.zh-CN.md)
+
 ## 测试信息
 
 - **测试时间**: 2025-12-10 21:22

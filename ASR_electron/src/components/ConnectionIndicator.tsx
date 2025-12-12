@@ -30,16 +30,6 @@ export const ConnectionIndicator: React.FC<ConnectionIndicatorProps> = ({ status
                     ? `0 0 8px ${getStatusColor()}`
                     : 'none'
             }} />
-            <p style={{
-                fontSize: '10px',
-                color: 'rgba(255, 255, 255, 0.4)',
-                fontFamily: 'monospace',
-                letterSpacing: '1px',
-                textTransform: 'uppercase',
-                margin: 0
-            }}>
-                {status}
-            </p>
         </div>
     );
 };

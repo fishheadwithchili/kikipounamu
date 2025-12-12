@@ -69,7 +69,7 @@ export const HistoryList: React.FC<HistoryListProps> = ({
             {/* Logo and Status */}
             <div style={{ padding: '20px', flexShrink: 0 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
-                    <Logo3D onClick={() => setShowAboutModal(true)} />
+                    <Logo3D onClick={() => setShowAboutModal(true)} size={48} />
                     <div>
                         <h2 style={{
                             fontWeight: 600,

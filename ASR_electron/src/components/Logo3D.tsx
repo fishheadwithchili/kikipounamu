@@ -11,9 +11,10 @@ import React from 'react';
 
 interface Logo3DProps {
     onClick?: () => void;
+    size?: number;
 }
 
-export const Logo3D = React.memo(({ onClick }: Logo3DProps) => (
+export const Logo3D = React.memo(({ onClick, size = 32 }: Logo3DProps) => (
     <div
         style={{
             position: 'relative',
@@ -68,8 +69,8 @@ export const Logo3D = React.memo(({ onClick }: Logo3DProps) => (
                     src="/icon.png"
                     alt="App Logo"
                     style={{
-                        width: '32px',
-                        height: '32px',
+                        width: `${size}px`,
+                        height: `${size}px`,
                         borderRadius: '8px',
                         boxShadow: '0 10px 15px -3px rgba(99, 102, 241, 0.3)',
                         objectFit: 'contain'

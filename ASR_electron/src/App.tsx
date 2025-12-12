@@ -462,7 +462,7 @@ function App() {
       <div style={{
         position: 'absolute',
         top: '10px',
-        left: '14px',
+        right: '14px',
         zIndex: 110,
         willChange: 'transform', // Isolated layer
         transform: 'translate3d(0,0,0)',

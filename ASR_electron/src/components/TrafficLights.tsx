@@ -23,27 +23,7 @@ export const TrafficLights = () => {
                 ...({ WebkitAppRegion: 'no-drag' } as any)
             }}
         >
-            {/* Close */}
-            <div
-                onClick={() => handleAction('close')}
-                style={{
-                    width: '12px',
-                    height: '12px',
-                    borderRadius: '50%',
-                    backgroundColor: '#ff5f56',
-                    border: '1px solid #e0443e',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    cursor: 'pointer',
-                    fontSize: '8px',
-                    color: 'rgba(0,0,0,0.5)'
-                }}
-            >
-                {hovered && <X size={8} strokeWidth={3} />}
-            </div>
-
-            {/* Minimize */}
+            {/* Minimize (Yellow) - First */}
             <div
                 onClick={() => handleAction('minimize')}
                 style={{
@@ -61,6 +41,26 @@ export const TrafficLights = () => {
                 }}
             >
                 {hovered && <div style={{ width: '6px', height: '2px', backgroundColor: 'rgba(0,0,0,0.5)' }} />}
+            </div>
+
+            {/* Close (Red) - Second (Far Right) */}
+            <div
+                onClick={() => handleAction('close')}
+                style={{
+                    width: '12px',
+                    height: '12px',
+                    borderRadius: '50%',
+                    backgroundColor: '#ff5f56',
+                    border: '1px solid #e0443e',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'pointer',
+                    fontSize: '8px',
+                    color: 'rgba(0,0,0,0.5)'
+                }}
+            >
+                {hovered && <X size={8} strokeWidth={3} />}
             </div>
         </div>
     );

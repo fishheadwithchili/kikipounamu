@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { HydroButton } from './HydroButton';
-import { X, Github, Copy, ExternalLink, Check } from 'lucide-react';
+import { X, Github, Copy, Check } from 'lucide-react';
 import { Logo3D } from './Logo3D';
 
 interface AboutModalProps {
@@ -16,23 +16,6 @@ export const AboutModal: React.FC<AboutModalProps> = ({ onClose }) => {
         navigator.clipboard.writeText(repoUrl);
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
-    };
-
-    const handleOpen = () => {
-        if (window.ipcRenderer) {
-            window.ipcRenderer.invoke('open-external', repoUrl)
-                .then((result: any) => {
-                    if (result && result.copiedToClipboard) {
-                        setCopied(true);
-                        setTimeout(() => setCopied(false), 2000);
-                        alert('Browser open failed. Link copied to clipboard!');
-                    }
-                })
-                .catch(err => {
-                    console.error(err);
-                    alert('Failed to open link: ' + err);
-                });
-        }
     };
 
     return ReactDOM.createPortal(
@@ -113,12 +96,11 @@ export const AboutModal: React.FC<AboutModalProps> = ({ onClose }) => {
                     <div style={{
                         marginBottom: '24px',
                         display: 'flex',
-                        justifyContent: 'center',
-                        transform: 'scale(1.5)'
+                        justifyContent: 'center'
                     }}>
                         {/* We use a static div here to host the Logo3D but disable its internal click if needed, 
                             or just reuse the component. Since Logo3D now accepts onClick, we can pass no-op. */}
-                        <Logo3D onClick={() => { }} />
+                        <Logo3D onClick={() => { }} size={128} />
                     </div>
 
                     <h2 style={{
@@ -196,30 +178,6 @@ export const AboutModal: React.FC<AboutModalProps> = ({ onClose }) => {
                             >
                                 {copied ? <Check size={16} /> : <Copy size={16} />}
                                 {copied ? 'Copied' : 'Copy Link'}
-                            </HydroButton>
-
-                            <HydroButton
-                                onClick={handleOpen}
-                                style={{
-                                    flex: 1,
-                                    padding: '10px',
-                                    borderRadius: '12px',
-                                    backgroundColor: '#3b82f6',
-                                    color: 'white',
-                                    fontSize: '13px',
-                                    fontWeight: 600,
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    gap: '8px',
-                                    boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)',
-                                    transition: 'all 0.2s'
-                                }}
-                                onMouseEnter={e => e.currentTarget.style.backgroundColor = '#2563eb'}
-                                onMouseLeave={e => e.currentTarget.style.backgroundColor = '#3b82f6'}
-                            >
-                                <ExternalLink size={16} />
-                                Open
                             </HydroButton>
                         </div>
                     </div>

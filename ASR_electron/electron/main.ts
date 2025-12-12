@@ -122,6 +122,7 @@ function createWindow() {
     }
   });
 
+
   // Setup Tray
   logger.info('Creating system tray');
   createTray(win);

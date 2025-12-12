@@ -3,7 +3,7 @@
 > **Languages**: [English](retrospective_20251211.md) | [简体中文](retrospective_20251211.zh-CN.md)
 
 **Date**: 2025-12-11
-**Project**: ASR Go Backend (Katydid)
+**Project**: ASR Go Backend (kikipounamu)
 **Test Goal**: 500 Concurrent Audio Stream Real-time Speech Recognition
 
 ---

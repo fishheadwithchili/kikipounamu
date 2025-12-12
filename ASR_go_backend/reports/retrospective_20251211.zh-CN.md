@@ -4,7 +4,7 @@
 
 
 **日期**: 2025-12-11
-**项目**: ASR Go Backend (Katydid)
+**项目**: ASR Go Backend (kikipounamu)
 **测试目标**: 500路并发音频流实时语音识别
 
 ---

@@ -73,7 +73,7 @@ sudo service postgresql start
 
 ### 1. 数据库配置
 项目已配置为使用 `postgres` 用户（密码 `123456`）连接。
-后端启动时会自动创建名为 `katydid` 的数据库，无需手动创建。
+后端启动时会自动创建名为 `kikipounamu` 的数据库，无需手动创建。
 
 确保 `postgres` 用户密码正确：
 ```bash
@@ -87,7 +87,7 @@ echo "ALTER USER postgres WITH PASSWORD '123456';" | sudo -u postgres psql
 
 1.  **进入目录**:
     ```bash
-    cd /home/tiger/Projects/Katydid/ASR_server
+    cd /home/tiger/Projects/kikipounamu/ASR_server
     ```
 
 2.  **设置 GPU 环境变量 (如果代码支持)**:
@@ -118,7 +118,7 @@ echo "ALTER USER postgres WITH PASSWORD '123456';" | sudo -u postgres psql
 直接运行启动脚本即可，它会自动检查依赖、编译代码并启动服务：
 
 ```bash
-cd /home/tiger/Projects/Katydid/ASR_go_backend
+cd /home/tiger/Projects/kikipounamu/ASR_go_backend
 ./scripts/start_backend.sh
 ```
 
@@ -159,7 +159,7 @@ server {
 直接运行启动脚本即可：
 
 ```bash
-cd /home/tiger/Projects/Katydid/ASR_electron
+cd /home/tiger/Projects/kikipounamu/ASR_electron
 ./scripts/start_electron.sh
 ```
 

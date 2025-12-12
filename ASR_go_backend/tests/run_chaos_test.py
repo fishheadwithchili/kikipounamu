@@ -41,7 +41,7 @@ async def chaos_monkey():
                 # Or we can launch a new one.
                 # Let's try to launch a replacement.
                 log_file = open("worker.log", "a")
-                subprocess.Popen(["/home/tiger/Projects/Katydid/ASR_server/scripts/start_stream_worker.sh"], 
+                subprocess.Popen(["/home/tiger/Projects/kikipounamu/ASR_server/scripts/start_stream_worker.sh"], 
                                  stdout=log_file, stderr=log_file, preexec_fn=os.setsid)
                 
             else:

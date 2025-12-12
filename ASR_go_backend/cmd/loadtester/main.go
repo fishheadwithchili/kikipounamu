@@ -53,7 +53,7 @@ func init() {
 	flag.DurationVar(&duration, "d", 60*time.Second, "Test duration (e.g., 60s, 30m, 1h)")
 	flag.StringVar(&mode, "mode", "short", "Test mode: short (default audio), medium (30m), long (1h)")
 	flag.StringVar(&serverAddr, "server", "localhost:8080", "ASR Go Backend address")
-	flag.StringVar(&sourceAudioPath, "audio", "/home/tiger/Projects/Katydid/ASR_server/tests/resources/test_audio_short.wav", "Path to source audio file")
+	flag.StringVar(&sourceAudioPath, "audio", "/home/tiger/Projects/kikipounamu/ASR_server/tests/resources/test_audio_short.wav", "Path to source audio file")
 	flag.BoolVar(&cleanup, "cleanup", true, "Delete generated large audio files after test")
 }
 

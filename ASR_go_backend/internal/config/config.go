@@ -55,7 +55,7 @@ func Load() *Config {
 	viper.SetDefault("DB_PORT", 5432)
 	viper.SetDefault("DB_USER", "postgres")
 	viper.SetDefault("DB_PASSWORD", "123456")
-	viper.SetDefault("DB_NAME", "katydid")
+	viper.SetDefault("DB_NAME", "kikipounamu")
 	viper.SetDefault("AUTO_CREATE_DB", true)
 
 	// Read config file (if exists)

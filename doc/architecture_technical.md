@@ -1,5 +1,5 @@
-# 分布式微服务 ASR 系统 (Project Katydid) 技术架构白皮书
-# Distributed Microservices ASR System (Project Katydid) Technical Architecture Whitepaper
+# 分布式微服务 ASR 系统 (Project kikipounamu) 技术架构白皮书
+# Distributed Microservices ASR System (Project kikipounamu) Technical Architecture Whitepaper
 
 > **版本**: 2.2
 > **密级**: 内部公开
@@ -9,7 +9,7 @@
 
 ## 1. 摘要 (Executive Summary)
 
-Project Katydid 是一个基于 **Event-Driven Architecture (EDA)** 构建的高性能、高并发分布式语音识别系统。本项目旨在解决传统单体 ASR 系统在并发处理、资源隔离和扩展性方面的痛点。通过引入 **Go 语言高性能网关** 与 **Redis Streams 消息总线**，系统成功实现了计算密集型（ASR 推理）与 IO 密集型（网络连接）任务的彻底解耦。
+Project kikipounamu 是一个基于 **Event-Driven Architecture (EDA)** 构建的高性能、高并发分布式语音识别系统。本项目旨在解决传统单体 ASR 系统在并发处理、资源隔离和扩展性方面的痛点。通过引入 **Go 语言高性能网关** 与 **Redis Streams 消息总线**，系统成功实现了计算密集型（ASR 推理）与 IO 密集型（网络连接）任务的彻底解耦。
 
 在最近的 **500 路高并发压力测试** 中，系统展现了极强的韧性：在计算资源（Worker）严重不足的极限压测下，网关层仍保持了 **100% 的可用性**，未发生崩溃或内存泄漏，验证了架构设计的健壮性。
 
@@ -185,4 +185,4 @@ Project Katydid 是一个基于 **Event-Driven Architecture (EDA)** 构建的高
 
 ---
 
-> **结语**: Project Katydid 的架构经受住了高并发的实战考验。通过合理的架构分层与技术选型，我们构建了一个既能承载当前业务，又具备极强水平扩展能力的现代化 ASR 平台。
+> **结语**: Project kikipounamu 的架构经受住了高并发的实战考验。通过合理的架构分层与技术选型，我们构建了一个既能承载当前业务，又具备极强水平扩展能力的现代化 ASR 平台。

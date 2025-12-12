@@ -19,7 +19,7 @@ from dataclasses import dataclass, asdict
 
 # Configuration
 WS_URI = "ws://localhost:8080/ws/asr"
-RESULTS_DIR = Path("/home/tiger/Projects/Katydid/ASR_go_backend/tests/results")
+RESULTS_DIR = Path("/home/tiger/Projects/kikipounamu/ASR_go_backend/tests/results")
 
 @dataclass
 class TestResult:

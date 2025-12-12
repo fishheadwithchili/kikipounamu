@@ -9,7 +9,7 @@ from datetime import datetime
 
 def recover_history():
     # Define paths
-    project_root = Path("/home/tiger/Projects/Katydid")
+    project_root = Path("/home/tiger/Projects/kikipounamu")
     log_file = project_root / "ASR_server/src/storage/logs/asr_history.jsonl"
     output_file = project_root / "all_chat_history_recovered.txt"
     

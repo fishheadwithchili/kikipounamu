@@ -7,7 +7,7 @@
 **模式:** Short (高并发短音频模式)
 **并发数:** 500
 **持续时间:** 30s
-**音频源:** /home/tiger/Projects/Katydid/ASR_server/tests/resources/test_audio_short.wav
+**音频源:** /home/tiger/Projects/kikipounamu/ASR_server/tests/resources/test_audio_short.wav
 
 ## 测试结果概览
 - **总尝试会话数:** ~111,510

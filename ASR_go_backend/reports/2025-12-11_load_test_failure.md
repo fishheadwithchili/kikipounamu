@@ -6,7 +6,7 @@
 **Mode:** Short (High Concurrency Short Audio Mode)
 **Concurrency:** 500
 **Duration:** 30s
-**Audio Source:** /home/tiger/Projects/Katydid/ASR_server/tests/resources/test_audio_short.wav
+**Audio Source:** /home/tiger/Projects/kikipounamu/ASR_server/tests/resources/test_audio_short.wav
 
 ## Test Result Overview
 - **Total Attempted Sessions:** ~111,510

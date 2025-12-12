@@ -55,11 +55,18 @@ redis-server &
 sudo service postgresql start
 
 # 2. 启动 Python 服务
-bash ASR_server/scripts/start_unified_worker.sh
+cd ASR_server
+./scripts/start_unified_worker.sh
+./scripts/start_api_server.sh
+cd ..
 
 # 3. 启动 Go 后端
-bash ASR_go_backend/scripts/start_backend.sh
+cd ASR_go_backend
+./scripts/start_backend.sh
+cd ..
 
 # 4. 启动 Electron 应用
-bash ASR_electron/scripts/start_electron.sh
+cd ASR_electron
+./scripts/start_electron.sh
+cd ..
 ```

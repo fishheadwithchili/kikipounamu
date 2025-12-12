@@ -87,7 +87,7 @@ echo "ALTER USER postgres WITH PASSWORD '123456';" | sudo -u postgres psql
 
 1.  **进入目录**:
     ```bash
-    cd /home/tiger/Projects/kikipounamu/ASR_server
+    cd ASR_server
     ```
 
 2.  **设置 GPU 环境变量 (如果代码支持)**:
@@ -118,7 +118,7 @@ echo "ALTER USER postgres WITH PASSWORD '123456';" | sudo -u postgres psql
 直接运行启动脚本即可，它会自动检查依赖、编译代码并启动服务：
 
 ```bash
-cd /home/tiger/Projects/kikipounamu/ASR_go_backend
+cd ASR_go_backend
 ./scripts/start_backend.sh
 ```
 
@@ -159,7 +159,7 @@ server {
 直接运行启动脚本即可：
 
 ```bash
-cd /home/tiger/Projects/kikipounamu/ASR_electron
+cd ASR_electron
 ./scripts/start_electron.sh
 ```
 

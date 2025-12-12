@@ -86,7 +86,7 @@ echo "ALTER USER postgres WITH PASSWORD '123456';" | sudo -u postgres psql
 
 1.  **Enter Directory**:
     ```bash
-    cd /home/tiger/Projects/kikipounamu/ASR_server
+    cd ASR_server
     ```
 
 2.  **Set GPU Environment Variable (Process-Dependent)**:
@@ -115,7 +115,7 @@ echo "ALTER USER postgres WITH PASSWORD '123456';" | sudo -u postgres psql
 Run the start script directly. It will check dependencies, compile the code, and start the service:
 
 ```bash
-cd /home/tiger/Projects/kikipounamu/ASR_go_backend
+cd ASR_go_backend
 ./scripts/start_backend.sh
 ```
 
@@ -154,7 +154,7 @@ server {
 Run the start script directly. It will check and install system dependencies (may require sudo password):
 
 ```bash
-cd /home/tiger/Projects/kikipounamu/ASR_electron
+cd ASR_electron
 ./scripts/start_electron.sh
 ```
 

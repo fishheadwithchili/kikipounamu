@@ -55,11 +55,18 @@ redis-server &
 sudo service postgresql start
 
 # 2. Start Python Server
-bash ASR_server/scripts/start_unified_worker.sh
+cd ASR_server
+./scripts/start_unified_worker.sh
+./scripts/start_api_server.sh
+cd ..
 
 # 3. Start Go Backend
-bash ASR_go_backend/scripts/start_backend.sh
+cd ASR_go_backend
+./scripts/start_backend.sh
+cd ..
 
 # 4. Start Electron App
-bash ASR_electron/scripts/start_electron.sh
+cd ASR_electron
+./scripts/start_electron.sh
+cd ..
 ```

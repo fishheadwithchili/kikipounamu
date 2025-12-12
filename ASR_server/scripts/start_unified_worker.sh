@@ -25,6 +25,19 @@ echo "👥 Group: $GROUP_NAME"
 echo "🔢 Workers: $WORKER_COUNT"
 echo ""
 
+# Check for ffmpeg
+if ! command -v ffmpeg &> /dev/null; then
+    echo "⚠️  ffmpeg not found. Installing..."
+    sudo apt-get update && sudo apt-get install -y ffmpeg
+    if [ $? -ne 0 ]; then
+         echo "❌ Error: Failed to install ffmpeg. Please install it manually."
+         exit 1
+    fi
+    echo "✅ ffmpeg installed."
+else
+    echo "✅ ffmpeg found."
+fi
+
 # Check if venv exists (prefer .venv created by uv)
 if [ -d ".venv" ]; then
     echo "📦 Activating virtual environment (.venv)..."

@@ -54,7 +54,7 @@ fi
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
     echo "🐧 Detected Linux. Checking system dependencies..."
     
-    REQUIRED_LIBS=("libnss3" "libatk1.0-0" "libatk-bridge2.0-0" "libcups2" "libdrm2" "libxkbcommon0" "libxcomposite1" "libxdamage1" "libxfixes3" "libxrandr2" "libgbm1" "libasound2")
+    REQUIRED_LIBS=("libnss3" "libatk1.0-0" "libatk-bridge2.0-0" "libcups2" "libdrm2" "libxkbcommon0" "libxcomposite1" "libxdamage1" "libxfixes3" "libxrandr2" "libgbm1" "libasound2" "xdotool")
     MISSING_LIBS=()
 
     for lib in "${REQUIRED_LIBS[@]}"; do

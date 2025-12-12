@@ -29,7 +29,20 @@ check_and_install_fonts() {
     fi
 }
 
+# Check for ffmpeg
+check_and_install_ffmpeg() {
+    echo "Checking for ffmpeg..."
+    if ! command -v ffmpeg &> /dev/null; then
+        echo "ffmpeg not found. Installing..."
+        sudo apt-get update && sudo apt-get install -y ffmpeg
+        echo "ffmpeg installed."
+    else
+        echo "ffmpeg found."
+    fi
+}
+
 check_and_install_fonts
+check_and_install_ffmpeg
 
 # Check if venv exists (prefer .venv created by uv)
 if [ -d ".venv" ]; then

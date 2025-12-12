@@ -15,6 +15,24 @@ if ! command -v go &> /dev/null; then
     exit 1
 fi
 
+# 2. 检查 ffmpeg (Go Backend 需要它来处理音频格式转换)
+if ! command -v ffmpeg &> /dev/null; then
+    echo "⚠️  ffmpeg not found."
+    if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+        echo "🐧 Detected Linux. Installing ffmpeg..."
+        sudo apt-get update && sudo apt-get install -y ffmpeg
+        if [ $? -ne 0 ]; then
+             echo "❌ Error: Failed to install ffmpeg. Please install it manually."
+             exit 1
+        fi
+    else
+        echo "❌ Error: ffmpeg is missing. Please install it manually."
+        echo "   Windows: https://www.gyan.dev/ffmpeg/builds/"
+        echo "   MacOS: brew install ffmpeg"
+        exit 1
+    fi
+fi
+
 # 2. 检查并安装依赖
 echo "📦 Checking dependencies..."
 go mod tidy

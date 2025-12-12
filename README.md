@@ -10,6 +10,11 @@
 
 ---
 
+> [!NOTE]
+> *   **Run via Terminal**: No pre-built binaries yet. Please run from source.
+> *   **Platform Status**: Developed on **WSL2 (Ubuntu)**. Native Windows pending test. macOS not supported. Other Linux distros likely work but "expect the unexpected".
+> *   **Media**: Commercial demo video coming soon.
+
 ## 📚 Documentation
 
 *   **Deployment Guide**: [English](doc/FULL_SYSTEM_STARTUP_GUIDE.en.md)

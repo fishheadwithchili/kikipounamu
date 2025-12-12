@@ -2,3 +2,4 @@
 *.log
 # Temporarily ignore other microservices
 ASR_pc_front/
+my_ququ/

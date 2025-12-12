@@ -1,15 +1,14 @@
 import React from 'react';
-import { Copy, Check, X } from 'lucide-react';
+import { Copy, Check } from 'lucide-react';
 import { HydroButton } from '../HydroButton';
 
 interface SelectionDockProps {
     selectedCount: number;
-    onCancel: () => void;
     onCopy: () => void;
     isCopied: boolean;
 }
 
-export const SelectionDock = React.memo(({ selectedCount, onCancel, onCopy, isCopied }: SelectionDockProps) => (
+export const SelectionDock = React.memo(({ selectedCount, onCopy, isCopied }: SelectionDockProps) => (
     <div style={{
         pointerEvents: 'auto',
         display: 'flex',
@@ -50,27 +49,6 @@ export const SelectionDock = React.memo(({ selectedCount, onCancel, onCopy, isCo
             {isCopied ? 'Copied' : 'Copy'}
         </HydroButton>
 
-        <div style={{ height: '16px', width: '1px', backgroundColor: 'rgba(255, 255, 255, 0.1)', margin: '0 4px' }}></div>
 
-        <HydroButton
-            onClick={onCancel}
-            style={{
-                padding: '8px',
-                borderRadius: '9999px',
-                color: 'rgba(255, 255, 255, 0.6)',
-                transition: 'all 0.2s',
-                backgroundColor: 'transparent'
-            }}
-            onMouseEnter={e => {
-                e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
-                e.currentTarget.style.color = 'white';
-            }}
-            onMouseLeave={e => {
-                e.currentTarget.style.backgroundColor = 'transparent';
-                e.currentTarget.style.color = 'rgba(255, 255, 255, 0.6)';
-            }}
-        >
-            <X size={18} />
-        </HydroButton>
     </div>
 ));

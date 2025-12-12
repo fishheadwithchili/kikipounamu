@@ -69,3 +69,28 @@ body {
     opacity: 1;
   }
 }
+
+/* Dynamic Background Ambient Animation */
+@keyframes ambientPulse {
+
+  0%,
+  100% {
+    transform: scale(1) translate(0, 0);
+    opacity: 0.6;
+  }
+
+  25% {
+    transform: scale(1.1) translate(5%, 3%);
+    opacity: 0.8;
+  }
+
+  50% {
+    transform: scale(1.05) translate(-3%, 5%);
+    opacity: 0.7;
+  }
+
+  75% {
+    transform: scale(1.15) translate(-5%, -3%);
+    opacity: 0.9;
+  }
+}

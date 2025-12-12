@@ -99,10 +99,28 @@ export const ControlDock = React.memo(({ isRecording, isLoading, onRecordToggle,
                 color: 'rgba(255, 255, 255, 0.4)',
                 letterSpacing: '0.05em',
                 textTransform: 'uppercase',
-                fontFamily: 'monospace'
+                fontFamily: 'monospace',
+                minWidth: '40px',
+                textAlign: 'right'
             }}>
-                {isLoading ? 'INIT' : (isRecording ? 'REC' : 'READY')}
+                {isLoading ? 'INIT' : (isRecording ? <TimerDisplay /> : 'READY')}
             </span>
         </div>
     </div>
 ));
+
+const TimerDisplay = () => {
+    const [seconds, setSeconds] = React.useState(0);
+
+    React.useEffect(() => {
+        const start = Date.now();
+        const interval = setInterval(() => {
+            setSeconds(Math.floor((Date.now() - start) / 1000));
+        }, 1000);
+        return () => clearInterval(interval);
+    }, []);
+
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+};

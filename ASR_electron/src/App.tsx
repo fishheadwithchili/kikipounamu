@@ -30,6 +30,7 @@ function App() {
 
   // Settings State
   const [showSettings, setShowSettings] = useState(false);
+  const [showHistory, setShowHistory] = useState(true);
   const [vadMode, setVadModeState] = useState<VADMode>('unlimited');
   const [timeLimit, setTimeLimit] = useState(180); // Default 3 minutes (180s)
 
@@ -414,17 +415,19 @@ function App() {
       color: 'white',
       fontFamily: "'Inter', sans-serif"
     }}>
-      {/* Ambient Background Blobs */}
+      {/* Ambient Background Blobs - Animated */}
       <div style={{
         position: 'absolute',
         top: '-20%',
         right: '-10%',
         width: '600px',
         height: '600px',
-        background: 'radial-gradient(circle, rgba(99,102,241,0.15) 0%, transparent 70%)',
+        background: 'radial-gradient(circle, rgba(99,102,241,0.25) 0%, transparent 70%)',
         borderRadius: '50%',
-        filter: 'blur(80px)',
-        zIndex: 0
+        filter: 'blur(100px)',
+        zIndex: 0,
+        animation: 'ambientPulse 8s ease-in-out infinite',
+        pointerEvents: 'none'
       }} />
       <div style={{
         position: 'absolute',
@@ -432,10 +435,12 @@ function App() {
         left: '-10%',
         width: '500px',
         height: '500px',
-        background: 'radial-gradient(circle, rgba(168,85,247,0.15) 0%, transparent 70%)',
+        background: 'radial-gradient(circle, rgba(168,85,247,0.25) 0%, transparent 70%)',
         borderRadius: '50%',
-        filter: 'blur(60px)',
-        zIndex: 0
+        filter: 'blur(80px)',
+        zIndex: 0,
+        animation: 'ambientPulse 8s ease-in-out infinite 4s',
+        pointerEvents: 'none'
       }} />
 
       {/* Global Drag Area - Top Bar */}
@@ -481,9 +486,13 @@ function App() {
           position: 'fixed',
           top: '38px', // Below drag bar
           left: 0,
-          width: '320px',
+          width: showHistory ? '320px' : '0px',
           bottom: 0,
-          zIndex: 20
+          zIndex: 20,
+          opacity: showHistory ? 1 : 0,
+          pointerEvents: showHistory ? 'auto' : 'none',
+          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+          overflow: 'hidden'
         }}>
           <HistoryList
             history={history}
@@ -501,10 +510,11 @@ function App() {
         <div style={{
           position: 'fixed',
           top: '38px', // Below drag bar
-          left: '320px',
+          left: showHistory ? '320px' : '0px',
           right: 0,
           bottom: 0,
-          zIndex: 10
+          zIndex: 10,
+          transition: 'left 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
         }}>
           <TranscriptionPane
             segments={segments}
@@ -516,6 +526,8 @@ function App() {
             isLoading={isToggling}
             queueCount={queueCount}
             stream={vad.stream}
+            showHistory={showHistory}
+            onToggleHistory={() => setShowHistory(!showHistory)}
           />
         </div>
       </div>

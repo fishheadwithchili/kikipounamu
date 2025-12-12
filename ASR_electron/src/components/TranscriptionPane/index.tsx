@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Check, X, Loader2, Users } from 'lucide-react';
+import { Check, X, Loader2, Users, ChevronLeft, History, Plus } from 'lucide-react';
 import { HydroButton } from '../HydroButton';
 import { ControlDock } from './ControlDock';
 import { SelectionDock } from './SelectionDock';
@@ -16,6 +16,8 @@ interface TranscriptionPaneProps {
     isLoading?: boolean;
     queueCount?: number;       // Number of background tasks
     stream?: MediaStream | null; // Shared stream
+    showHistory?: boolean;
+    onToggleHistory?: () => void;
 }
 
 /* --- Main Workspace Component --- */
@@ -29,7 +31,9 @@ export const TranscriptionPane: React.FC<TranscriptionPaneProps> = ({
     processingStatus = 'idle',
     isLoading = false,
     queueCount = 0,
-    stream = null
+    stream = null,
+    showHistory = true,
+    onToggleHistory
 }) => {
     const endRef = useRef<HTMLDivElement>(null);
 
@@ -73,10 +77,11 @@ export const TranscriptionPane: React.FC<TranscriptionPaneProps> = ({
         if (selectedText) {
             await navigator.clipboard.writeText(selectedText);
             setIsCopied(true);
-            setTimeout(() => setIsCopied(false), 2000);
-            // Optionally exit selection mode
-            // setViewMode('edit'); 
-            // setSelectedIndices(new Set());
+            setTimeout(() => {
+                setIsCopied(false);
+                setViewMode('edit');
+                setSelectedIndices(new Set());
+            }, 600);
         }
     };
 
@@ -93,27 +98,53 @@ export const TranscriptionPane: React.FC<TranscriptionPaneProps> = ({
             <header style={{
                 position: 'fixed',
                 top: '46px', // 38px (Drag) + 8px (Margin)
-                left: '320px',
+                left: showHistory ? '320px' : '0px',
                 right: 0,
                 height: '64px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
                 padding: '0 24px',
-                zIndex: 20
+                zIndex: 20,
+                transition: 'left 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
             }}>
                 <div style={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '16px',
+                    gap: '12px', /** Reduced gap to fit divider */
                     backgroundColor: 'rgba(17, 24, 39, 0.4)',
                     backdropFilter: 'blur(12px)',
                     border: '1px solid rgba(255, 255, 255, 0.1)',
-                    padding: '8px 16px',
+                    padding: '6px 16px 6px 8px', /** Adjusted padding for button */
                     borderRadius: '9999px',
                     boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
                 }}>
-                    <div style={{ fontSize: '14px', fontWeight: 500, color: 'rgba(255, 255, 255, 0.9)' }}>
+                    {/* Toggle Button */}
+                    <HydroButton
+                        onClick={onToggleHistory}
+                        style={{
+                            padding: '8px',
+                            borderRadius: '50%',
+                            color: 'rgba(255, 255, 255, 0.7)',
+                            backgroundColor: 'transparent',
+                            transition: 'all 0.2s'
+                        }}
+                        // Hover effect handled inline or via CSS if strict
+                        onMouseEnter={e => {
+                            e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+                            e.currentTarget.style.color = 'white';
+                        }}
+                        onMouseLeave={e => {
+                            e.currentTarget.style.backgroundColor = 'transparent';
+                            e.currentTarget.style.color = 'rgba(255, 255, 255, 0.7)';
+                        }}
+                    >
+                        {showHistory ? <ChevronLeft size={20} /> : <History size={20} />}
+                    </HydroButton>
+
+                    <div style={{ width: '1px', height: '16px', backgroundColor: 'rgba(255, 255, 255, 0.1)' }}></div>
+
+                    <div style={{ fontSize: '14px', fontWeight: 500, color: 'rgba(255, 255, 255, 0.9)', paddingRight: '4px' }}>
                         {viewMode === 'select' ? 'Select Items' : 'Workspace'}
                         {segments.length > 0 && <span style={{ marginLeft: '8px', opacity: 0.5 }}>({segments.length})</span>}
                     </div>
@@ -160,7 +191,7 @@ export const TranscriptionPane: React.FC<TranscriptionPaneProps> = ({
                                 transition: 'all 0.2s'
                             }}
                         >
-                            New
+                            <Plus size={16} /> New
                         </HydroButton>
                     )}
                 </div>
@@ -170,13 +201,14 @@ export const TranscriptionPane: React.FC<TranscriptionPaneProps> = ({
             <main className="custom-scrollbar mask-gradient" style={{
                 position: 'fixed',
                 top: '110px', // 38 + 64 + 8
-                left: '320px',
+                left: showHistory ? '320px' : '0px',
                 right: 0,
                 bottom: 0,
                 // Remove width/height hardcodes, revert to anchor
                 overflowY: 'auto',
                 padding: '16px 32px',
                 paddingBottom: '160px',
+                transition: 'left 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
             }}>
                 <div style={{ maxWidth: '896px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '8px' }}>
                     {/* Empty State */}
@@ -277,7 +309,7 @@ export const TranscriptionPane: React.FC<TranscriptionPaneProps> = ({
             <div style={{
                 position: 'fixed',
                 bottom: 0,
-                left: '320px',
+                left: showHistory ? '320px' : '0px',
                 right: 0,
                 padding: '24px',
                 display: 'flex',
@@ -285,12 +317,12 @@ export const TranscriptionPane: React.FC<TranscriptionPaneProps> = ({
                 alignItems: 'center',
                 justifyContent: 'flex-end',
                 zIndex: 30, // Increased z-index to break stacking context issues
-                pointerEvents: 'none'
+                pointerEvents: 'none',
+                transition: 'left 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
             }}>
                 {viewMode === 'select' ? (
                     <SelectionDock
                         selectedCount={selectedIndices.size}
-                        onCancel={handleToggleSelectionMode}
                         onCopy={handleCopySelected}
                         isCopied={isCopied}
                     />

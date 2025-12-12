@@ -78,6 +78,14 @@ export const HistoryList: React.FC<HistoryListProps> = ({
                         }}>
                             ASR Pro
                         </h2>
+                        <p style={{
+                            fontSize: '10px',
+                            color: 'rgba(255, 255, 255, 0.4)',
+                            fontFamily: 'monospace',
+                            letterSpacing: '0.2em',
+                            textTransform: 'uppercase',
+                            margin: '0'
+                        }}>Version 2.0</p>
                         <ConnectionIndicator status={connectionStatus} />
                     </div>
                 </div>
@@ -129,7 +137,9 @@ export const HistoryList: React.FC<HistoryListProps> = ({
                     padding: '0 12px',
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: '6px'
+                    gap: '6px',
+                    maskImage: 'linear-gradient(to bottom, transparent 0%, black 16px, black calc(100% - 16px), transparent 100%)',
+                    WebkitMaskImage: 'linear-gradient(to bottom, transparent 0px, black 16px, black calc(100% - 16px), transparent 100%)'
                 }}
             >
                 {activeTab === 'text' ? (

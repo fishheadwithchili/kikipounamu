@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { VADMode } from '../hooks/useVADRecording';
 import { HydroButton } from './HydroButton';
-import { X, FolderOpen } from 'lucide-react';
+import { X } from 'lucide-react';
 
 interface SettingsPanelProps {
     currentMode: VADMode;
@@ -280,23 +280,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                                 onFocus={e => e.target.style.borderColor = 'rgba(59, 130, 246, 0.5)'}
                                 onBlur={e => e.target.style.borderColor = 'rgba(255, 255, 255, 0.1)'}
                             />
-                            <HydroButton
-                                style={{
-                                    padding: '10px',
-                                    backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                                    borderRadius: '12px',
-                                    color: 'rgba(255, 255, 255, 0.7)',
-                                    transition: 'all 0.2s',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center'
-                                }}
-                                onMouseEnter={e => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'}
-                                onMouseLeave={e => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.05)'}
-                            >
-                                <FolderOpen size={18} />
-                            </HydroButton>
+
                         </div>
                     </div>
                 </div>

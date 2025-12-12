@@ -83,6 +83,11 @@ class StreamWorker:
             channel = f"asr_result_{session_id}"
             count = self.redis.publish(channel, json.dumps(response))
             
+            # P0 Fix: Result Reliability - Cache result
+            cache_key = f"asr:results:{session_id}"
+            self.redis.rpush(cache_key, json.dumps(response))
+            self.redis.expire(cache_key, 60)
+            
             log_worker(f"Processed chunk sess={session_id} idx={chunk_index} subscribers={count} time={duration:.3f}s")
 
         except Exception as e:

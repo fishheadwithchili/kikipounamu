@@ -63,6 +63,8 @@ func PublishTask(ctx context.Context, taskType, taskID string, payload map[strin
 	msgID, err := redisCli.XAdd(ctx, &redis.XAddArgs{
 		Stream: StreamName,
 		Values: values,
+		MaxLen: 5000, // P0 Fix: Limit stream length
+		Approx: true, // Use ~ for performance
 	}).Result()
 
 	if err != nil {
@@ -82,6 +84,17 @@ func PublishStreamChunk(ctx context.Context, sessionID string, chunkIndex int, a
 	}
 
 	return PublishTask(ctx, "stream", sessionID, payload)
+}
+
+// GetQueueDepth returns the current length of the stream.
+// Used for backpressure.
+func GetQueueDepth(ctx context.Context) (int64, error) {
+	redisCli := db.GetRedis()
+	if redisCli == nil {
+		return 0, fmt.Errorf("redis client not initialized")
+	}
+
+	return redisCli.XLen(ctx, StreamName).Result()
 }
 
 // EnsureConsumerGroup creates the consumer group if it doesn't exist.

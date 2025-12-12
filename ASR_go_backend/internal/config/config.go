@@ -18,11 +18,12 @@ type Config struct {
 	LogLevel       string
 
 	// PostgreSQL 配置
-	DBHost     string
-	DBPort     int
-	DBUser     string
-	DBPassword string
-	DBName     string
+	DBHost       string
+	DBPort       int
+	DBUser       string
+	DBPassword   string
+	DBName       string
+	AutoCreateDB bool
 
 	// Retention Policy
 	MaxAudioFilesPerUser int
@@ -54,7 +55,8 @@ func Load() *Config {
 	viper.SetDefault("DB_PORT", 5432)
 	viper.SetDefault("DB_USER", "root")
 	viper.SetDefault("DB_PASSWORD", "123456")
-	viper.SetDefault("DB_NAME", "root")
+	viper.SetDefault("DB_NAME", "katydid")
+	viper.SetDefault("AUTO_CREATE_DB", true)
 
 	// Read config file (if exists)
 	if err := viper.ReadInConfig(); err != nil {
@@ -84,11 +86,12 @@ func updateGlobalConfig() {
 		MaxConnections: viper.GetInt("MAX_CONNECTIONS"),
 		LogLevel:       viper.GetString("LOG_LEVEL"),
 
-		DBHost:     viper.GetString("DB_HOST"),
-		DBPort:     viper.GetInt("DB_PORT"),
-		DBUser:     viper.GetString("DB_USER"),
-		DBPassword: viper.GetString("DB_PASSWORD"),
-		DBName:     viper.GetString("DB_NAME"),
+		DBHost:       viper.GetString("DB_HOST"),
+		DBPort:       viper.GetInt("DB_PORT"),
+		DBUser:       viper.GetString("DB_USER"),
+		DBPassword:   viper.GetString("DB_PASSWORD"),
+		DBName:       viper.GetString("DB_NAME"),
+		AutoCreateDB: viper.GetBool("AUTO_CREATE_DB"),
 
 		MaxAudioFilesPerUser: viper.GetInt("MAX_AUDIO_FILES_PER_USER"),
 	}

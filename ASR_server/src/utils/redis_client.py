@@ -78,6 +78,17 @@ class RedisClient:
         """Delete task result"""
         self._client.delete(f"asr:task:{task_id}")
     
+    def cache_stream_result(self, session_id: str, result: Dict[str, Any], ttl: int = 60):
+        """
+        Cache stream result in a Redis List for reliability.
+        Used to recover results if client disconnects.
+        """
+        key = f"asr:results:{session_id}"
+        # RPUSH to append to list
+        self._client.rpush(key, json.dumps(result))
+        # Set TTL to expire the whole list after inactivity
+        self._client.expire(key, ttl)
+    
     # History operations
     def add_to_history(self, record: Dict[str, Any], max_records: int = 10):
         """Add record to history (keep latest N)"""

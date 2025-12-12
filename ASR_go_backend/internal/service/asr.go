@@ -36,6 +36,16 @@ func (s *ASRService) PushChunkToRedis(sessionID string, chunkIndex int, audioDat
 
 	ctx := context.Background()
 
+	// P0 Fix: Backpressure - Check queue depth
+	depth, err := streams.GetQueueDepth(ctx)
+	if err != nil {
+		// Log error but proceed, or fail? Failing safe is better for P0.
+		// But if Redis fails, XAdd will fail anyway.
+		logger.Error("Failed to get queue depth", zap.Error(err))
+	} else if depth > 5000 {
+		return fmt.Errorf("system overloaded: queue depth %d", depth)
+	}
+
 	// 2. 使用 Redis Streams XADD 代替 RPUSH
 	_, err = streams.PublishStreamChunk(ctx, sessionID, chunkIndex, audioDataBase64)
 	if err != nil {
@@ -73,6 +83,42 @@ func (s *ASRService) SubscribeResults(sessionID string) (<-chan *model.ChunkResu
 	// 启动后台协程读取 Redis 消息并转换
 	go func() {
 		defer close(outCh) // Close when input channel closed
+
+		// P0 Fix: Result Reliability - Fetch cached results first
+		// Use a map to deduplicate results received from both List and PubSub
+		sentIndices := make(map[int]bool)
+
+		// Fetch from Redis List
+		cacheKey := fmt.Sprintf("asr:results:%s", sessionID)
+		cachedResults, err := redisCli.LRange(ctx, cacheKey, 0, -1).Result()
+		if err != nil {
+			logger.Error("Failed to fetch cached results", zap.Error(err))
+		} else {
+			for _, msgStr := range cachedResults {
+				var result map[string]interface{}
+				if err := json.Unmarshal([]byte(msgStr), &result); err != nil {
+					continue
+				}
+				
+				chunkIndex := int(result["chunk_index"].(float64))
+				if sentIndices[chunkIndex] {
+					continue
+				}
+
+				chunkRes := &model.ChunkResult{
+					ChunkIndex: chunkIndex,
+					Text:       result["text"].(string),
+					Duration:   result["duration"].(float64),
+				}
+				if errMsg, ok := result["error"].(string); ok && errMsg != "" {
+					chunkRes.Error = fmt.Errorf(errMsg)
+				}
+
+				outCh <- chunkRes
+				sentIndices[chunkIndex] = true
+			}
+		}
+
 		for msg := range ch {
 			var result map[string]interface{}
 			if err := json.Unmarshal([]byte(msg.Payload), &result); err != nil {
@@ -80,8 +126,13 @@ func (s *ASRService) SubscribeResults(sessionID string) (<-chan *model.ChunkResu
 				continue
 			}
 
+			chunkIndex := int(result["chunk_index"].(float64))
+			if sentIndices[chunkIndex] {
+				continue
+			}
+
 			chunkRes := &model.ChunkResult{
-				ChunkIndex: int(result["chunk_index"].(float64)),
+				ChunkIndex: chunkIndex,
 				Text:       result["text"].(string),
 				Duration:   result["duration"].(float64),
 			}
@@ -93,6 +144,7 @@ func (s *ASRService) SubscribeResults(sessionID string) (<-chan *model.ChunkResu
 			// Non-blocking send or drop if full (though we shouldn't drop results)
 			// Blocking send is safer for correctness, but consumer must be fast.
 			outCh <- chunkRes
+			sentIndices[chunkIndex] = true
 		}
 	}()
 

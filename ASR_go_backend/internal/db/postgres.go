@@ -14,6 +14,11 @@ var pool *pgxpool.Pool
 
 // Init 初始化数据库连接池
 func Init(cfg *config.Config) error {
+	// 确保数据库存在
+	if err := ensureDatabaseExists(cfg); err != nil {
+		return fmt.Errorf("确保数据库存在失败: %w", err)
+	}
+
 	connStr := fmt.Sprintf(
 		"postgres://%s:%s@%s:%d/%s?sslmode=disable",
 		cfg.DBUser, cfg.DBPassword, cfg.DBHost, cfg.DBPort, cfg.DBName,
@@ -40,6 +45,49 @@ func Init(cfg *config.Config) error {
 		return fmt.Errorf("创建表失败: %w", err)
 	}
 
+	return nil
+}
+
+// ensureDatabaseExists 确保目标数据库存在，如果不存在且允许自动创建则创建它
+func ensureDatabaseExists(cfg *config.Config) error {
+	// 连接到 postgres 系统数据库
+	sysConnStr := fmt.Sprintf(
+		"postgres://%s:%s@%s:%d/postgres?sslmode=disable",
+		cfg.DBUser, cfg.DBPassword, cfg.DBHost, cfg.DBPort,
+	)
+
+	ctx := context.Background()
+	sysPool, err := pgxpool.New(ctx, sysConnStr)
+	if err != nil {
+		return fmt.Errorf("无法连接到系统数据库: %w", err)
+	}
+	defer sysPool.Close()
+
+	// 检查目标数据库是否存在
+	var exists bool
+	err = sysPool.QueryRow(ctx, "SELECT EXISTS(SELECT 1 FROM pg_database WHERE datname = $1)", cfg.DBName).Scan(&exists)
+	if err != nil {
+		return fmt.Errorf("检查数据库是否存在失败: %w", err)
+	}
+
+	if exists {
+		logger.Info(fmt.Sprintf("✅ 数据库 '%s' 已存在", cfg.DBName))
+		return nil
+	}
+
+	// 数据库不存在
+	if !cfg.AutoCreateDB {
+		return fmt.Errorf("数据库 '%s' 不存在，且 AUTO_CREATE_DB 已禁用", cfg.DBName)
+	}
+
+	// 自动创建数据库
+	logger.Info(fmt.Sprintf("🔧 数据库 '%s' 不存在，正在自动创建...", cfg.DBName))
+	createSQL := fmt.Sprintf("CREATE DATABASE %s OWNER %s", cfg.DBName, cfg.DBUser)
+	if _, err := sysPool.Exec(ctx, createSQL); err != nil {
+		return fmt.Errorf("创建数据库失败: %w", err)
+	}
+
+	logger.Info(fmt.Sprintf("✅ 数据库 '%s' 创建成功", cfg.DBName))
 	return nil
 }
 

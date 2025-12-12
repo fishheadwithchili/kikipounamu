@@ -211,6 +211,9 @@ class UnifiedWorker:
             channel = f"asr_result_{session_id}"
             count = redis_client.client.publish(channel, json.dumps(response))
             
+            # P0 Fix: Result Reliability - Cache result
+            redis_client.cache_stream_result(session_id, response)
+            
             log_worker(
                 f"STREAM sess={session_id} chunk={chunk_index} "
                 f"subscribers={count} time={duration:.3f}s"

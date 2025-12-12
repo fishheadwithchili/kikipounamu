@@ -1,4 +1,4 @@
-import { ipcMain, app } from 'electron';
+import { ipcMain, app, shell } from 'electron';
 import { insertTextAtCursor } from './textInserter';
 import { ASRClient } from './asrClient';
 import Store from 'electron-store';
@@ -123,6 +123,11 @@ export function setupIpc(asrClient: ASRClient) {
             console.error('Failed to read audio file:', error);
             return { success: false, error: String(error) };
         }
+    });
+
+    ipcMain.handle('open-external', async (_event, url: string) => {
+        await shell.openExternal(url);
+        return { success: true };
     });
 
     ipcMain.handle('get-default-save-path', () => {

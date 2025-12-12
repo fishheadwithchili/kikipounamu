@@ -17,12 +17,14 @@ export const Logo3D = React.memo(() => (
         }}
         aria-label="App Logo"
     >
-        <div style={{
-            position: 'relative',
-            zIndex: 10,
-            transformStyle: 'preserve-3d',
-            animation: 'float3d 6s ease-in-out infinite'
-        }}>
+        <div
+            onClick={() => window.ipcRenderer.invoke('open-external', 'https://github.com/fishheadwithchili/kikipounamu.git')}
+            style={{
+                position: 'relative',
+                zIndex: 10,
+                transformStyle: 'preserve-3d',
+                animation: 'float3d 6s ease-in-out infinite'
+            }}>
             <img
                 src="/icon.png"
                 alt="App Logo"

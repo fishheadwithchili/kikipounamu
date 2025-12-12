@@ -49,6 +49,7 @@ This project adopts the **Async Producer-Consumer Model**, achieving complete de
 Ensure the server has installed:
 *   **Go** (>= 1.21)
 *   **PostgreSQL** (>= 14)
+*   **FFmpeg** (Included in PATH)
 
 ### 2. Database Configuration
 

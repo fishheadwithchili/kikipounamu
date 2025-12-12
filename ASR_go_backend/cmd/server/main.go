@@ -3,6 +3,7 @@ package main
 import (
 	"net/http"
 	"os"
+	"os/exec"
 	"os/signal"
 	"sync/atomic"
 	"syscall"
@@ -28,6 +29,11 @@ func main() {
 	}
 	logger.Init(env, cfg.LogLevel)
 	defer logger.Sync()
+
+	// 检查 ffmpeg
+	if _, err := exec.LookPath("ffmpeg"); err != nil {
+		logger.Fatal("❌ 未找到 ffmpeg。请先安装 ffmpeg 并确保它在系统 PATH 中。\nWindows: https://www.gyan.dev/ffmpeg/builds/\nLinux: sudo apt install ffmpeg / sudo pacman -S ffmpeg\nMacOS: brew install ffmpeg", zap.Error(err))
+	}
 
 	// 初始化数据库
 	if err := db.Init(cfg); err != nil {

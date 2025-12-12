@@ -126,8 +126,86 @@ export function setupIpc(asrClient: ASRClient) {
     });
 
     ipcMain.handle('open-external', async (_event, url: string) => {
-        await shell.openExternal(url);
-        return { success: true };
+        logger.info(`[IPC] Opening external URL: ${url}`);
+
+        let openSuccess = false;
+        let methodUsed = '';
+        let errorDetails = '';
+
+        // 1. Detect WSL2 environment
+        const isWSL2 = process.platform === 'linux' && fs.existsSync('/proc/version') &&
+            fs.readFileSync('/proc/version', 'utf8').toLowerCase().includes('microsoft');
+
+        if (isWSL2) {
+            logger.info('[IPC] WSL2 detected, attempting to open URL in Windows host');
+
+            // 2. Try wslview (wslu)
+            try {
+                const { execSync } = await import('child_process');
+                execSync('which wslview', { stdio: 'ignore' }); // Check existence
+
+                const { spawn } = await import('child_process');
+                const child = spawn('wslview', [url], { detached: true, stdio: 'ignore' });
+                child.unref();
+                openSuccess = true;
+                methodUsed = 'wsl2-wslview';
+            } catch (wslviewErr) {
+                // 3. Try explorer.exe fallback
+                try {
+                    const { spawn } = await import('child_process');
+                    const child = spawn('/mnt/c/Windows/explorer.exe', [url], { detached: true, stdio: 'ignore' });
+                    child.unref();
+                    openSuccess = true;
+                    methodUsed = 'wsl2-explorer';
+                } catch (explorerErr) {
+                    errorDetails += `WSL2 methods failed: wslview(${wslviewErr}), explorer(${explorerErr}). `;
+                }
+            }
+        }
+
+        // 4. Standard shell.openExternal
+        if (!openSuccess && !isWSL2) {
+            try {
+                await shell.openExternal(url);
+                openSuccess = true;
+                methodUsed = 'shell.openExternal';
+            } catch (err) {
+                errorDetails += `shell.openExternal failed: ${err}. `;
+
+                // 5. Linux xdg-open fallback
+                if (process.platform === 'linux') {
+                    try {
+                        const { spawn } = await import('child_process');
+                        const child = spawn('/usr/bin/xdg-open', [url], { detached: true, stdio: 'ignore' });
+                        child.unref();
+                        openSuccess = true;
+                        methodUsed = 'xdg-open-fallback';
+                    } catch (fallbackErr) {
+                        errorDetails += `xdg-open failed: ${fallbackErr}. `;
+                    }
+                }
+            }
+        }
+
+        if (openSuccess) {
+            logger.info(`[IPC] URL opened successfully via ${methodUsed}`);
+            return { success: true, method: methodUsed };
+        }
+
+        // 6. FINAL FALLBACK: Clipboard
+        try {
+            const { clipboard } = await import('electron');
+            clipboard.writeText(url);
+            logger.info('[IPC] All open methods failed. URL copied to clipboard.');
+            return {
+                success: false,
+                copiedToClipboard: true,
+                error: errorDetails || 'Unknown error'
+            };
+        } catch (clipErr) {
+            logger.error('[IPC] Clipboard fallback failed', clipErr as Error);
+            return { success: false, error: errorDetails + `Clipboard failed: ${clipErr}` };
+        }
     });
 
     ipcMain.handle('get-default-save-path', () => {

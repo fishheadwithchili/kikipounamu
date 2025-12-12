@@ -180,16 +180,49 @@ export function useVADRecording(
                     .catch(e => console.error('Temp write failed:', e));
             }
 
-            // --- UNLIMITED MODE ---
-            if (vadMode === 'unlimited') {
+            // --- CONTINUOUS MODES (Unlimited & Time Limit) ---
+            if (vadMode === 'unlimited' || vadMode === 'time_limit') {
                 speechBufferRef.current.push(inputBuffer.slice());
+
+                // Always mark as speaking in continuous modes so UI shows activity
                 if (!isSpeaking) {
                     setIsSpeaking(true);
                     isSpeakingRef.current = true;
                 }
-                // Log that we are just buffering
-                if (now - lastLogTimeRef.current > 1000) { // Log less frequently in unlimited
-                    logDebug(`[Unlimited] Buffering... Total chunks: ${speechBufferRef.current.length}`);
+
+                // Check Time Limit
+                if (vadMode === 'time_limit') {
+                    const currentBufferDurationMs = speechBufferRef.current.length * BUFFER_SIZE_MS;
+                    if (currentBufferDurationMs >= timeLimitRef.current) {
+                        logDebug(`[TimeLimit] Limit met (${timeLimitRef.current}ms) -> CUTTING`);
+
+                        // Perform Cut
+                        const totalLength = speechBufferRef.current.reduce((sum, buf) => sum + buf.length, 0);
+                        const mergedAudio = new Float32Array(totalLength);
+                        let offset = 0;
+                        for (const buf of speechBufferRef.current) {
+                            mergedAudio.set(buf, offset);
+                            offset += buf.length;
+                        }
+
+                        const wavBuffer = float32ToWav(mergedAudio, SAMPLE_RATE);
+                        const currentIndex = chunkIndexRef.current;
+                        chunkIndexRef.current++;
+                        setChunkCount((prev: number) => prev + 1);
+
+                        logDebug(`[TimeLimit] Flushed Chunk #${currentIndex} | Size=${wavBuffer.byteLength} | Dur=${(mergedAudio.length / SAMPLE_RATE).toFixed(2)}s`);
+
+                        if (chunkCallbackRef.current) {
+                            chunkCallbackRef.current(currentIndex, wavBuffer, mergedAudio);
+                        }
+
+                        speechBufferRef.current = [];
+                    }
+                }
+
+                // Log less frequently
+                if (now - lastLogTimeRef.current > 1000) {
+                    logDebug(`[Continuous] Mode=${vadMode} | Buffering: ${speechBufferRef.current.length} chunks`);
                 }
                 return;
             }
@@ -202,7 +235,11 @@ export function useVADRecording(
 
             if (speechProb < 0) {
                 logDebug(`[VAD-Skip] Insufficient data`);
-                if (vadMode === 'vad' || vadMode === 'time_limit') {
+                // Only buffer if we were expecting VAD logic? 
+                // In pure VAD mode, we usually wait for speech. 
+                // The original code buffered for 'vad' or 'time_limit' here.
+                // Since 'time_limit' is handled above, we only care about 'vad'.
+                if (vadMode === 'vad') {
                     speechBufferRef.current.push(inputBuffer.slice());
                 }
                 return;
@@ -222,7 +259,8 @@ export function useVADRecording(
                 silenceFramesRef.current++;
                 speechFramesRef.current = 0;
 
-                if (vadMode === 'time_limit' || vadMode === 'vad') {
+                // Only buffer payload in VAD mode (time_limit handled above)
+                if (vadMode === 'vad') {
                     speechBufferRef.current.push(inputBuffer.slice());
                 }
 
@@ -238,13 +276,8 @@ export function useVADRecording(
                     } else if (silenceDurationMs >= VAD_CONFIG.minSilenceDurationMs) {
                         logDebug(`[VAD-Event] Silence threshold met (${silenceDurationMs}ms) but not speaking, no cut.`);
                     }
-                } else if (vadMode === 'time_limit') {
-                    const currentBufferDurationMs = speechBufferRef.current.length * BUFFER_SIZE_MS;
-                    if (currentBufferDurationMs >= timeLimitRef.current) {
-                        logDebug(`[VAD-Event] TIME LIMIT REACHED (${timeLimitRef.current}ms) -> CUTTING`);
-                        shouldCut = true;
-                    }
                 }
+                // time_limit logic removed from here as it is handled at the top
 
                 if (shouldCut) {
                     if (speechBufferRef.current.length > 0) {
@@ -395,19 +428,19 @@ export function useVADRecording(
                 offset += buf.length;
             }
 
-            // CHECK MODE: If unlimited, do not slice. Send ONE BIG CHUNK.
+            // CHECK MODE: If unlimited or time_limit, do not slice. Send ONE BIG CHUNK.
             const currentMode = vadModeRef.current;
 
-            if (currentMode === 'unlimited') {
-                // --- UNLIMITED MODE: SINGLE CHUNK ---
+            if (currentMode === 'unlimited' || currentMode === 'time_limit') {
+                // --- CONTINUOUS MODES: SINGLE CHUNK ---
                 const wavBuffer = float32ToWav(mergedAudio, SAMPLE_RATE);
                 const currentIndex = chunkIndexRef.current;
                 chunkIndexRef.current++;
                 setChunkCount((prev: number) => prev + 1);
 
-                console.log(`🎵 [Unlimited] 发送完整录音, 大小: ${wavBuffer.byteLength} bytes, 时长: ${(mergedAudio.length / SAMPLE_RATE).toFixed(2)}s`);
-                logger.info('Sending complete recording', {
-                    mode: 'unlimited',
+                console.log(`🎵 [${currentMode}] 发送剩余录音, 大小: ${wavBuffer.byteLength} bytes, 时长: ${(mergedAudio.length / SAMPLE_RATE).toFixed(2)}s`);
+                logger.info('Sending remaining recording', {
+                    mode: currentMode,
                     size: wavBuffer.byteLength,
                     duration: (mergedAudio.length / SAMPLE_RATE).toFixed(2)
                 });
@@ -417,9 +450,8 @@ export function useVADRecording(
                 }
 
             } else {
-                // --- OTHER MODES: Keep safety slicing if very long (fallback) ---
-                // But generally 'vad' and 'time_limit' should have cut already.
-                // This is just cleanup for leftovers.
+                // --- VAD MODE: Keep safety slicing if very long (fallback) ---
+                // VAD should have cut already. This is just cleanup for leftovers.
 
                 // Slice into smaller chunks for transmission (e.g. 10s = 16000 * 10 = 160000 samples)
                 const MAX_CHUNK_SAMPLES = 16000 * 10; // 10 seconds per chunk

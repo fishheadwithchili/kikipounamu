@@ -205,9 +205,6 @@ func (s *SessionService) SetChunkResult(sessionID string, chunkIndex int, text s
 		state.pending--
 		state.lastActive = time.Now() // 更新活动时间
 
-		state.pending--
-		state.lastActive = time.Now() // 更新活动时间
-
 		// 调试日志：记录 Chunk 结果
 		logger.Debug("Chunk result received",
 			zap.String("session_id", sessionID),

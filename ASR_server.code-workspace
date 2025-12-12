@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"path": "ASR_server"
+		},
+		{
+			"path": "ASR_electron"
+		},
+		{
+			"path": "ASR_go_backend"
+		},
+		{
+			"path": "."
+		}
+	],
+	"settings": {}
+}

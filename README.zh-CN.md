@@ -1,8 +1,10 @@
-<img src="ASR_electron/src/icon/icon_128.png" align="right" width="128" height="128">
+<div align="center">
+  <img src="ASR_electron/src/icon/icon_128.png" width="128" height="128">
+</div>
 
-# KikiPounamu (ASR System)
+<h1 align="center">KikiPounamu (ASR System)</h1>
 
-> 专为 RTX 5060 优化的统一实时语音转文字系统，包含 Python/FunASR GPU 服务端、Go/Redis/PostgreSQL 后端以及 Electron/React 前端。
+> 企业级分布式微服务 ASR 系统。具有动态热扩容和高并发抗压能力。基于 Go、Redis Streams 和 Python 的事件驱动架构构建。
 
 > **语言**: [English](README.md) | [简体中文](README.zh-CN.md)
 

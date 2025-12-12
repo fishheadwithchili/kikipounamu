@@ -172,4 +172,4 @@ cd /home/tiger/Projects/kikipounamu/ASR_electron
 
 相比 CPU 模式：
 *   **CPU**: 延迟约 200-500ms，识别长句可能卡顿。
-*   **RTX 5060**: 延迟 < 50ms，实时性极强，基本是说话即上屏。
+*   **RTX 5060**: 延迟 < 50ms，高性能体验。

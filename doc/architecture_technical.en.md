@@ -1,4 +1,4 @@
-# Distributed Microservices ASR System (Project kikipounamu) Technical Architecture Whitepaper
+# Enterprise-grade Distributed Microservices ASR System (Project kikipounamu) Technical Architecture Whitepaper
 
 > **Version**: 2.2
 > **Classification**: Internal Public
@@ -9,7 +9,7 @@
 
 ## 1. Executive Summary
 
-Project kikipounamu is a high-performance, high-concurrency distributed speech recognition system built on **Event-Driven Architecture (EDA)**. This project aims to address the pain points of traditional monolithic ASR systems regarding concurrent processing, resource isolation, and scalability. By introducing a **Go language high-performance gateway** and **Redis Streams message bus**, the system successfully decouples compute-intensive (ASR inference) tasks from IO-intensive (network connection) tasks.
+Project kikipounamu is a high-performance, high-concurrency **Enterprise-grade Distributed Microservices ASR System** built on **Event-Driven Architecture (EDA)**. This project aims to address the pain points of traditional monolithic ASR systems regarding concurrent processing, resource isolation, and scalability. By introducing a **Go language high-performance gateway** and **Redis Streams message bus**, the system successfully decouples compute-intensive (ASR inference) tasks from IO-intensive (network connection) tasks.
 
 In recent **500-concurrency load tests**, the system demonstrated strong resilience: even under extreme stress with insufficient compute resources (Workers), the gateway layer maintained **100% availability** without crashing or memory leaks, validating the robustness of the architectural design.
 

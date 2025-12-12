@@ -2,7 +2,7 @@
 
 # KikiPounamu (ASR System)
 
-> A unified, real-time Speech-to-Text system optimized for RTX 5060, featuring a Python/FunASR GPU server, Go/Redis/PostgreSQL backend, and Electron/React frontend.
+> Enterprise-grade distributed microservices ASR system. Features dynamic scaling and high-concurrency resilience. Built on Event-Driven Architecture with Go, Redis Streams & Python.
 
 > **Language**: [English](README.md) | [简体中文](README.zh-CN.md)
 

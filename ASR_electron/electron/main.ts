@@ -1,4 +1,7 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, ipcMain } from 'electron';
+
+// Disable hardware acceleration to fix rendering issues on Linux/WSL2
+app.disableHardwareAcceleration();
 import path from 'node:path';
 import { registerShortcuts, unregisterShortcuts } from './shortcuts';
 import { createTray } from './tray';
@@ -31,12 +34,21 @@ function createWindow() {
   win = new BrowserWindow({
     width: 800,
     height: 600,
+    useContentSize: true, // Fix for Linux frameless window offset
     icon: path.join(process.env.VITE_PUBLIC, 'electron-vite.svg'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.mjs'),
     },
-    // Hide initially if you want tray-only start, but let's show it for now
-    show: true
+    // frame: false, // Replaced with titleBarStyle for better Linux support
+    titleBarStyle: 'hidden', // Standard cross-platform frameless mode
+    // titleBarOverlay: true, // Optional: enable if native controls are desired on supported platforms
+    backgroundColor: '#0f172a', // Solid dark background (matches app theme)
+    show: false // Show after ready-to-show to prevent flash
+  });
+
+  // Show window when ready to prevent visual glitches
+  win.once('ready-to-show', () => {
+    win?.show();
   });
 
   // Test active push message to Renderer-process.
@@ -62,6 +74,23 @@ function createWindow() {
   // Setup IPC
   logger.info('Setting up IPC handlers');
   setupIpc(asrClient);
+
+  // Window Controls IPC
+  ipcMain.handle('window-minimize', () => {
+    win?.minimize();
+  });
+
+  ipcMain.handle('window-maximize', () => {
+    if (win?.isMaximized()) {
+      win.unmaximize();
+    } else {
+      win?.maximize();
+    }
+  });
+
+  ipcMain.handle('window-close', () => {
+    win?.close();
+  });
 
   // Setup Tray
   logger.info('Creating system tray');

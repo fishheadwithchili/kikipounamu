@@ -1,10 +1,11 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import './index.css';
-import { StatusBar } from './components/StatusBar';
 import { HistoryList, AudioHistoryItem } from './components/HistoryList';
 import { TranscriptionPane } from './components/TranscriptionPane';
 import { SettingsPanel } from './components/SettingsPanel';
 import { RecoveryModal } from './components/RecoveryModal';
+import { AlertOverlay, AlertType } from './components/AlertOverlay';
+import { TrafficLights } from './components/TrafficLights';
 import { useVADRecording, VADMode } from './hooks/useVADRecording';
 import { arrayBufferToBase64 } from './utils/audioHelper';
 import { storageService } from './services/storage';
@@ -36,6 +37,9 @@ function App() {
   const [maxTextHistory, setMaxTextHistory] = useState(100);
   const [maxAudioHistory, setMaxAudioHistory] = useState(10);
   const [savePath, setSavePath] = useState('');
+
+  // Alert State
+  const [alertState, setAlertState] = useState<{ type: AlertType, title?: string, description?: string } | null>(null);
 
   // Audio Buffering
   const recordingStartTimeRef = useRef<number>(0);
@@ -79,23 +83,12 @@ function App() {
 
   const handleModeChange = useCallback((mode: VADMode) => {
     if (mode === 'vad') {
-      // Warning Dialog as requested
-      const message =
-        "⚠️ VAD Mode Warning / VAD 模式警告\n\n" +
-        "Expectation / 期待:\n" +
-        "Real-time audio segmentation whilst speaking.\n" +
-        "用户说话时进行实时语音切分。\n\n" +
-        "Bug Encountered / 遇到的问题:\n" +
-        "The VAD model output dimension is 248 (raw logits), but the code expects 2 (probabilities). This mismatch causes the VAD to fail to detect speech.\n" +
-        "VAD 模型输出维度是 248（原始 logits），但代码期望的是 2（概率）。这个不匹配导致 VAD 无法检测到语音。\n\n" +
-        "Action Required / 需要的行动:\n" +
-        "Needs a developer capable of fixing the ONNX tensor shape mismatch.\n" +
-        "需要有能力的人来修复 ONNX 张量形状不匹配的问题。\n\n" +
-        "The system will now revert to the previous mode.\n" +
-        "系统将恢复到之前的模式。";
-
-      window.alert(message);
-      // Do not update state, effectively reverting/staying on previous mode
+      // Warning Dialog using new AlertOverlay
+      setAlertState({
+        type: 'warning',
+        title: 'VAD Mode Warning',
+        description: "The VAD model output dimension mismatch (248 vs 2) prevents speech detection. System will revert to previous mode."
+      });
       return;
     }
 
@@ -138,6 +131,11 @@ function App() {
             setAudioHistory(prev => [newAudioItem, ...prev].slice(0, maxAudioHistory));
           } else {
             await window.ipcRenderer.invoke('log-message', 'error', 'Failed to save audio: ' + result.error);
+            setAlertState({
+              type: 'error',
+              title: 'Save Failed',
+              description: `Failed to save audio: ${result.error}`
+            });
           }
         }
       } else {
@@ -153,12 +151,22 @@ function App() {
           await window.ipcRenderer.invoke('log-message', 'info', 'Backend session started.');
         } else {
           await window.ipcRenderer.invoke('log-message', 'error', 'Failed to start local VAD. Backend session NOT started.');
+          setAlertState({
+            type: 'error',
+            title: 'Initialization Failed',
+            description: "Failed to start local VAD. Check microphone permissions."
+          });
         }
       }
     } catch (e) {
       console.error('Toggle recording failed:', e);
       window.ipcRenderer.invoke('log-message', 'error', `Toggle failed: ${e}`);
       window.ipcRenderer.invoke('write-debug-log', `[App-Error] Toggle Failed: ${e}`);
+      setAlertState({
+        type: 'error',
+        title: 'System Error',
+        description: `An unexpected error occurred: ${e}`
+      });
     } finally {
       setIsToggling(false);
     }
@@ -238,9 +246,14 @@ function App() {
       }
     });
 
-    const cleanupError = window.ipcRenderer.on('asr-error', (_event, _msg: string) => {
+    const cleanupError = window.ipcRenderer.on('asr-error', (_event, msg: string) => {
       setProcessingStatus('idle');
       setQueueCount(prev => Math.max(0, prev - 1));
+      setAlertState({
+        type: 'error',
+        title: 'Backend Error',
+        description: msg
+      });
     });
 
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -293,6 +306,11 @@ function App() {
     } else {
       console.error('Failed to recover:', res.error);
       window.ipcRenderer.invoke('log-message', 'error', 'Recovery failed: ' + res.error);
+      setAlertState({
+        type: 'error',
+        title: 'Recovery Failed',
+        description: res.error
+      });
     }
   };
 
@@ -377,11 +395,108 @@ function App() {
     } else {
       console.error('Failed to load audio:', result.error);
       window.ipcRenderer.invoke('log-message', 'error', `Playback failed: ${result.error}`);
+      setAlertState({
+        type: 'error',
+        title: 'Playback Error',
+        description: result.error
+      });
     }
   };
 
   return (
-    <div style={{ display: 'flex', height: '100vh', flexDirection: 'column', position: 'relative' }}>
+    <div style={{
+      position: 'relative',
+      height: '100vh',
+      width: '100vw',
+      overflow: 'hidden',
+      backgroundColor: '#0f172a',
+      color: 'white',
+      fontFamily: "'Inter', sans-serif"
+    }}>
+      {/* Ambient Background Blobs */}
+      <div style={{
+        position: 'absolute',
+        top: '-20%',
+        right: '-10%',
+        width: '600px',
+        height: '600px',
+        background: 'radial-gradient(circle, rgba(99,102,241,0.15) 0%, transparent 70%)',
+        borderRadius: '50%',
+        filter: 'blur(80px)',
+        zIndex: 0
+      }} />
+      <div style={{
+        position: 'absolute',
+        bottom: '-10%',
+        left: '-10%',
+        width: '500px',
+        height: '500px',
+        background: 'radial-gradient(circle, rgba(168,85,247,0.15) 0%, transparent 70%)',
+        borderRadius: '50%',
+        filter: 'blur(60px)',
+        zIndex: 0
+      }} />
+
+      {/* Global Drag Area - Top Bar */}
+      <div style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        height: '38px',
+        zIndex: 100,
+        ...({ WebkitAppRegion: 'drag' } as any)
+      }} />
+
+      {/* Traffic Lights - Window Level */}
+      <div style={{
+        position: 'absolute',
+        top: '10px',
+        left: '14px',
+        zIndex: 110,
+        ...({ WebkitAppRegion: 'no-drag' } as any)
+      }}>
+        <TrafficLights />
+      </div>
+
+      {/* Main Content - Pushed down to clear drag area */}
+      <div style={{
+        position: 'relative',
+        zIndex: 10,
+        display: 'flex',
+        height: 'calc(100% - 38px)',
+        width: '100%',
+        marginTop: '38px',
+        overflow: 'hidden'
+      }}>
+        {/* Sidebar */}
+        <HistoryList
+          history={history}
+          audioHistory={audioHistory}
+          onInsert={handleInsert}
+          onPlayAudio={handlePlayAudio}
+          playingFilePath={playingFilePath}
+          isPlaying={isPlaying}
+          onOpenSettings={() => setShowSettings(true)}
+          connectionStatus={status}
+        />
+
+        {/* Workspace */}
+        <TranscriptionPane
+          segments={segments}
+          interimText={interimText}
+          isRecording={vad.isRecording}
+          onToggleRecording={toggleRecording}
+          onClear={handleClearWorkspace}
+          autoPaste={autoPaste}
+          processingStatus={processingStatus}
+          isLoading={isToggling}
+          queueCount={queueCount}
+          stream={vad.stream}
+        />
+      </div>
+
+      {/* Modals & Overlays */}
       {showSettings && (
         <SettingsPanel
           currentMode={vadMode}
@@ -407,34 +522,25 @@ function App() {
         />
       )}
 
-      <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
-        <HistoryList
-          history={history}
-          audioHistory={audioHistory}
-          onInsert={handleInsert}
-          onPlayAudio={handlePlayAudio}
-          playingFilePath={playingFilePath}
-          isPlaying={isPlaying}
-          onOpenSettings={() => setShowSettings(true)}
+      {/* Alert System */}
+      {alertState && (
+        <AlertOverlay
+          type={alertState.type}
+          title={alertState.title}
+          description={alertState.description}
+          onDismiss={() => setAlertState(null)}
         />
-        <TranscriptionPane
-          segments={segments}
-          interimText={interimText}
-          isRecording={vad.isRecording}
-          onToggleRecording={toggleRecording}
-          onClear={handleClearWorkspace}
-          autoPaste={autoPaste}
-          processingStatus={processingStatus}
-          isLoading={isToggling}
-          queueCount={queueCount}
-          stream={vad.stream}
-        />
-      </div>
-      <StatusBar status={status} />
+      )}
 
-      {vad.error && (
-        <div style={{ position: 'absolute', bottom: 40, right: 10, background: 'red', color: 'white', padding: 5 }}>
-          {vad.error}
+      {vad.error && !alertState && (
+        /* Fallback for VAD errors if alertState is not set yet */
+        <div style={{ position: 'absolute', bottom: 20, right: 20, zIndex: 100 }}>
+          <AlertOverlay
+            type="error"
+            title="VAD Error"
+            description={vad.error}
+            onDismiss={() => { }}
+          />
         </div>
       )}
     </div>

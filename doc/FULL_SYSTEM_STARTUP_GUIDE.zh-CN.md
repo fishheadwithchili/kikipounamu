@@ -1,6 +1,6 @@
 # ASR 系统统一部署指南
 
-> **语言切换**: [English](FULL_SYSTEM_STARTUP_GUIDE.md) | [简体中文](FULL_SYSTEM_STARTUP_GUIDE.zh-CN.md)
+> **语言切换**: [English](FULL_SYSTEM_STARTUP_GUIDE.en.md) | [简体中文](FULL_SYSTEM_STARTUP_GUIDE.zh-CN.md)
 
 
 本指南用于在目标机器（如配备 RTX 5060 的主力机）上完整部署 ASR 系统。

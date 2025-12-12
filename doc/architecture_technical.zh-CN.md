@@ -4,6 +4,7 @@
 > **版本**: 2.2
 > **密级**: 内部公开
 > **最后更新**: 2025-12-12
+> **语言**: [English](architecture_technical.en.md) | [简体中文](architecture_technical.zh-CN.md)
 
 ---
 

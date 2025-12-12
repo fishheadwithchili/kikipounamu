@@ -4,6 +4,7 @@ import { registerShortcuts, unregisterShortcuts } from './shortcuts';
 import { createTray } from './tray';
 import { setupIpc } from './ipc';
 import { ASRClient } from './asrClient';
+import { logger } from './logger';
 
 // The built directory structure
 //
@@ -25,6 +26,8 @@ let win: BrowserWindow | null;
 let asrClient: ASRClient | null = null;
 
 function createWindow() {
+  logger.info('Creating application window');
+
   win = new BrowserWindow({
     width: 800,
     height: 600,
@@ -38,44 +41,54 @@ function createWindow() {
 
   // Test active push message to Renderer-process.
   win.webContents.on('did-finish-load', () => {
+    logger.info('Renderer process finished loading');
     win?.webContents.send('main-process-message', (new Date).toLocaleString());
   });
 
   if (process.env.VITE_DEV_SERVER_URL) {
+    logger.debug('Loading from dev server', { url: process.env.VITE_DEV_SERVER_URL });
     win.loadURL(process.env.VITE_DEV_SERVER_URL);
   } else {
+    logger.debug('Loading from production build');
     // win.loadFile('dist/index.html')
     win.loadFile(path.join(process.env.DIST || '', 'index.html'));
   }
 
   // Initialize ASR Client
+  logger.info('Initializing ASR client');
   asrClient = new ASRClient(win);
   asrClient.connect(); // Auto connect on start
 
   // Setup IPC
+  logger.info('Setting up IPC handlers');
   setupIpc(asrClient);
 
   // Setup Tray
+  logger.info('Creating system tray');
   createTray(win);
 
   // Register Shortcuts
+  logger.info('Registering global shortcuts');
   registerShortcuts(
     () => {
       // Start Recording Action
-      console.log('Global Shortcut: Start Recording');
+      logger.info('Global shortcut triggered: Start Recording');
       asrClient?.startRecording();
       win?.webContents.send('recording-state', true);
     },
     () => {
       // Stop Recording Action
-      console.log('Global Shortcut: Stop Recording');
+      logger.info('Global shortcut triggered: Stop Recording');
       asrClient?.stopRecording();
       win?.webContents.send('recording-state', false);
     }
   );
+
+  logger.info('Application window created successfully');
 }
 
 app.on('window-all-closed', () => {
+  logger.info('All windows closed');
   win = null;
   // Don't quit if tray is active usually, but for this app we might want to stay alive.
   // However, often users expect close to quit unless configured.
@@ -84,7 +97,11 @@ app.on('window-all-closed', () => {
 });
 
 app.on('will-quit', () => {
+  logger.info('Application will quit, cleaning up');
   unregisterShortcuts();
 });
 
-app.whenReady().then(createWindow);
+app.whenReady().then(() => {
+  logger.info('Electron app is ready');
+  createWindow();
+});

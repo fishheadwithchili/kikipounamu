@@ -32,6 +32,32 @@ npm run build
 
 构建产物将位于 `dist-electron` 和 `dist` 文档中。
 
+## 📝 日志系统
+
+本项目集成了 `electron-log` v5，提供统一的、自动轮转的日志记录功能。
+
+### 日志位置
+- **Linux**: `~/.config/asr-electron/logs/main.log`
+- **macOS**: `~/Library/Logs/asr-electron/main.log`
+- **Windows**: `%USERPROFILE%\AppData\Roaming\asr-electron\logs\main.log`
+- **开发模式**: `<项目根目录>/logs/main.log`
+
+### 主要特性
+- **自动轮转**: 单个文件 5MB，保留最近 10 个文件。
+- **环境隔离**: 开发环境记录 `debug` 级别，生产环境记录 `info` 级别。
+- **结构化日志**: 支持记录 JSON 对象，便于分析。
+- **统一入口**: 渲染进程日志自动通过 IPC 传输到主进程统一记录。
+
+### 运行测试
+验证日志系统是否正常工作：
+```bash
+npm test
+# 或者
+npx vitest run
+```
+
+更多详细信息请参阅 [LOGGING_GUIDE.md](./LOGGING_GUIDE.md)。
+
 ## 🛠️ 常见问题
 
 - **界面显示空白**？

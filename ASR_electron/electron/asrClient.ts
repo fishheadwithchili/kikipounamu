@@ -3,11 +3,14 @@ import WebSocket from 'ws';
 import { v4 as uuidv4 } from 'uuid';
 import dotenv from 'dotenv';
 import path from 'path';
+import { createLogger } from './logger';
 
 // Load .env from project root
 dotenv.config({ path: path.join(process.cwd(), '.env') });
 
 const USER_ID = process.env.VITE_USER_ID || 'anonymous';
+
+const logger = createLogger('ASRClient');
 
 export class ASRClient {
     private ws: WebSocket | null = null;
@@ -19,13 +22,15 @@ export class ASRClient {
 
     constructor(mainWindow: BrowserWindow) {
         this.mainWindow = mainWindow;
+        logger.debug('ASRClient instance created');
     }
 
     connect() {
+        logger.info('Connecting to ASR backend', { url: this.url });
         this.ws = new WebSocket(this.url);
 
         this.ws.onopen = () => {
-            console.log('Connected to ASR backend');
+            logger.info('WebSocket connected to ASR backend');
             this.mainWindow.webContents.send('asr-status', 'connected');
         };
 
@@ -33,11 +38,12 @@ export class ASRClient {
             if (this.mainWindow.isDestroyed()) return;
             try {
                 const message = JSON.parse(event.data.toString());
-                console.log('ASR message:', message);
+                logger.debug('Received ASR message', { type: message.type });
 
                 switch (message.type) {
                     case 'ack':
                         if (message.status === 'session_started') {
+                            logger.info('ASR session started');
                             this.mainWindow.webContents.send('asr-status', 'ready');
                         } else if (message.status === 'received') {
                             // Chunk received, show processing indicator
@@ -49,6 +55,7 @@ export class ASRClient {
                         break;
                     case 'chunk_result':
                         // Partial result
+                        logger.debug('Received chunk result', { chunkIndex: message.chunk_index, textLength: message.text?.length });
                         this.mainWindow.webContents.send('asr-result', {
                             text: message.text,
                             is_final: false,
@@ -57,6 +64,11 @@ export class ASRClient {
                         break;
                     case 'final_result':
                         // Final result
+                        logger.info('Received final ASR result', {
+                            duration: message.duration,
+                            chunkCount: message.chunk_count,
+                            textLength: message.text?.length
+                        });
                         this.mainWindow.webContents.send('asr-result', {
                             text: message.text,
                             is_final: true,
@@ -66,17 +78,17 @@ export class ASRClient {
                         this.mainWindow.webContents.send('asr-processing', { status: 'done' });
                         break;
                     case 'error':
-                        console.error('ASR error:', message.message);
+                        logger.error('ASR backend error', { message: message.message });
                         this.mainWindow.webContents.send('asr-error', message.message);
                         break;
                 }
             } catch (e) {
-                console.error('Failed to parse ASR message', e);
+                logger.error('Failed to parse ASR message', e as Error);
             }
         };
 
         this.ws.onclose = () => {
-            console.log('Disconnected from ASR backend, retrying in 3s...');
+            logger.warn('WebSocket disconnected, retrying in 3s');
             if (!this.mainWindow.isDestroyed()) {
                 this.mainWindow.webContents.send('asr-status', 'disconnected');
             }
@@ -84,7 +96,7 @@ export class ASRClient {
         };
 
         this.ws.onerror = (err) => {
-            console.error('ASR WebSocket error:', err);
+            logger.error('WebSocket error', { error: err.message || String(err) });
             if (!this.mainWindow.isDestroyed()) {
                 this.mainWindow.webContents.send('asr-status', 'error');
             }
@@ -93,7 +105,7 @@ export class ASRClient {
 
     startRecording() {
         if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
-            console.error('WebSocket not connected');
+            logger.error('Cannot start recording: WebSocket not connected');
             return;
         }
 
@@ -109,11 +121,12 @@ export class ASRClient {
         }));
 
         this.mainWindow.webContents.send('asr-processing', { status: 'recording' });
-        console.log('Recording started, session:', this.sessionId);
+        logger.info('Recording started', { sessionId: this.sessionId, userId: USER_ID });
     }
 
     stopRecording() {
         if (!this.ws || this.ws.readyState !== WebSocket.OPEN || !this.sessionId) {
+            logger.warn('Cannot stop recording: invalid state');
             return;
         }
 
@@ -126,7 +139,7 @@ export class ASRClient {
         }));
 
         this.mainWindow.webContents.send('asr-processing', { status: 'finalizing' });
-        console.log('Recording stopped, waiting for final result');
+        logger.info('Recording stopped, waiting for final result', { sessionId: this.sessionId, chunkCount: this.chunkIndex });
     }
 
     // Called from renderer process with audio data

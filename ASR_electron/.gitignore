@@ -2,6 +2,8 @@
 logs/
 !logs/.gitkeep
 *.log
+main.log
+main.old.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*

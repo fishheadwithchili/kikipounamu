@@ -1,4 +1,7 @@
 import React, { useRef, useEffect } from 'react';
+import { createLogger } from '../utils/loggerRenderer';
+
+const logger = createLogger('Waveform');
 
 interface WaveformProps {
     isRecording: boolean;
@@ -45,8 +48,9 @@ export const Waveform: React.FC<WaveformProps> = ({ isRecording, stream }) => {
             analyserRef.current = analyser;
 
             draw();
+            logger.debug('Waveform visualization started');
         } catch (error) {
-            console.error('Error starting visualization:', error);
+            logger.error('Failed to start visualization', error as Error);
         }
     };
 
@@ -63,9 +67,10 @@ export const Waveform: React.FC<WaveformProps> = ({ isRecording, stream }) => {
         // Fix: Explicitly close AudioContext to prevent "Too many AudioContexts" error
         if (audioContextRef.current) {
             if (audioContextRef.current.state !== 'closed') {
-                audioContextRef.current.close().catch(e => console.error('Error closing AudioContext:', e));
+                audioContextRef.current.close().catch(e => logger.warn('Error closing AudioContext', { error: String(e) }));
             }
             audioContextRef.current = null;
+            logger.debug('Waveform visualization stopped');
         }
 
         // Clear canvas

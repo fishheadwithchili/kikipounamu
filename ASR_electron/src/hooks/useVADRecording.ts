@@ -12,6 +12,7 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { FunASRVAD } from '../services/funasrVAD';
 import { float32ToWav, float32ToBase64 } from '../utils/audioHelper';
+import { createLogger } from '../utils/loggerRenderer';
 
 
 
@@ -47,6 +48,8 @@ const SAMPLE_RATE = 16000;
 // ScriptProcessorNode bufferSize 必须是 2 的幂次方 (256, 512, 1024, 2048, 4096, 8192, 16384)
 const BUFFER_SIZE = 2048; // ~128ms @ 16kHz
 const BUFFER_SIZE_MS = Math.floor(BUFFER_SIZE * 1000 / SAMPLE_RATE); // 256ms
+
+const logger = createLogger('VADRecording');
 
 export function useVADRecording(
     initialMode: VADMode = 'unlimited',
@@ -122,13 +125,13 @@ export function useVADRecording(
                 if (isMounted) {
                     vadRef.current = vad;
                     setIsVADReady(true);
-                    console.log('✅ FunASR VAD 初始化完成');
+                    logger.info('VAD initialized successfully');
                 } else {
                     vad.reset(); // Cleanup if unmounted during init
                 }
             } catch (err) {
                 if (isMounted) {
-                    console.error('FunASR VAD 初始化失败:', err);
+                    logger.error('VAD initialization failed', err as Error);
                     setError('VAD 模型加载失败: ' + (err as Error).message);
                 }
             }
@@ -312,9 +315,9 @@ export function useVADRecording(
             try {
                 const sessionRes = await window.ipcRenderer.invoke('start-temp-recording');
                 if (sessionRes.success && sessionRes.sessionId) {
-                    console.log(`📝 Temp recording started: ${sessionRes.sessionId}`);
                     sessionIdRef.current = sessionRes.sessionId;
                     setSessionId(sessionRes.sessionId);
+                    logger.info('Temp recording session started', { sessionId: sessionRes.sessionId });
                 } else {
                     console.error('Failed to start temp recording:', sessionRes.error);
                 }
@@ -349,10 +352,11 @@ export function useVADRecording(
             }, 1000);
 
             console.log('🎤 FunASR VAD 录音已启动');
+            logger.info('Recording started', { mode: vadModeRef.current, sampleRate: SAMPLE_RATE });
             return true;
 
         } catch (err) {
-            console.error('录音启动失败:', err);
+            logger.error('Failed to start recording', err as Error);
             setError('麦克风访问失败: ' + (err as Error).message);
             return false;
         }
@@ -402,6 +406,11 @@ export function useVADRecording(
                 setChunkCount((prev: number) => prev + 1);
 
                 console.log(`🎵 [Unlimited] 发送完整录音, 大小: ${wavBuffer.byteLength} bytes, 时长: ${(mergedAudio.length / SAMPLE_RATE).toFixed(2)}s`);
+                logger.info('Sending complete recording', {
+                    mode: 'unlimited',
+                    size: wavBuffer.byteLength,
+                    duration: (mergedAudio.length / SAMPLE_RATE).toFixed(2)
+                });
 
                 if (chunkCallbackRef.current) {
                     chunkCallbackRef.current(currentIndex, wavBuffer, mergedAudio);
@@ -441,6 +450,7 @@ export function useVADRecording(
         setIsSpeaking(false);
         isSpeakingRef.current = false;
 
+        logger.info('Recording stopped', { chunkCount: chunkIndexRef.current });
         console.log('🛑 录音已停止');
 
         sessionIdRef.current = null;

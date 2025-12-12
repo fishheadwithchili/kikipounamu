@@ -4,12 +4,15 @@ import { ASRClient } from './asrClient';
 import Store from 'electron-store';
 import * as fs from 'fs';
 import * as path from 'path';
+import { createLogger } from './logger';
 
 const store = new Store();
+const logger = createLogger('IPC');
 
 const DEBUG_LOG_PATH = path.join(process.cwd(), 'debug_flow.log');
 
 export function setupIpc(asrClient: ASRClient) {
+    logger.info('Setting up IPC handlers');
     // Clear log on startup
     try {
         fs.writeFileSync(DEBUG_LOG_PATH, `[${new Date().toISOString()}] === NEW SESSION ===\n`);
@@ -30,8 +33,7 @@ export function setupIpc(asrClient: ASRClient) {
     });
 
     ipcMain.on('renderer-ready', (_event) => {
-        console.log('Renderer ready');
-        // You could send initial status here
+        logger.info('Renderer process ready');
     });
 
     // --- Persistence Store ---
@@ -51,27 +53,30 @@ export function setupIpc(asrClient: ASRClient) {
 
     // Logging helper
     ipcMain.handle('log-message', (_event, level: string, message: string) => {
-        console.log(`[Renderer ${level.toUpperCase()}] ${message}`);
+        logger.debug(`[Renderer ${level.toUpperCase()}] ${message}`);
         return null;
     });
 
     ipcMain.handle('insert-text', async (_event, text: string) => {
         try {
+            logger.debug('Inserting text at cursor', { textLength: text.length });
             await insertTextAtCursor(text);
             return { success: true };
         } catch (error) {
-            console.error('Failed to insert text:', error);
+            logger.error('Failed to insert text', error as Error);
             return { success: false, error: String(error) };
         }
     });
 
     // Forwarding ASR commands from UI
     ipcMain.handle('start-recording', async () => {
+        logger.info('IPC: Start recording requested');
         asrClient.startRecording();
         return { success: true };
     });
 
     ipcMain.handle('stop-recording', async () => {
+        logger.info('IPC: Stop recording requested');
         asrClient.stopRecording();
         return { success: true };
     });
@@ -98,10 +103,10 @@ export function setupIpc(asrClient: ASRClient) {
             const fullPath = path.join(targetDir, filename);
 
             fs.writeFileSync(fullPath, buffer);
-            console.log(`Saved audio to: ${fullPath}`);
+            logger.info('Saved audio file', { path: fullPath, size: buffer.length });
             return { success: true, filePath: fullPath };
         } catch (error) {
-            console.error('Failed to save audio file:', error);
+            logger.error('Failed to save audio file', error as Error);
             return { success: false, error: String(error) };
         }
     });
@@ -138,7 +143,7 @@ export function setupIpc(asrClient: ASRClient) {
         const fileName = `temp_recording_${sessionId}.raw`; // Raw PCM float32
         const filePath = path.join(TEMP_DIR, fileName);
 
-        console.log(`[CrashProtect] Starting temp file: ${filePath}`);
+        logger.debug('Starting temp recording', { sessionId, filePath });
 
         const stream = fs.createWriteStream(filePath, { flags: 'a' });
         activeStreams.set(sessionId, stream);
@@ -198,14 +203,14 @@ export function setupIpc(asrClient: ASRClient) {
             const finalBuffer = Buffer.concat([wavHeader, rawBuffer]);
 
             fs.writeFileSync(finalPath, finalBuffer);
-            console.log(`[CrashProtect] Saved to ${finalPath}`);
+            logger.info('Finalized temp recording', { sessionId, path: finalPath, size: finalBuffer.length });
 
             // Delete temp
             fs.unlinkSync(tempFilePath);
 
             return { success: true, filePath: finalPath };
         } catch (err: any) {
-            console.error('[CrashProtect] Finalize failed:', err);
+            logger.error('Finalize temp recording failed', { sessionId, error: err.message });
             return { success: false, error: err.message };
         }
     });

@@ -115,7 +115,7 @@ Leveraging Redis Streams decoupling, the system naturally supports cross-machine
 
 *   **Node A (Laptop)**:
     *   Runs **Go Gateway**: Handles network traffic, lightweight.
-    *   Runs **Redis/Postgres**: Data center.
+    *   Runs **Redis/PostgreSQL**: Data center.
     *   Runs **CPU Worker**: Handles lightweight tasks (e.g., short VAD segmentation).
 *   **Node B (Desktop)**:
     *   Runs **GPU Worker**: Equipped with **RTX 5060 Ti**.

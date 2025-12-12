@@ -1,6 +1,8 @@
+<img src="ASR_electron/src/icon/icon_128.png" align="right" width="128" height="128">
+
 # KikiPounamu (ASR System)
 
-> A unified, real-time Speech-to-Text system optimized for RTX 5060, featuring a Python/FunASR GPU server, Go/Redis/Postgres backend, and Electron/React frontend.
+> A unified, real-time Speech-to-Text system optimized for RTX 5060, featuring a Python/FunASR GPU server, Go/Redis/PostgreSQL backend, and Electron/React frontend.
 
 > **Language**: [English](README.md) | [简体中文](README.zh-CN.md)
 
@@ -41,8 +43,16 @@ This project is developed and tested in the following specific environment.
 Please refer to the [Deployment Guide](doc/FULL_SYSTEM_STARTUP_GUIDE.en.md) for detailed instructions.
 
 ```bash
-# 1. Start Redis & Postgres
-# 2. Start Python Server (ASR_server/scripts/start_unified_worker.sh)
-# 3. Start Go Backend (ASR_go_backend/scripts/start_backend.sh)
-# 4. Start Electron App (ASR_electron/scripts/start_electron.sh)
+# 1. Start Infrastructure (Redis & PostgreSQL)
+redis-server &
+sudo service postgresql start
+
+# 2. Start Python Server
+bash ASR_server/scripts/start_unified_worker.sh
+
+# 3. Start Go Backend
+bash ASR_go_backend/scripts/start_backend.sh
+
+# 4. Start Electron App
+bash ASR_electron/scripts/start_electron.sh
 ```

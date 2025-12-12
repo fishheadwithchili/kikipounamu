@@ -116,7 +116,7 @@ Project kikipounamu 是一个基于 **Event-Driven Architecture (EDA)** 构建�
 
 *   **节点 A (笔记本 Laptop)**:
     *   运行 **Go Gateway**: 处理网络流量，轻量级，不占资源。
-    *   运行 **Redis/Postgres**: 作为数据中心。
+    *   运行 **Redis/PostgreSQL**: 作为数据中心。
     *   运行 **CPU Worker**: 处理轻量级任务（如短语音 VAD 切分），利用笔记本 CPU 资源。
 *   **节点 B (台式机 Desktop)**:
     *   运行 **GPU Worker**: 搭载 **RTX 5060 Ti**。

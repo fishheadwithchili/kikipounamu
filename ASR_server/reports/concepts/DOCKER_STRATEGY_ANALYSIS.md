@@ -61,7 +61,7 @@ Concern: Docker containers eating RAM/CPU when the project is not in frequent us
 ### Phase 1: Naked Metal Development (Current)
 *   **Status**: Recommended.
 *   **Why**: Best performance for RTX 5060 Ti, simplest debugging, zero virtualization overhead.
-*   **Tooling**: `uv` for python env, local Redis/Postgres.
+*   **Tooling**: `uv` for python env, local Redis/PostgreSQL.
 
 ### Phase 2: Hybrid / Partial Containerization (Deployment Prep)
 *   **Trigger**: When deploying to a remote server or adding a second developer.

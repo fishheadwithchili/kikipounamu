@@ -1,6 +1,8 @@
+<img src="ASR_electron/src/icon/icon_128.png" align="right" width="128" height="128">
+
 # KikiPounamu (ASR System)
 
-> 专为 RTX 5060 优化的统一实时语音转文字系统，包含 Python/FunASR GPU 服务端、Go/Redis/Postgres 后端以及 Electron/React 前端。
+> 专为 RTX 5060 优化的统一实时语音转文字系统，包含 Python/FunASR GPU 服务端、Go/Redis/PostgreSQL 后端以及 Electron/React 前端。
 
 > **语言**: [English](README.md) | [简体中文](README.zh-CN.md)
 
@@ -41,8 +43,16 @@
 请参阅 [部署指南](doc/FULL_SYSTEM_STARTUP_GUIDE.zh-CN.md) 获取详细步骤。
 
 ```bash
-# 1. 启动 Redis & Postgres
-# 2. 启动 Python 服务 (ASR_server/scripts/start_unified_worker.sh)
-# 3. 启动 Go 后端 (ASR_go_backend/scripts/start_backend.sh)
-# 4. 启动 Electron 应用 (ASR_electron/scripts/start_electron.sh)
+# 1. 启动基础服务 (Redis & PostgreSQL)
+redis-server &
+sudo service postgresql start
+
+# 2. 启动 Python 服务
+bash ASR_server/scripts/start_unified_worker.sh
+
+# 3. 启动 Go 后端
+bash ASR_go_backend/scripts/start_backend.sh
+
+# 4. 启动 Electron 应用
+bash ASR_electron/scripts/start_electron.sh
 ```

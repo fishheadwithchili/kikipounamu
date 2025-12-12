@@ -1,5 +1,5 @@
 import React from 'react';
-import { Zap } from 'lucide-react';
+
 
 /**
  * Logo3D Component
@@ -18,41 +18,22 @@ export const Logo3D = React.memo(() => (
         aria-label="App Logo"
     >
         <div style={{
-            width: '32px',
-            height: '32px',
-            background: 'linear-gradient(135deg, #6366f1 0%, #a855f7 100%)',
-            borderRadius: '8px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            boxShadow: '0 10px 15px -3px rgba(99, 102, 241, 0.3)',
             position: 'relative',
             zIndex: 10,
             transformStyle: 'preserve-3d',
             animation: 'float3d 6s ease-in-out infinite'
         }}>
-            <div style={{ color: 'white', filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.3))' }}>
-                <Zap size={18} fill="currentColor" />
-            </div>
-
-            {/* Glossy Overlay */}
-            <div style={{
-                position: 'absolute',
-                inset: 0,
-                borderRadius: '8px',
-                background: 'linear-gradient(135deg, rgba(255,255,255,0.4) 0%, transparent 50%, transparent 100%)',
-                opacity: 0.8,
-                pointerEvents: 'none'
-            }} />
-
-            {/* Border Overlay */}
-            <div style={{
-                position: 'absolute',
-                inset: 0,
-                borderRadius: '8px',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
-                pointerEvents: 'none'
-            }} />
+            <img
+                src="/icon.png"
+                alt="App Logo"
+                style={{
+                    width: '32px',
+                    height: '32px',
+                    borderRadius: '8px',
+                    boxShadow: '0 10px 15px -3px rgba(99, 102, 241, 0.3)',
+                    objectFit: 'contain'
+                }}
+            />
         </div>
 
         {/* Dynamic Shadow */}

@@ -67,6 +67,8 @@ function App() {
     loadState();
   }, []);
 
+
+
   // Save state on changes
   useEffect(() => {
     storageService.set('segments', segments);
@@ -169,6 +171,7 @@ function App() {
       });
     } finally {
       setIsToggling(false);
+
     }
   }, [vad, isToggling, vadMode, savePath, maxAudioHistory]);
 
@@ -206,16 +209,12 @@ function App() {
 
         // Only add to segments/history if there's actual text
         if (data.text) {
-          const newItem = {
-            timestamp: new Date().toLocaleTimeString(),
-            text: data.text
-          };
 
           // 1. Add to segments
           setSegments(prev => [...prev, data.text]);
 
           // 2. Add to History
-          setHistory(prev => [newItem, ...prev].slice(0, maxTextHistory));
+          // REMOVED: setHistory(prev => [newItem, ...prev].slice(0, maxTextHistory));
 
           // 3. Clear interim
           setInterimText('');
@@ -223,6 +222,8 @@ function App() {
           if (autoPaste) {
             window.ipcRenderer.invoke('insert-text', data.text);
           }
+
+
         } else {
           // Empty result - just clear interim
           setInterimText('');
@@ -438,6 +439,7 @@ function App() {
       }} />
 
       {/* Global Drag Area - Top Bar */}
+      {/* FIX: will-change and transform3d force isolated layer to prevent WSL2 offset bug */}
       <div style={{
         position: 'absolute',
         top: 0,
@@ -445,6 +447,9 @@ function App() {
         right: 0,
         height: '38px',
         zIndex: 100,
+        willChange: 'transform', // Force isolated rendering layer
+        transform: 'translate3d(0,0,0)', // Force GPU layer
+        backfaceVisibility: 'hidden', // Prevent subpixel rendering issues
         ...({ WebkitAppRegion: 'drag' } as any)
       }} />
 
@@ -454,46 +459,65 @@ function App() {
         top: '10px',
         left: '14px',
         zIndex: 110,
+        willChange: 'transform', // Isolated layer
+        transform: 'translate3d(0,0,0)',
         ...({ WebkitAppRegion: 'no-drag' } as any)
       }}>
         <TrafficLights />
       </div>
 
-      {/* Main Content - Pushed down to clear drag area */}
+      {/* Main Content - FIXED Positioning (Viewport Anchor) */}
       <div style={{
-        position: 'relative',
-        zIndex: 10,
-        display: 'flex',
-        height: 'calc(100% - 38px)',
-        width: '100%',
-        marginTop: '38px',
-        overflow: 'hidden'
+        position: 'fixed',
+        top: '38px',
+        left: 0,
+        right: 0,
+        bottom: 0,
+        overflow: 'hidden',
+        zIndex: 10
       }}>
-        {/* Sidebar */}
-        <HistoryList
-          history={history}
-          audioHistory={audioHistory}
-          onInsert={handleInsert}
-          onPlayAudio={handlePlayAudio}
-          playingFilePath={playingFilePath}
-          isPlaying={isPlaying}
-          onOpenSettings={() => setShowSettings(true)}
-          connectionStatus={status}
-        />
+        {/* Sidebar - Fixed Left */}
+        <div style={{
+          position: 'fixed',
+          top: '38px', // Below drag bar
+          left: 0,
+          width: '320px',
+          bottom: 0,
+          zIndex: 20
+        }}>
+          <HistoryList
+            history={history}
+            audioHistory={audioHistory}
+            onInsert={handleInsert}
+            onPlayAudio={handlePlayAudio}
+            playingFilePath={playingFilePath}
+            isPlaying={isPlaying}
+            onOpenSettings={() => setShowSettings(true)}
+            connectionStatus={status}
+          />
+        </div>
 
-        {/* Workspace */}
-        <TranscriptionPane
-          segments={segments}
-          interimText={interimText}
-          isRecording={vad.isRecording}
-          onToggleRecording={toggleRecording}
-          onClear={handleClearWorkspace}
-          autoPaste={autoPaste}
-          processingStatus={processingStatus}
-          isLoading={isToggling}
-          queueCount={queueCount}
-          stream={vad.stream}
-        />
+        {/* Workspace - Fixed Right */}
+        <div style={{
+          position: 'fixed',
+          top: '38px', // Below drag bar
+          left: '320px',
+          right: 0,
+          bottom: 0,
+          zIndex: 10
+        }}>
+          <TranscriptionPane
+            segments={segments}
+            interimText={interimText}
+            isRecording={vad.isRecording}
+            onToggleRecording={toggleRecording}
+            onClear={handleClearWorkspace}
+            processingStatus={processingStatus}
+            isLoading={isToggling}
+            queueCount={queueCount}
+            stream={vad.stream}
+          />
+        </div>
       </div>
 
       {/* Modals & Overlays */}
@@ -534,14 +558,12 @@ function App() {
 
       {vad.error && !alertState && (
         /* Fallback for VAD errors if alertState is not set yet */
-        <div style={{ position: 'absolute', bottom: 20, right: 20, zIndex: 100 }}>
-          <AlertOverlay
-            type="error"
-            title="VAD Error"
-            description={vad.error}
-            onDismiss={() => { }}
-          />
-        </div>
+        <AlertOverlay
+          type="error"
+          title="VAD Error"
+          description={vad.error}
+          onDismiss={() => { }}
+        />
       )}
     </div>
   );

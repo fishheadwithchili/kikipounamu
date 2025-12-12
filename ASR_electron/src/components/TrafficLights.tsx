@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { X, Minus, Maximize2 } from 'lucide-react';
+import { useState } from 'react';
+import { X } from 'lucide-react';
 
 export const TrafficLights = () => {
     const [hovered, setHovered] = useState(false);
@@ -51,7 +51,7 @@ export const TrafficLights = () => {
                     height: '12px',
                     borderRadius: '50%',
                     backgroundColor: '#ffbd2e',
-                    border: '1px solid #dea123',
+                    border: '1px solid #e1a116',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -60,27 +60,7 @@ export const TrafficLights = () => {
                     color: 'rgba(0,0,0,0.5)'
                 }}
             >
-                {hovered && <Minus size={8} strokeWidth={3} />}
-            </div>
-
-            {/* Maximize */}
-            <div
-                onClick={() => handleAction('maximize')}
-                style={{
-                    width: '12px',
-                    height: '12px',
-                    borderRadius: '50%',
-                    backgroundColor: '#27c93f',
-                    border: '1px solid #1aab29',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    cursor: 'pointer',
-                    fontSize: '8px',
-                    color: 'rgba(0,0,0,0.5)'
-                }}
-            >
-                {hovered && <Maximize2 size={6} strokeWidth={4} />}
+                {hovered && <div style={{ width: '6px', height: '2px', backgroundColor: 'rgba(0,0,0,0.5)' }} />}
             </div>
         </div>
     );

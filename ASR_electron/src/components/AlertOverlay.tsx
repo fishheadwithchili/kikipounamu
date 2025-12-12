@@ -55,7 +55,7 @@ export const AlertOverlay: React.FC<AlertOverlayProps> = ({
             style={{
                 position: 'fixed',
                 inset: 0,
-                zIndex: 100,
+                zIndex: 150,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',

@@ -1,195 +1,22 @@
-import React, { useEffect, useRef, useState, useMemo } from 'react';
-import { Waveform } from './Waveform';
-import { Mic, Square, Copy, Check, X, Loader2, Users } from 'lucide-react';
-import { HydroButton } from './HydroButton';
+import React, { useEffect, useRef, useState } from 'react';
+import { Check, X, Loader2, Users } from 'lucide-react';
+import { HydroButton } from '../HydroButton';
+import { ControlDock } from './ControlDock';
+import { SelectionDock } from './SelectionDock';
 
-type ProcessingStatus = 'idle' | 'recording' | 'processing' | 'finalizing' | 'done';
+type ProcessingStatus = 'idle' | 'recording' | 'processing' | 'finalizing' | 'done' | 'queued';
 
 interface TranscriptionPaneProps {
     segments: string[];        // Completed segments
     interimText: string;       // Current live text
     isRecording: boolean;
     onToggleRecording: () => void;
-    onCopyAll?: () => void;    // Copy all content
     onClear?: () => void;      // Clear workspace
-    autoPaste?: boolean;
     processingStatus?: ProcessingStatus;
     isLoading?: boolean;
     queueCount?: number;       // Number of background tasks
     stream?: MediaStream | null; // Shared stream
 }
-
-/* --- Internal Components --- */
-
-interface ControlDockProps {
-    isRecording: boolean;
-    isLoading: boolean;
-    queueCount: number;
-    onRecordToggle: () => void;
-    stream: MediaStream | null;
-}
-
-const ControlDock = React.memo(({ isRecording, isLoading, queueCount, onRecordToggle, stream }: ControlDockProps) => (
-    <div style={{
-        pointerEvents: 'auto',
-        display: 'flex',
-        alignItems: 'center',
-        gap: '24px',
-        backgroundColor: 'rgba(17, 24, 39, 0.5)',
-        backdropFilter: 'blur(24px)',
-        WebkitBackdropFilter: 'blur(24px)',
-        border: '1px solid rgba(255, 255, 255, 0.1)',
-        padding: '16px 32px',
-        borderRadius: '32px',
-        boxShadow: '0 10px 40px rgba(0,0,0,0.3)',
-        transition: 'background-color 0.2s',
-        width: '100%',
-        maxWidth: '672px'
-    }}>
-        {/* Main Record Button */}
-        <HydroButton
-            onClick={onRecordToggle}
-            disabled={isLoading}
-            aria-label={isRecording ? "Stop Recording" : "Start Recording"}
-            style={{
-                position: 'relative',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: '56px',
-                height: '56px',
-                borderRadius: '50%',
-                boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-                backgroundColor: isRecording ? '#ef4444' : '#ffffff',
-                color: isRecording ? 'white' : 'black',
-                transition: 'all 0.3s'
-            }}
-        >
-            {isRecording && (
-                <span style={{
-                    position: 'absolute',
-                    inset: 0,
-                    borderRadius: '50%',
-                    backgroundColor: '#ef4444',
-                    opacity: 0.3,
-                    animation: 'ping 1s cubic-bezier(0, 0, 0.2, 1) infinite'
-                }}></span>
-            )}
-            {isLoading ? (
-                <Loader2 className="animate-spin" size={24} />
-            ) : (
-                isRecording ? <Square fill="currentColor" size={20} style={{ position: 'relative', zIndex: 10 }} /> : <Mic size={24} style={{ position: 'relative', zIndex: 10 }} />
-            )}
-        </HydroButton>
-
-        {/* Audio Visualizer Area */}
-        <div style={{ flex: 1, height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            {isRecording ? (
-                <Waveform isRecording={isRecording} stream={stream} />
-            ) : (
-                <div style={{ width: '100%', textAlign: 'center', color: 'rgba(255, 255, 255, 0.5)', fontSize: '14px' }}>
-                    Tap microphone to speak
-                </div>
-            )}
-        </div>
-
-        {/* Status Indicators */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', minWidth: '80px', justifyContent: 'flex-end' }}>
-            <span style={{
-                width: '6px',
-                height: '6px',
-                borderRadius: '50%',
-                backgroundColor: isRecording ? '#ef4444' : '#10b981',
-                boxShadow: isRecording ? 'none' : '0 0 8px rgba(16, 185, 129, 0.6)',
-                animation: isRecording ? 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite' : 'none'
-            }}></span>
-            <span style={{
-                fontSize: '12px',
-                fontWeight: 500,
-                color: 'rgba(255, 255, 255, 0.4)',
-                letterSpacing: '0.05em',
-                textTransform: 'uppercase',
-                fontFamily: 'monospace'
-            }}>
-                {isLoading ? 'INIT' : (isRecording ? 'REC' : 'READY')}
-            </span>
-        </div>
-    </div>
-));
-
-interface SelectionDockProps {
-    selectedCount: number;
-    onCancel: () => void;
-    onCopy: () => void;
-    isCopied: boolean;
-}
-
-const SelectionDock = React.memo(({ selectedCount, onCancel, onCopy, isCopied }: SelectionDockProps) => (
-    <div style={{
-        pointerEvents: 'auto',
-        display: 'flex',
-        alignItems: 'center',
-        gap: '8px',
-        backgroundColor: 'rgba(17, 24, 39, 0.9)',
-        backdropFilter: 'blur(24px)',
-        WebkitBackdropFilter: 'blur(24px)',
-        border: '1px solid rgba(255, 255, 255, 0.1)',
-        padding: '8px 16px',
-        borderRadius: '9999px',
-        boxShadow: '0 20px 50px rgba(0,0,0,0.5)',
-        animation: 'slideUp 0.3s ease-out'
-    }}>
-        <div style={{ padding: '0 16px', fontSize: '14px', fontWeight: 600, color: 'white', borderRight: '1px solid rgba(255, 255, 255, 0.1)', marginRight: '4px' }}>
-            {selectedCount} Selected
-        </div>
-
-        <HydroButton
-            onClick={onCopy}
-            disabled={selectedCount === 0}
-            style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px',
-                width: '100px',
-                padding: '8px 16px',
-                borderRadius: '9999px',
-                fontSize: '14px',
-                fontWeight: 500,
-                transition: 'all 0.2s',
-                backgroundColor: isCopied ? 'rgba(34, 197, 94, 0.2)' : 'transparent',
-                color: isCopied ? '#4ade80' : 'rgba(255, 255, 255, 0.9)',
-            }}
-        >
-            {isCopied ? <Check size={16} /> : <Copy size={16} />}
-            {isCopied ? 'Copied' : 'Copy'}
-        </HydroButton>
-
-        <div style={{ height: '16px', width: '1px', backgroundColor: 'rgba(255, 255, 255, 0.1)', margin: '0 4px' }}></div>
-
-        <HydroButton
-            onClick={onCancel}
-            style={{
-                padding: '8px',
-                borderRadius: '9999px',
-                color: 'rgba(255, 255, 255, 0.6)',
-                transition: 'all 0.2s',
-                backgroundColor: 'transparent'
-            }}
-            onMouseEnter={e => {
-                e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
-                e.currentTarget.style.color = 'white';
-            }}
-            onMouseLeave={e => {
-                e.currentTarget.style.backgroundColor = 'transparent';
-                e.currentTarget.style.color = 'rgba(255, 255, 255, 0.6)';
-            }}
-        >
-            <X size={18} />
-        </HydroButton>
-    </div>
-));
-
 
 /* --- Main Workspace Component --- */
 
@@ -198,9 +25,7 @@ export const TranscriptionPane: React.FC<TranscriptionPaneProps> = ({
     interimText,
     isRecording,
     onToggleRecording,
-    onCopyAll,
     onClear,
-    autoPaste = true,
     processingStatus = 'idle',
     isLoading = false,
     queueCount = 0,
@@ -259,23 +84,23 @@ export const TranscriptionPane: React.FC<TranscriptionPaneProps> = ({
 
     return (
         <div style={{
-            flex: 1,
-            position: 'relative',
-            display: 'flex',
-            flexDirection: 'column',
+            /* Container doesn't matter for fixed children, but keeping it clean */
+            width: '100%',
             height: '100%',
-            overflow: 'hidden',
             backgroundColor: 'transparent'
         }}>
-            {/* Header / Top Bar */}
+            {/* Header / Top Bar - FIXED Viewport Anchor */}
             <header style={{
+                position: 'fixed',
+                top: '46px', // 38px (Drag) + 8px (Margin)
+                left: '320px',
+                right: 0,
                 height: '64px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
                 padding: '0 24px',
-                marginTop: '8px',
-                flexShrink: 0
+                zIndex: 20
             }}>
                 <div style={{
                     display: 'flex',
@@ -341,9 +166,14 @@ export const TranscriptionPane: React.FC<TranscriptionPaneProps> = ({
                 </div>
             </header>
 
-            {/* Dynamic Workspace */}
+            {/* Dynamic Workspace - FIXED Viewport Anchor */}
             <main className="custom-scrollbar mask-gradient" style={{
-                flex: 1,
+                position: 'fixed',
+                top: '110px', // 38 + 64 + 8
+                left: '320px',
+                right: 0,
+                bottom: 0,
+                // Remove width/height hardcodes, revert to anchor
                 overflowY: 'auto',
                 padding: '16px 32px',
                 paddingBottom: '160px',
@@ -356,7 +186,7 @@ export const TranscriptionPane: React.FC<TranscriptionPaneProps> = ({
                             flexDirection: 'column',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            height: '60vh',
+                            marginTop: '20vh',
                             opacity: 0.3,
                         }}>
                             <div style={{ fontSize: '48px', marginBottom: '16px' }}>🎙️</div>
@@ -443,18 +273,18 @@ export const TranscriptionPane: React.FC<TranscriptionPaneProps> = ({
                 </div>
             </main>
 
-            {/* Footer Dock Switching Logic */}
+            {/* Footer Dock Switching Logic - FIXED Viewport Anchor */}
             <div style={{
-                position: 'absolute',
+                position: 'fixed',
                 bottom: 0,
-                left: 0,
+                left: '320px',
                 right: 0,
                 padding: '24px',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'flex-end',
-                zIndex: 20,
+                zIndex: 30, // Increased z-index to break stacking context issues
                 pointerEvents: 'none'
             }}>
                 {viewMode === 'select' ? (
@@ -506,7 +336,6 @@ export const TranscriptionPane: React.FC<TranscriptionPaneProps> = ({
                         <ControlDock
                             isRecording={isRecording}
                             isLoading={isLoading}
-                            queueCount={queueCount}
                             onRecordToggle={onToggleRecording}
                             stream={stream}
                         />

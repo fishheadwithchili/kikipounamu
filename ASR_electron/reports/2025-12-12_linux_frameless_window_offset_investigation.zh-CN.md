@@ -1,50 +1,101 @@
-# Linux Electron 无边框窗口偏移问题调查报告
+# Linux Electron 无边框窗口偏移问题深度调查与终极解决方案
 
-## 背景与需求
-**目标:** 将 Electron 应用 UI 升级为专家级设计（Glassmorphism + 深色主题），启用无边框窗口 (`frame: false`)。
-**环境:** Windows 11 WSL2 (Ubuntu 22.04.3 LTS)。
-**问题:** UI 内容出现异常垂直偏移，红绿灯控件不可见或错位，渲染层级可能存在冲突。
+## 问题背景
+**环境**: Windows 11 WSL2 (Ubuntu 22.04 LTS) + Electron (28.x) + X Server (GWSL/VcXsrv)
+**应用配置**: `frame: false` (无边框窗口), `resizable: false` (固定尺寸), Transparent (透明/半透明背景)
+**现象**:
+在应用运行过程中，特别是当 DOM 内容发生变化（如录音状态切换、列表项增加）时，整个 Electron 窗口内容区域会莫名其妙地向上偏移 (Offset)，导致界面错位，底部留白，甚至录音按钮被“裁切”。
 
-## 根本原因分析 (Root Cause Analysis)
+## 根本原因深度分析
+经过四个阶段的排查与试错，我们确认问题的根源在于 **Electron/Chromium 渲染引擎在 Linux/WSL2 环境下对无边框窗口 (`frame: false`) 的视口坐标计算存在缺陷**。
 
-### 1. WSL2 的特殊性 - 核心因素
-您的环境（WSL2）是导致此问题的关键：
-- **无原生 GUI:** WSL2 本身不支持原生 GUI，必须通过 Windows 上的 X Server（如 VcXsrv）或 WSLg 来显示。
-- **双层渲染瓶颈:** Electron → Linux GUI → X Server → Windows 显示。每一层都可能引入偏移。
-- **虚拟机网络架构:** WSL2 运行在轻量级虚拟机中，`DISPLAY` 环境变量配置容易出错。
+具体来说：
+1.  **文档流的不稳定性**: 当使用 `position: relative` 或默认文档流时，内部内容的尺寸变化会触发浏览器的 Layout 重算。在 WSL2 的 X11 转发机制下，这种重算偶尔会错误地将“窗口标题栏高度”（即使已隐藏）计算在内，导致内容整体上移。
+2.  **绝对定位的局限性**: 即使使用 `position: absolute`，如果其参照的父容器（Container）本身是流式布局的一部分，偏移依然会发生。
+3.  **强制刷新的副作用**: 试图通过 `setBounds` (改变窗口大小 1px) 来强制重绘虽然能暂时修正偏移，但在高频状态切换下会导致**累积漂移 (Cumulative Drift)**，最终让界面跑偏得更远。
 
-### 2. 已确认的 Electron + Linux 无边框窗口 Bug
-调研发现这是 Electron 在 Linux 上的经典问题：
-- **最大化偏移:** 无边框窗口在最大化或恢复时，尺寸和位置计算容易出错。
-- **次显示器溢出:** 最大化时，未最大化的窗口残影可能会出现在副显示器上。
-- **全屏行为异常:** 切换全屏时窗口大小操作行为不可预测。
-- **Wayland 问题:** 失去焦点时动态调整大小、缩放错误以及鼠标点击错位。
+## 探索过程复盘（失败教训）
 
-### 3. WSL2 透明窗口的特殊 Bug
-透明窗口 (`transparent: true`) 在 WSL2 中特别容易出问题，主要源于上游 NVIDIA 驱动在 Linux 下 alpha 通道的 Bug。
-*临时方案:* 使用 `--enable-transparent-visuals --disable-gpu`（但移除透明属性是更稳妥的做法）。
+### ❌ 方案一：强制布局刷新 (Force Layout Refresh)
+*   **思路**: 每次状态变化时，用 JS 强制让窗口宽+1px 再减-1px。
+*   **结果**: 治标不治本。虽然单次有效，但多次操作后引入了像素级误差累积，导致窗口缓慢“爬升”。
 
-## 建议解决方案
+### ❌ 方案二：绝对定位 + 硬编码尺寸 (Absolute + Hardcoded)
+*   **思路**: 将 `width`, `height`全部写死为像素值（如 816px x 562px），试图由容器撑开。
+*   **结果**: 失败。因为 `absolute` 仍然依赖于父级容器 (`#root`, `body`) 的定位原点。如果渲染层认为 `body` 的原点变了（例如上移了 20px），那么绝对定位的子元素也会跟着上移。
 
-### 方案 A：WSL2 环境配置修复（优先尝试）
-1.  **检查 X Server:** 确保 VcXsrv 或 WSLg 正在运行。
-2.  **修复 DISPLAY 变量:**
-    ```bash
-    export DISPLAY=$(grep -m 1 nameserver /etc/resolv.conf | awk '{print $2}'):0
-    ```
-3.  **安装缺失依赖:**
-    ```bash
-    sudo apt install -y libgconf-2-4 libatk1.0-0 libatk-bridge2.0-0 libgdk-pixbuf2.0-0 libgtk-3-0 libgbm-dev libnss3-dev libxss-dev
-    ```
+## ✅ 终极解决方案：全员固定定位 (Global Fixed Positioning)
 
-### 方案 B：Electron 配置调整
-1.  **禁用硬件加速:**
-    在 `main.ts` 中添加: `app.disableHardwareAcceleration();`
-2.  **延迟窗口显示:**
-    等待 `ready-to-show` 事件，并使用 `setTimeout(..., 300)` 延迟显示窗口，让布局有时间稳定。
-3.  **强制重绘:**
-    在 `ready-to-show` 时调用 `win.setBounds(win.getBounds())` 强制刷新布局。
+### 核心思想
+**“钉死在视口上” (Anchor to Viewport)**。
+放弃所有依赖 DOM 结构的定位方式，利用 CSS 的 `position: fixed` 属性，将每一个核心 UI 组件直接**锚定在浏览器视口 (Viewport) 的绝对坐标系上**。
 
-### 方案 C：替代方案
-1.  **使用 `titleBarStyle: 'hidden'`:** 代替 `frame: false`，Linux 上行为不同但可能更稳定。
-2.  **使用 Windows 版 Electron:** 在 WSL2 中安装并运行 Windows 版本的 Electron (`npm install --platform=win32 electron`)，绕过 Linux GUI 层。
+由于 Electron 的 `BrowserWindow` 视口本身是我们在主进程中定义的（例如 816x600），这个坐标系是极其稳定的。除非操作系统本身出 Bug，否则 `fixed` 元素绝不会动。
+
+### 实施细节
+
+**1. CSS 全局锁定 (`index.css`)**
+```css
+html, body, #root {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  position: fixed; /* 物理锁定根元素 */
+  top: 0;
+  left: 0;
+}
+```
+
+**2. 主布局组件化锁定 (`App.tsx`)**
+不再使用 Flexbox 布局，而是将左右两栏直接定死：
+```tsx
+// 侧边栏容器
+<div style={{
+  position: 'fixed', // 关键！
+  left: 0,
+  top: '38px', // 避开顶部拖拽栏
+  width: '320px',
+  bottom: 0 // 钉死底部
+}}>...</div>
+
+// 右侧工作区容器
+<div style={{
+  position: 'fixed', // 关键！
+  left: '320px',
+  right: 0,
+  top: '38px',
+  bottom: 0
+}}>...</div>
+```
+
+**3. 内部组件分层锁定 (`TranscriptionPane.tsx`)**
+即使在组件内部，对于头部、列表、底部栏，也全部使用 `fixed` 定位，而不是让它们在容器里自然堆叠。
+```tsx
+// 顶部栏
+<header style={{
+  position: 'fixed',
+  top: '46px',
+  left: '320px',
+  right: 0
+}}>...</header>
+
+// 中间滚动列表
+<main style={{
+  position: 'fixed',
+  top: '110px',
+  left: '320px',
+  right: 0,
+  bottom: 0
+}}>...</main>
+
+// 底部控制栏
+<div style={{
+  position: 'fixed',
+  bottom: 0,
+  left: '320px',
+  right: 0
+}}>...</div>
+```
+
+### 总结
+在开发 Linux/WSL2 下的 Electron 无边框应用时，**不要相信文档流，也不要相信相对定位**。如果你的窗口尺寸是固定的，那么请毫不犹豫地使用 **Global Fixed Positioning** 策略，将每一个像素都由你自己掌控。这是解决“幽灵偏移”最暴力也最有效的手段。

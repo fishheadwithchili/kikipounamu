@@ -13,7 +13,7 @@ import {
     applyCMVN,
     parseCMVN,
     computeLogMelFrames,
-    computeLFRFromFrames,
+
     FRAME_LENGTH,
     FRAME_SHIFT,
     LFR_CONTEXT

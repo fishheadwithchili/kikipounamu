@@ -2,6 +2,11 @@ import { app, BrowserWindow, ipcMain } from 'electron';
 
 // Disable hardware acceleration to fix rendering issues on Linux/WSL2
 app.disableHardwareAcceleration();
+
+// Additional Chromium flags for WSL2/Linux stability
+app.commandLine.appendSwitch('disable-features', 'CalculateNativeWinOcclusion');
+app.commandLine.appendSwitch('disable-gpu-compositing'); // Prevents GPU layer shifts
+app.commandLine.appendSwitch('disable-software-rasterizer');
 import path from 'node:path';
 import { registerShortcuts, unregisterShortcuts } from './shortcuts';
 import { createTray } from './tray';
@@ -32,23 +37,39 @@ function createWindow() {
   logger.info('Creating application window');
 
   win = new BrowserWindow({
-    width: 800,
+    width: 816,
     height: 600,
-    useContentSize: true, // Fix for Linux frameless window offset
+    resizable: false,
+    maximizable: false,
+    // useContentSize: true, // Disabled - can cause offset issues in WSL2
     icon: path.join(process.env.VITE_PUBLIC, 'electron-vite.svg'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.mjs'),
     },
-    // frame: false, // Replaced with titleBarStyle for better Linux support
-    titleBarStyle: 'hidden', // Standard cross-platform frameless mode
-    // titleBarOverlay: true, // Optional: enable if native controls are desired on supported platforms
+    frame: false, // Custom frameless window
     backgroundColor: '#0f172a', // Solid dark background (matches app theme)
     show: false // Show after ready-to-show to prevent flash
   });
 
-  // Show window when ready to prevent visual glitches
+  // LINUX/WSL2 FIX: Force layout refresh by resetting bounds after ready
   win.once('ready-to-show', () => {
-    win?.show();
+    // Force a bounds reset to fix Linux offset bug
+    const bounds = win?.getBounds();
+    if (bounds && win) {
+      win.setBounds({
+        x: bounds.x,
+        y: bounds.y,
+        width: bounds.width + 1,
+        height: bounds.height
+      });
+      // Immediately set back to actual size
+      setTimeout(() => {
+        win?.setBounds(bounds);
+        win?.show();
+      }, 50);
+    } else {
+      win?.show();
+    }
   });
 
   // Test active push message to Renderer-process.
@@ -90,6 +111,15 @@ function createWindow() {
 
   ipcMain.handle('window-close', () => {
     win?.close();
+  });
+
+  // LINUX/WSL2 FIX: Allow renderer to trigger layout refresh
+  ipcMain.handle('force-layout-refresh', () => {
+    if (win) {
+      const bounds = win.getBounds();
+      win.setBounds({ ...bounds, width: bounds.width + 1 });
+      setTimeout(() => win?.setBounds(bounds), 50);
+    }
   });
 
   // Setup Tray

@@ -3,6 +3,8 @@ import { Type, FileAudio, Settings, Copy, Check, Play, Pause } from 'lucide-reac
 import { HydroButton } from './HydroButton';
 import { Logo3D } from './Logo3D';
 
+import { ConnectionIndicator } from './ConnectionIndicator';
+
 export interface HistoryItem {
     timestamp: string;
     text: string;
@@ -49,15 +51,6 @@ export const HistoryList: React.FC<HistoryListProps> = ({
         setTimeout(() => setCopiedId(null), ANIMATION_TIMING.TOAST);
     };
 
-    const getStatusColor = () => {
-        switch (connectionStatus) {
-            case 'connected': return '#10b981';
-            case 'error': return '#ef4444';
-            case 'connecting': return '#f59e0b';
-            default: return '#64748b';
-        }
-    };
-
     return (
         <div style={{
             position: 'relative',
@@ -68,7 +61,7 @@ export const HistoryList: React.FC<HistoryListProps> = ({
             backgroundColor: 'rgba(17, 24, 39, 0.3)',
             backdropFilter: 'blur(24px)',
             WebkitBackdropFilter: 'blur(24px)',
-            width: '320px',
+            width: '100%',
             height: '100%'
         }}>
             {/* Logo and Status */}
@@ -85,32 +78,7 @@ export const HistoryList: React.FC<HistoryListProps> = ({
                         }}>
                             ASR Pro
                         </h2>
-                        <div style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '6px',
-                            marginTop: '2px'
-                        }}>
-                            <span style={{
-                                width: '6px',
-                                height: '6px',
-                                borderRadius: '50%',
-                                backgroundColor: getStatusColor(),
-                                boxShadow: connectionStatus === 'connected'
-                                    ? `0 0 8px ${getStatusColor()}`
-                                    : 'none'
-                            }} />
-                            <p style={{
-                                fontSize: '10px',
-                                color: 'rgba(255, 255, 255, 0.4)',
-                                fontFamily: 'monospace',
-                                letterSpacing: '1px',
-                                textTransform: 'uppercase',
-                                margin: 0
-                            }}>
-                                {connectionStatus}
-                            </p>
-                        </div>
+                        <ConnectionIndicator status={connectionStatus} />
                     </div>
                 </div>
 

@@ -3,48 +3,40 @@
 ## Context
 **Goal:** Upgrade Electron app UI to expert level (Glassmorphism + Dark Theme) with frameless window (`frame: false`).
 **Environment:** Windows 11 running WSL2 (Ubuntu 22.04.3 LTS).
-**Problem:** Abnormal vertical offset in UI content, traffic light controls invisible or misplaced, and potential rendering layer conflicts.
+**Problem:** Abnormal vertical offset in UI content when recording starts. Content shifts upwards, and the recording button appears deformed.
+
+## Initial Hypothesis & Research
+Initially, we suspected a rendering issue common to Electron on Linux/WSL2:
+1.  **WSL2 Rendering Layer:** Double rendering (Electron -> Linux GUI -> X Server -> Windows) often introduces offsets.
+2.  **Frameless Window Bug:** `frame: false` on Linux has known issues with window maximize/restore coordinates.
+3.  **Dynamic Paint Flashing:** `-webkit-app-region: drag` can trigger layout recalculations during DOM updates.
+
+## Attempted Solutions (Failures)
+We systematically tested several standard fixes, but none worked:
+1.  **`titleBarStyle: 'hidden'`:** Switching from `frame: false` to the standard title bar style did not fix the offset.
+2.  **Forced Bounds Refresh:** Manually resizing the window on `ready-to-show` to force a layout recalculation had no effect.
+3.  **CSS Layer Isolation:** Adding `will-change: transform` and `transform: translate3d(0,0,0)` to forced GPU layer isolation for drag regions did not resolve the shift.
+4.  **Chromium Flags:** Disabling GPU compositing and hardware acceleration via command line flags (`--disable-gpu-compositing`, `--disable-features=CalculateNativeWinOcclusion`) improved stability but did not fix the recording offset.
+
+## Pivot & Observation
+The breakthrough came from observing **when** the offset happened:
+- **Observation:** The window was correctly sized and positioned on launch. The offset *only* occurred when clicking the "Record" button.
+- **Visual Clue:** The recording button itself was deformed in the screenshot provided by the user.
+- **Deduction:** This wasn't a window-level rendering bug, but a **dynamic layout issue** triggered by the state change from "Ready" to "Recording".
 
 ## Root Cause Analysis
+We examined the component responsible for the recording UI (`ControlDock` in `TranscriptionPane.tsx`) and found a critical CSS size mismatch:
 
-### 1. WSL2 Specifics
-The WSL2 environment is a core factor.
-- **No Native GUI:** WSL2 requires an X Server (like VcXsrv) or WSLg to display GUIs.
-- **Double Rendering Layers:** Electron → Linux GUI → X Server → Windows Display. Each layer can introduce offsets.
-- **Networking:** WSL2 runs in a VM, so `DISPLAY` environment variable misconfiguration is common.
+1.  **Container:** The `ControlDock` has a flex container for the visualizer with a fixed height of **40px**.
+2.  **Component:** The `Waveform` component (rendered only during recording) had a hardcoded canvas height of **60px**.
 
-### 2. Confirmed Electron + Linux Frameless Window Bugs
-Research confirms this is a classic Electron on Linux issue:
-- **Maximized Offset:** Frameless windows often calculate size/position incorrectly when maximized.
-- **Secondary Monitor Overflow:** Ghosting on secondary monitors when maximized.
-- **Fullscreen Behavior:** Unpredictable behavior when toggling fullscreen.
-- **Wayland Issues:** Dynamic resizing on focus loss, incorrect scaling, and mouse click misalignment.
+When recording started, the 60px canvas was injected into the 40px container. This caused an immediate layout overflow, pushing the parent container and surrounding elements (including the drag region and top bar) upwards, resulting in the visual "offset".
 
-### 3. Transparent Window Bug in WSL2
-Transparent windows (`transparent: true`) are notoriously problematic in WSL2 due to upstream NVIDIA driver bugs with the alpha channel.
-*Workaround:* Use `--enable-transparent-visuals --disable-gpu` (but removing transparency is safer).
+## Final Solution
+We applied a precise CSS fix to ensure layout stability:
+1.  **Match Heights:** Updated `Waveform.tsx` to set the canvas height to `40px`, matching its container.
+2.  **CSS Containment:** Added `contain: strict` to the canvas to isolate its layout calculations.
+3.  **Overflow Protection:** Added `overflow: hidden` and `contain: layout size` to the parent container in `TranscriptionPane.tsx` to prevent any future child elements from affecting the parent layout.
 
-## Recommended Solutions
-
-### Solution A: Fix WSL2 Environment (Priority)
-1.  **Check X Server:** Ensure VcXsrv/WSLg is running.
-2.  **Fix DISPLAY Variable:**
-    ```bash
-    export DISPLAY=$(grep -m 1 nameserver /etc/resolv.conf | awk '{print $2}'):0
-    ```
-3.  **Install Dependencies:**
-    ```bash
-    sudo apt install -y libgconf-2-4 libatk1.0-0 libatk-bridge2.0-0 libgdk-pixbuf2.0-0 libgtk-3-0 libgbm-dev libnss3-dev libxss-dev
-    ```
-
-### Solution B: Electron Configuration Tweaks
-1.  **Disable Hardware Acceleration:**
-    In `main.ts`: `app.disableHardwareAcceleration();`
-2.  **Delay Window Show:**
-    Wait for `ready-to-show` and then `setTimeout(..., 300)` before showing the window to allow layout to settle.
-3.  **Force Layout Refresh:**
-    Call `win.setBounds(win.getBounds())` in `ready-to-show`.
-
-### Solution C: Alternatives
-1.  **Use `titleBarStyle: 'hidden'`:** Instead of `frame: false`.
-2.  **Use Windows Electron:** Run the Windows version of Electron from WSL2 (`npm install --platform=win32 electron`).
+## Result
+The layout is now stable. Switching between "Ready" and "Recording" states no longer triggers a layout shift, and the visual deformation is gone.

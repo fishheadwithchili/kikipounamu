@@ -129,10 +129,12 @@ export const Waveform: React.FC<WaveformProps> = ({ isRecording, stream }) => {
         <canvas
             ref={canvasRef}
             width={300}
-            height={60}
+            height={40}  // FIX: Match container height to prevent layout shift
             style={{
                 borderRadius: '8px',
                 backgroundColor: 'rgba(30, 41, 59, 0.5)',
+                maxHeight: '40px', // Ensure no overflow
+                contain: 'strict', // Prevent layout recalculation from affecting parent
             }}
         />
     );

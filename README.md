@@ -22,6 +22,22 @@
 
 ---
 
+## 🎬 Video Tutorials
+
+### Deployment & Usage Guide
+
+[![How to deploy and use KikiPounamu](https://img.youtube.com/vi/OmpvwU-1Aus/maxresdefault.jpg)](https://youtu.be/OmpvwU-1Aus?si=soHdu4IN8edH27ta)
+
+*Step-by-step guide on deploying and using the KikiPounamu ASR System.*
+
+### Technical Architecture Whitepaper
+
+[![KikiPounamu Technical Architecture](https://img.youtube.com/vi/rEsNXzD4K2M/maxresdefault.jpg)](https://youtu.be/rEsNXzD4K2M?si=p3DIhwRr4np1aOT2)
+
+*Deep dive into the project's technical architecture and design decisions.*
+
+---
+
 ## 🛠 Development Environment
 
 This project is developed and tested in the following specific environment.

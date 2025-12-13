@@ -22,6 +22,22 @@
 
 ---
 
+## 🎬 视频教程
+
+### 部署与使用指南
+
+[![如何部署和使用 KikiPounamu](https://img.youtube.com/vi/OmpvwU-1Aus/maxresdefault.jpg)](https://youtu.be/OmpvwU-1Aus?si=soHdu4IN8edH27ta)
+
+*手把手教你部署和使用 KikiPounamu ASR 系统。*
+
+### 技术架构白皮书
+
+[![KikiPounamu 项目技术架构](https://img.youtube.com/vi/rEsNXzD4K2M/maxresdefault.jpg)](https://youtu.be/rEsNXzD4K2M?si=p3DIhwRr4np1aOT2)
+
+*深入解析项目的技术架构和设计决策。*
+
+---
+
 ## 🛠 开发环境
 
 本项目在以下特定环境中开发并测试通过：

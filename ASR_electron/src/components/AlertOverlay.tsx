@@ -60,6 +60,8 @@ export const AlertOverlay: React.FC<AlertOverlayProps> = ({
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
+                willChange: 'opacity',
+                transform: 'translateZ(0)',
                 backgroundColor: 'rgba(0, 0, 0, 0.8)',
                 backdropFilter: 'blur(12px)',
                 WebkitBackdropFilter: 'blur(12px)',
@@ -72,6 +74,8 @@ export const AlertOverlay: React.FC<AlertOverlayProps> = ({
                 className="animate-zoom-in"
                 style={{
                     position: 'relative',
+                    willChange: 'transform, opacity',
+                    backfaceVisibility: 'hidden',
                     width: '100%',
                     maxWidth: '384px',
                     margin: '0 16px',

@@ -1,0 +1,41 @@
+[2025-12-14T09:25:03.320Z] === LOG STARTED ===
+ID: 20251214222503_vad
+[2025-12-14T09:25:03.322Z] [Cycle] START RECORDING | Mode=vad
+[2025-12-14T09:25:03.631Z] [AudioFlow] Amp=0.0065 Avg=0.0004 | Mode=vad | Buffer=0 | isSpeaking=false
+[2025-12-14T09:25:03.691Z] [VAD-Detect] Prob=0.0040 | Amp=0.0065
+[2025-12-14T09:25:04.033Z] [VAD-Event] Silence threshold met (512ms) but not speaking, no cut. (Suppressing next 50 logs)
+[2025-12-14T09:25:04.676Z] [AudioFlow] Amp=0.0038 Avg=0.0009 | Mode=vad | Buffer=8 | isSpeaking=false
+[2025-12-14T09:25:05.697Z] [AudioFlow] Amp=0.0109 Avg=0.0017 | Mode=vad | Buffer=16 | isSpeaking=false
+[2025-12-14T09:25:06.742Z] [AudioFlow] Amp=0.0612 Avg=0.0051 | Mode=vad | Buffer=24 | isSpeaking=false
+[2025-12-14T09:25:07.764Z] [AudioFlow] Amp=0.4990 Avg=0.0698 | Mode=vad | Buffer=32 | isSpeaking=false
+[2025-12-14T09:25:08.785Z] [AudioFlow] Amp=0.0215 Avg=0.0032 | Mode=vad | Buffer=40 | isSpeaking=false
+[2025-12-14T09:25:09.830Z] [AudioFlow] Amp=0.4044 Avg=0.0563 | Mode=vad | Buffer=48 | isSpeaking=false
+[2025-12-14T09:25:10.117Z] [VAD-Detect] Prob=0.0040 | Amp=0.2997
+[2025-12-14T09:25:10.487Z] [VAD-Event] Silence threshold met (6912ms) but not speaking, no cut. (Suppressing next 50 logs)
+[2025-12-14T09:25:10.851Z] [AudioFlow] Amp=0.0142 Avg=0.0021 | Mode=vad | Buffer=56 | isSpeaking=false
+[2025-12-14T09:25:11.873Z] [AudioFlow] Amp=0.0710 Avg=0.0075 | Mode=vad | Buffer=64 | isSpeaking=false
+[2025-12-14T09:25:12.895Z] [AudioFlow] Amp=0.1078 Avg=0.0159 | Mode=vad | Buffer=72 | isSpeaking=false
+[2025-12-14T09:25:13.916Z] [AudioFlow] Amp=0.0016 Avg=0.0003 | Mode=vad | Buffer=80 | isSpeaking=false
+[2025-12-14T09:25:14.938Z] [AudioFlow] Amp=0.0215 Avg=0.0031 | Mode=vad | Buffer=88 | isSpeaking=false
+[2025-12-14T09:25:15.960Z] [AudioFlow] Amp=0.0991 Avg=0.0131 | Mode=vad | Buffer=96 | isSpeaking=false
+[2025-12-14T09:25:16.523Z] [VAD-Detect] Prob=0.0040 | Amp=0.0621
+[2025-12-14T09:25:16.895Z] [VAD-Event] Silence threshold met (13312ms) but not speaking, no cut. (Suppressing next 50 logs)
+[2025-12-14T09:25:17.005Z] [AudioFlow] Amp=0.2522 Avg=0.0467 | Mode=vad | Buffer=104 | isSpeaking=false
+[2025-12-14T09:25:18.026Z] [AudioFlow] Amp=0.0062 Avg=0.0007 | Mode=vad | Buffer=112 | isSpeaking=false
+[2025-12-14T09:25:19.071Z] [AudioFlow] Amp=0.0527 Avg=0.0097 | Mode=vad | Buffer=120 | isSpeaking=false
+[2025-12-14T09:25:20.092Z] [AudioFlow] Amp=0.0913 Avg=0.0073 | Mode=vad | Buffer=128 | isSpeaking=false
+[2025-12-14T09:25:21.114Z] [AudioFlow] Amp=0.0357 Avg=0.0064 | Mode=vad | Buffer=136 | isSpeaking=false
+[2025-12-14T09:25:22.136Z] [AudioFlow] Amp=0.4440 Avg=0.0757 | Mode=vad | Buffer=144 | isSpeaking=false
+[2025-12-14T09:25:22.933Z] [VAD-Detect] Prob=0.0040 | Amp=0.5776
+[2025-12-14T09:25:23.180Z] [AudioFlow] Amp=0.2655 Avg=0.0334 | Mode=vad | Buffer=152 | isSpeaking=false
+[2025-12-14T09:25:23.328Z] [VAD-Event] Silence threshold met (19712ms) but not speaking, no cut. (Suppressing next 50 logs)
+[2025-12-14T09:25:24.201Z] [AudioFlow] Amp=0.3949 Avg=0.0344 | Mode=vad | Buffer=160 | isSpeaking=false
+[2025-12-14T09:25:25.223Z] [AudioFlow] Amp=0.4263 Avg=0.0823 | Mode=vad | Buffer=168 | isSpeaking=false
+[2025-12-14T09:25:26.245Z] [AudioFlow] Amp=0.2841 Avg=0.0448 | Mode=vad | Buffer=176 | isSpeaking=false
+[2025-12-14T09:25:27.267Z] [AudioFlow] Amp=0.4369 Avg=0.0672 | Mode=vad | Buffer=184 | isSpeaking=false
+[2025-12-14T09:25:28.288Z] [AudioFlow] Amp=0.2184 Avg=0.0389 | Mode=vad | Buffer=192 | isSpeaking=false
+[2025-12-14T09:25:29.310Z] [AudioFlow] Amp=0.5076 Avg=0.0637 | Mode=vad | Buffer=200 | isSpeaking=false
+[2025-12-14T09:25:29.340Z] [VAD-Detect] Prob=0.0040 | Amp=0.5076
+[2025-12-14T09:25:29.737Z] [VAD-Event] Silence threshold met (26112ms) but not speaking, no cut. (Suppressing next 50 logs)
+[2025-12-14T09:25:30.355Z] [AudioFlow] Amp=0.2682 Avg=0.0499 | Mode=vad | Buffer=208 | isSpeaking=false
+[2025-12-14T09:25:31.382Z] [AudioFlow] Amp=0.1870 Avg=0.0353 | Mode=vad | Buffer=216 | isSpeaking=false

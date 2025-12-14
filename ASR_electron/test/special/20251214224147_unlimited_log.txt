@@ -1,0 +1,16 @@
+[2025-12-14T09:41:47.406Z] === LOG STARTED ===
+ID: 20251214224147_unlimited
+[2025-12-14T09:41:47.409Z] [Cycle] START RECORDING | Mode=unlimited
+[2025-12-14T09:41:47.694Z] [AudioFlow] Amp=0.1019 Avg=0.0032 | Mode=unlimited | Buffer=0 | isSpeaking=false
+[2025-12-14T09:41:54.383Z] [ASRClient] Starting session def399b2-9b12-41d6-b173-e3f1f2131f7c
+[2025-12-14T09:41:54.392Z] [ASRClient-Rx] Type=ack Status=session_started
+[2025-12-14T09:41:54.393Z] [ASRClient-Rx] Session Started ACK
+[2025-12-14T09:42:16.518Z] [ASRClient] Sending Chunk #0
+[2025-12-14T09:42:16.528Z] [ASRClient] Sending Chunk #1
+[2025-12-14T09:42:16.533Z] [ASRClient-Rx] Type=ack Status=received
+[2025-12-14T09:42:16.535Z] [ASRClient] Sending Chunk #2
+[2025-12-14T09:42:16.537Z] [ASRClient] Stopping session def399b2-9b12-41d6-b173-e3f1f2131f7c. Sent frames: 3
+[2025-12-14T09:42:16.552Z] [ASRClient-Rx] Type=ack Status=received
+[2025-12-14T09:42:16.553Z] [ASRClient-Rx] Type=ack Status=received
+[2025-12-14T09:42:21.572Z] [ASRClient-Rx] Type=final_result Status=N/A
+[2025-12-14T09:42:21.573Z] [ASRClient-Rx] Final Result: Dur=27.17309023 Chunks=3 TextLen=90

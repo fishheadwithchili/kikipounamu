@@ -25,6 +25,9 @@ type Config struct {
 	DBName       string
 	AutoCreateDB bool
 
+	// Health Check
+	MinWorkers int
+
 	// Retention Policy
 	MaxAudioFilesPerUser int
 }
@@ -50,6 +53,7 @@ func Load() *Config {
 	viper.SetDefault("WORKER_POOL_SIZE", 200)
 	viper.SetDefault("MAX_CONNECTIONS", 1000)
 	viper.SetDefault("LOG_LEVEL", "info")
+	viper.SetDefault("MIN_WORKERS", 1) // Default to 1 for easier local dev/testing
 	viper.SetDefault("MAX_AUDIO_FILES_PER_USER", 10)
 	viper.SetDefault("DB_HOST", "localhost")
 	viper.SetDefault("DB_PORT", 5432)
@@ -92,6 +96,8 @@ func updateGlobalConfig() {
 		DBPassword:   viper.GetString("DB_PASSWORD"),
 		DBName:       viper.GetString("DB_NAME"),
 		AutoCreateDB: viper.GetBool("AUTO_CREATE_DB"),
+
+		MinWorkers: viper.GetInt("MIN_WORKERS"),
 
 		MaxAudioFilesPerUser: viper.GetInt("MAX_AUDIO_FILES_PER_USER"),
 	}

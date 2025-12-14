@@ -68,8 +68,8 @@ func (s *ASRService) checkWorkers() {
 
 // IsSystemHealthy checks if there are enough active workers
 func (s *ASRService) IsSystemHealthy() bool {
-	// Threshold is 2 as per plan.
-	return atomic.LoadInt64(&s.activeWorkers) >= 2
+	// Threshold is configurable, default 1
+	return atomic.LoadInt64(&s.activeWorkers) >= int64(s.cfg.MinWorkers)
 }
 
 // PushChunkToRedis 仅负责将任务推送到 Redis Streams (Fire and Forget)

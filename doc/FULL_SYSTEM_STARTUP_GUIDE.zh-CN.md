@@ -62,6 +62,7 @@ model = AutoModel(
 
 ```bash
 # 启动 Redis
+cd ASR_server
 redis-server &
 
 # 启动 PostgreSQL (确保服务已运行)

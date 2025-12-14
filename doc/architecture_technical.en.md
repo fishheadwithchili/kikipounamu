@@ -116,7 +116,7 @@ Leveraging Redis Streams decoupling, the system naturally supports cross-machine
 *   **Node A (Laptop)**:
     *   Runs **Go Gateway**: Handles network traffic, lightweight.
     *   Runs **Redis/PostgreSQL**: Data center.
-    *   Runs **CPU Worker**: Handles lightweight tasks (e.g., short VAD segmentation).
+    *   Runs **CPU Worker**: Handles lightweight tasks.
 *   **Node B (Desktop)**:
     *   Runs **GPU Worker**: Equipped with **RTX 5060 Ti**.
     *   Connects to Node A's Redis via LAN.
@@ -171,10 +171,8 @@ Based on current limitations and business expectations:
     *   Implement **Cluster Autoscaler** for dynamic cloud GPU nodes.
 
 ### 8.2 Frontend Intelligence
-*   **Challenge**: Current VAD relies on backend or simple amplitude detection, causing high network overhead or inaccuracy.
-*   **Plan**: Integrated **WebAssembly (WASM) FunASR VAD**.
-    *   **Difficulty**: Matching ONNX model output (248 dim logits) with frontend probability logic.
-    *   **Benefit**: Millisecond-level client-side silence detection, reducing invalid audio transmission and bandwidth costs by >30%.
+
+
 
 ### 8.3 Dependency Standardization
 *   **Challenge**: PyTorch Nightly vs CUDA 12.8 compatibility (`uv lock` failures).

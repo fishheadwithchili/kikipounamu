@@ -10,7 +10,7 @@
  * - 实时语音活动检测
  */
 import { useState, useRef, useCallback, useEffect } from 'react';
-import { FunASRVAD } from '../services/funasrVAD';
+// import { FunASRVAD } from '../services/funasrVAD'; // Removed VAD
 import { float32ToWav, float32ToBase64 } from '../utils/audioHelper';
 import { createLogger } from '../utils/loggerRenderer';
 
@@ -35,12 +35,8 @@ interface VADRecordingResult {
 }
 
 // VAD 配置
-const VAD_CONFIG = {
-    speechThreshold: 0.1,       // 语音检测阈值 (降低以提高灵敏度)
-    silenceThreshold: 0.35,     // 静音检测阈值
-    minSpeechDurationMs: 200,   // 最小语音段
-    minSilenceDurationMs: 500,  // 静音触发切分
-};
+// VAD Config removed
+// const VAD_CONFIG = { ... }
 
 // 音频配置
 // 音频配置
@@ -83,7 +79,7 @@ export function useVADRecording(
     const [sessionId, setSessionId] = useState<string | null>(null);
     const sessionIdRef = useRef<string | null>(null);
 
-    const vadRef = useRef<FunASRVAD | null>(null);
+    // const vadRef = useRef<FunASRVAD | null>(null); // Removed
     const streamRef = useRef<MediaStream | null>(null);
     const [streamState, setStreamState] = useState<MediaStream | null>(null); // Reactive state for stream sharing
     const audioContextRef = useRef<AudioContext | null>(null);
@@ -111,49 +107,15 @@ export function useVADRecording(
     }, []);
 
     // 初始化 VAD
+    // VAD Initialization Removed
     useEffect(() => {
-        let isMounted = true;
-        const initVAD = async () => {
-            // Prevent double init if already ready or processing
-            if (vadRef.current) return;
-
-            try {
-                console.log('🔄 初始化 FunASR VAD...');
-                const vad = new FunASRVAD(VAD_CONFIG);
-                await vad.init('/models/model.onnx', '/models/vad.mvn');
-
-                if (isMounted) {
-                    vadRef.current = vad;
-                    setIsVADReady(true);
-                    logger.info('VAD initialized successfully');
-                } else {
-                    vad.reset(); // Cleanup if unmounted during init
-                }
-            } catch (err) {
-                if (isMounted) {
-                    logger.error('VAD initialization failed', err as Error);
-                    setError('VAD 模型加载失败: ' + (err as Error).message);
-                }
-            }
-        };
-
-        initVAD();
-
-        return () => {
-            isMounted = false;
-            // Only reset if we own the instance
-            if (vadRef.current) {
-                vadRef.current.reset();
-                vadRef.current = null;
-            }
-        };
+        setIsVADReady(true); // Always ready as we don't need model
+        return () => { };
     }, []);
 
     // 处理音频块
     const processAudioChunk = useCallback(async (inputBuffer: Float32Array) => {
-
-
-        if (!vadRef.current?.ready) return;
+        // if (!vadRef.current?.ready) return; // Removed check
 
         try {
             // Calculate Amplitude for frequent logging
@@ -181,7 +143,9 @@ export function useVADRecording(
             }
 
             // --- CONTINUOUS MODES (Unlimited & Time Limit) ---
-            if (vadMode === 'unlimited' || vadMode === 'time_limit') {
+            // --- CONTINUOUS MODES (Unlimited & Time Limit) ---
+            // Treated VAD mode as Unlimited for safety if somehow selected
+            if (vadMode === 'unlimited' || vadMode === 'time_limit' || vadMode === 'vad') {
                 speechBufferRef.current.push(inputBuffer.slice());
 
                 // Always mark as speaking in continuous modes so UI shows activity
@@ -227,88 +191,8 @@ export function useVADRecording(
                 return;
             }
 
-            // --- VAD MODE ---
-            const speechProb = await vadRef.current.detect(inputBuffer);
-
-            // Log VAD result
-            logDebug(`[VAD-Detect] Prob=${speechProb.toFixed(4)} | Amp=${maxAmp.toFixed(4)}`);
-
-            if (speechProb < 0) {
-                logDebug(`[VAD-Skip] Insufficient data`);
-                // Only buffer if we were expecting VAD logic? 
-                // In pure VAD mode, we usually wait for speech. 
-                // The original code buffered for 'vad' or 'time_limit' here.
-                // Since 'time_limit' is handled above, we only care about 'vad'.
-                if (vadMode === 'vad') {
-                    speechBufferRef.current.push(inputBuffer.slice());
-                }
-                return;
-            }
-
-            if (speechProb >= VAD_CONFIG.speechThreshold) {
-                speechFramesRef.current++;
-                silenceFramesRef.current = 0;
-
-                if (!isSpeakingRef.current && speechFramesRef.current >= 2) {
-                    logDebug(`[VAD-Event] START SPEAKING (Prob=${speechProb.toFixed(3)})`);
-                    setIsSpeaking(true);
-                    isSpeakingRef.current = true;
-                }
-                speechBufferRef.current.push(inputBuffer.slice());
-            } else if (speechProb < VAD_CONFIG.silenceThreshold) {
-                silenceFramesRef.current++;
-                speechFramesRef.current = 0;
-
-                // Only buffer payload in VAD mode (time_limit handled above)
-                if (vadMode === 'vad') {
-                    speechBufferRef.current.push(inputBuffer.slice());
-                }
-
-                const silenceDurationMs = silenceFramesRef.current * BUFFER_SIZE_MS;
-                let shouldCut = false;
-
-                if (vadMode === 'vad') {
-                    if (silenceDurationMs >= VAD_CONFIG.minSilenceDurationMs && isSpeakingRef.current) {
-                        logDebug(`[VAD-Event] SILENCE DETECTED (${silenceDurationMs}ms) -> CUTTING`);
-                        shouldCut = true;
-                        setIsSpeaking(false);
-                        isSpeakingRef.current = false;
-                    } else if (silenceDurationMs >= VAD_CONFIG.minSilenceDurationMs) {
-                        logDebug(`[VAD-Event] Silence threshold met (${silenceDurationMs}ms) but not speaking, no cut.`);
-                    }
-                }
-                // time_limit logic removed from here as it is handled at the top
-
-                if (shouldCut) {
-                    if (speechBufferRef.current.length > 0) {
-                        // 合并语音缓冲并发送
-                        const totalLength = speechBufferRef.current.reduce((sum, buf) => sum + buf.length, 0);
-                        const mergedAudio = new Float32Array(totalLength);
-                        let offset = 0;
-                        for (const buf of speechBufferRef.current) {
-                            mergedAudio.set(buf, offset);
-                            offset += buf.length;
-                        }
-
-                        const wavBuffer = float32ToWav(mergedAudio, SAMPLE_RATE);
-                        const currentIndex = chunkIndexRef.current;
-                        chunkIndexRef.current++;
-                        setChunkCount((prev: number) => prev + 1);
-
-                        logDebug(`[Chunk-Cut] Sending Chunk #${currentIndex} | Size=${wavBuffer.byteLength} bytes | Duration=${(mergedAudio.length / SAMPLE_RATE).toFixed(2)}s`);
-
-                        if (chunkCallbackRef.current) {
-                            chunkCallbackRef.current(currentIndex, wavBuffer, mergedAudio);
-                        }
-
-                        speechBufferRef.current = [];
-                        // 如果是加速模式，重置静音帧；固定模式下也重置
-                        silenceFramesRef.current = 0;
-                    } else {
-                        logDebug(`[Warn] shouldCut=true but buffer empty`);
-                    }
-                }
-            }
+            // --- VAD MODE REMOVED ---
+            // If we reach here, it's an unknown mode, but we handled 'vad' above as fallback.
         } catch (err) {
             console.error('VAD 处理错误:', err);
             logDebug(`[Error] VAD Processing: ${err}`);
@@ -477,7 +361,7 @@ export function useVADRecording(
         } else {
             console.warn('⚠️ 停止录音时缓冲区为空 (VAD 可能未检测到语音)');
         }
-        vadRef.current?.reset();
+        // vadRef.current?.reset(); // Removed
         setIsRecording(false);
         setIsSpeaking(false);
         isSpeakingRef.current = false;

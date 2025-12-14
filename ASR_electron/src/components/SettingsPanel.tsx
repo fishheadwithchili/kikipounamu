@@ -123,13 +123,25 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(1, minmax(0, 1fr))', gap: '12px' }}>
                             {[
                                 { value: 'unlimited', label: 'Unlimited (No Auto-Cut)', desc: 'Best for long stream dictation.' },
-                                { value: 'time_limit', label: 'Time Limit', desc: 'Forces a cut after a set duration.' }
+                                { value: 'time_limit', label: 'Time Limit', desc: 'Forces a cut after a set duration.' },
+                                // { value: 'vad', label: 'VAD (Experimental)', desc: 'Voice Activity Detection (Abandoned)' }
                             ].map((option) => {
                                 const isActive = currentMode === option.value;
                                 return (
                                     <HydroButton
                                         key={option.value}
-                                        onClick={() => onModeChange(option.value as VADMode)}
+                                        onClick={() => {
+                                            if (option.value === 'vad') {
+                                                // Alert for abandoned VAD mode
+                                                window.ipcRenderer.invoke('show-message-box', {
+                                                    type: 'warning',
+                                                    title: 'Feature Abandoned',
+                                                    message: 'The current ONNX FunASR VAD implementation has underlying issues, and further debugging has been abandoned. A different VAD solution may be considered in the future.'
+                                                });
+                                                return;
+                                            }
+                                            onModeChange(option.value as VADMode);
+                                        }}
                                         style={{
                                             position: 'relative',
                                             padding: '16px',

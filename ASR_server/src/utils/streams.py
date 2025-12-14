@@ -90,7 +90,13 @@ class StreamsClient:
             "origin": origin
         }
         
-        msg_id = self._redis.xadd(STREAM_NAME, message)
+        # P0 Fix: Redis Streams Memory Cleaning - Limit stream length
+        msg_id = self._redis.xadd(
+            STREAM_NAME, 
+            message,
+            maxlen=5000,      # Limit to 5000 messages
+            approximate=True  # Use ~ for better performance
+        )
         return msg_id
     
     # ========================================================================

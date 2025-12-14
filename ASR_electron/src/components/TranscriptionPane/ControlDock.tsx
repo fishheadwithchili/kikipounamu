@@ -74,7 +74,11 @@ export const ControlDock = React.memo(({ isRecording, isLoading, onRecordToggle,
             contain: 'layout size', // Isolate layout calculations
             position: 'relative' // Establish containing block
         }}>
-            <Waveform isRecording={isRecording} stream={stream} />
+            {isRecording ? (
+                <Waveform isRecording={isRecording} stream={stream} />
+            ) : (
+                <div className="w-full text-center text-white/50 text-sm">Tap microphone to speak</div>
+            )}
         </div>
 
         {/* Status Indicators */}

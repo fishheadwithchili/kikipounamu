@@ -1,7 +1,4 @@
-import React, { useRef, useEffect } from 'react';
-import { createLogger } from '../utils/loggerRenderer';
-
-const logger = createLogger('Waveform');
+import React, { useRef, useEffect, useState } from 'react';
 
 interface WaveformProps {
     isRecording: boolean;
@@ -9,23 +6,19 @@ interface WaveformProps {
 }
 
 export const Waveform: React.FC<WaveformProps> = ({ isRecording, stream }) => {
-    const canvasRef = useRef<HTMLCanvasElement>(null);
+    const [volumes, setVolumes] = useState<number[]>(new Array(25).fill(0));
     const animationRef = useRef<number>();
     const analyserRef = useRef<AnalyserNode | null>(null);
-    const sourceRef = useRef<MediaStreamAudioSourceNode | null>(null);
     const audioContextRef = useRef<AudioContext | null>(null);
-
-    // Fallback animation ref (for simulating "alive" state when no audio or waiting)
-    // However, per requirements: "Fallback mechanism: Ensure in no audio stream (stream is empty), show a static but nice placeholder"
-    // The design uses "Simulated random voice waves" in some contexts, but requirements say:
-    // "Ensure in no audio stream (stream is empty), show a static but nice placeholder, rather than a blank space."
+    const sourceRef = useRef<MediaStreamAudioSourceNode | null>(null);
 
     useEffect(() => {
         if (isRecording && stream) {
             startVisualization(stream);
         } else {
             stopVisualization();
-            drawFallback();
+            // Reset volumes to base state
+            setVolumes(new Array(25).fill(20)); // Base state
         }
 
         return () => {
@@ -46,16 +39,16 @@ export const Waveform: React.FC<WaveformProps> = ({ isRecording, stream }) => {
 
             const source = audioContext.createMediaStreamSource(audioStream);
             const analyser = audioContext.createAnalyser();
-            analyser.fftSize = 64; // Reduced for chunkier, distinct bars like design
+            analyser.fftSize = 64; // Small FFT size for chunky bars
+            analyser.smoothingTimeConstant = 0.6; // Smooth transitions
             source.connect(analyser);
 
             sourceRef.current = source;
             analyserRef.current = analyser;
 
-            draw();
-            logger.debug('Waveform visualization started');
+            updateVolumes();
         } catch (error) {
-            logger.error('Failed to start visualization', error as Error);
+            console.error('Failed to start visualization', error);
         }
     };
 
@@ -69,125 +62,62 @@ export const Waveform: React.FC<WaveformProps> = ({ isRecording, stream }) => {
             sourceRef.current = null;
         }
 
+        // We generally keep the AudioContext alive or suspend it, but closing it is safer for cleanup
         if (audioContextRef.current) {
-            if (audioContextRef.current.state !== 'closed') {
-                audioContextRef.current.close().catch(e => logger.warn('Error closing AudioContext', { error: String(e) }));
-            }
+            audioContextRef.current.close().catch(console.error);
             audioContextRef.current = null;
         }
-
-        // Don't clear rect immediately if we want fallback, but drawFallback handles it
     };
 
-    const drawFallback = () => {
-        const canvas = canvasRef.current;
-        if (!canvas) return;
-        const ctx = canvas.getContext('2d');
-        if (!ctx) return;
+    const updateVolumes = () => {
+        if (!analyserRef.current) return;
 
-        // Draw a static "ready" state - maybe a straight muted line or subtle pulses
-        // Design request: "Static but nice placeholder"
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        // Simple subtle baseline
-        const barCount = 20;
-        const spacing = 4;
-        const totalWidth = canvas.width;
-        const barWidth = (totalWidth - (barCount - 1) * spacing) / barCount;
-
-        for (let i = 0; i < barCount; i++) {
-            const x = i * (barWidth + spacing);
-            const height = 4; // Minimal height
-            const y = (canvas.height - height) / 2;
-
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
-            ctx.beginPath();
-            if (ctx.roundRect) {
-                ctx.roundRect(x, y, barWidth, height, 4);
-            } else {
-                ctx.rect(x, y, barWidth, height);
-            }
-            ctx.fill();
-        }
-    }
-
-    const draw = () => {
-        if (!canvasRef.current || !analyserRef.current) return;
-
-        const canvas = canvasRef.current;
-        const ctx = canvas.getContext('2d');
-        if (!ctx) return;
-
-        const analyser = analyserRef.current;
-        const bufferLength = analyser.frequencyBinCount;
+        const bufferLength = analyserRef.current.frequencyBinCount;
         const dataArray = new Uint8Array(bufferLength);
+        analyserRef.current.getByteFrequencyData(dataArray);
 
-        const render = () => {
-            if (!analyserRef.current) return;
+        // Map FFT data to 25 bars
+        // For FFT 64, bufferLength is 32. We need 25 bars.
+        // We'll roughly sample the lower-mid frequencies where voice lives.
+        const newVolumes: number[] = [];
+        const step = Math.floor(bufferLength / 25) || 1;
 
-            animationRef.current = requestAnimationFrame(render);
-            analyser.getByteFrequencyData(dataArray);
+        for (let i = 0; i < 25; i++) {
+            let value = 0;
+            // Simple averaging
+            const index = Math.min(i * step, bufferLength - 1);
+            value = dataArray[index] || 0;
 
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // Settings for design match
-            const barCount = 24; // Limit bars for cleaner look
-            const spacing = 6;
-            const totalWidth = canvas.width;
-            // Calculate bar width based on available space
-            const barWidth = (totalWidth - (barCount - 1) * spacing) / barCount;
-
-            // We'll increment through the logic carefully to spread FFT data
-            const step = Math.floor(bufferLength / barCount);
-
-            for (let i = 0; i < barCount; i++) {
-                // Get average value for this chunk to smooth it out
-                let value = 0;
-                for (let j = 0; j < step; j++) {
-                    value += dataArray[i * step + j] || 0;
-                }
-                value = value / step;
-
-                // Scale value
-                // Design has "soft" waves. 
-                const percent = value / 255;
-                const height = Math.max(percent * canvas.height * 0.9, 4); // Min height 4px
-
-                const x = i * (barWidth + spacing);
-                const y = (canvas.height - height) / 2; // Center vertically
-
-                // Gradient: #3b82f6 (blue-500) to #a855f7 (purple-500)
-                // We can create a vertical gradient for the bar
-                const gradient = ctx.createLinearGradient(x, y, x, y + height);
-                gradient.addColorStop(0, '#a855f7');
-                gradient.addColorStop(1, '#3b82f6');
-
-                ctx.fillStyle = gradient;
-
-                ctx.beginPath();
-                if (ctx.roundRect) {
-                    ctx.roundRect(x, y, barWidth, height, 999); // Pill shape
-                } else {
-                    ctx.rect(x, y, barWidth, height);
-                }
-                ctx.fill();
-            }
-        };
-
-        render();
+            // Normalize 0-255 to percentage 20-100 (keep min height like design)
+            const percent = Math.max((value / 255) * 80 + 20, 20);
+            newVolumes.push(percent);
+        }
+        setVolumes(newVolumes);
+        animationRef.current = requestAnimationFrame(updateVolumes);
     };
 
     return (
-        <canvas
-            ref={canvasRef}
-            width={300}
-            height={40}
-            style={{
-                borderRadius: '8px',
-                maxHeight: '40px',
-                width: '100%',
-                contain: 'strict',
-            }}
-        />
+        <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '6px',
+            height: '100%',
+            width: '100%',
+            padding: '0 16px'
+        }}>
+            {volumes.map((vol, i) => (
+                <div
+                    key={i}
+                    style={{
+                        width: '6px',
+                        height: `${vol}%`,
+                        background: 'linear-gradient(to top, #3b82f6, #a855f7)',
+                        borderRadius: '9999px',
+                        transition: 'height 50ms ease-out'
+                    }}
+                ></div>
+            ))}
+        </div>
     );
 };

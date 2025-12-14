@@ -2,6 +2,9 @@
 asr-backend
 asr-backend.exe
 
+# Generated binaries
+bin/
+
 # Logs
 logs/
 !logs/.gitkeep
@@ -24,4 +27,3 @@ storage/recordings/*
 !storage/recordings/.gitkeep
 storage/temp/*
 !storage/temp/.gitkeep
-

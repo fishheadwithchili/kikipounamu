@@ -406,13 +406,7 @@ function App() {
   };
 
   return (
-    <div style={{
-      position: 'relative',
-      height: '100vh',
-      width: '100vw',
-      overflow: 'hidden',
-      backgroundColor: '#0f172a',
-      color: 'white',
+    <div className="relative h-screen w-screen overflow-hidden bg-slate-900 text-white font-sans" style={{
       fontFamily: "'Inter', sans-serif"
     }}>
       {/* Ambient Background Blobs - Animated */}

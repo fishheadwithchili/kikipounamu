@@ -1,0 +1,733 @@
+[2025-12-14T09:38:05.070Z] === LOG STARTED ===
+ID: 20251214223805_vad
+[2025-12-14T09:38:05.072Z] [Cycle] START RECORDING | Mode=vad
+[2025-12-14T09:38:05.376Z] [AudioFlow] Amp=0.0067 Avg=0.0004 | Mode=vad | Buffer=0 | isSpeaking=false
+[2025-12-14T09:38:05.426Z] [VAD-Model] dims=[1,7,248], len=1736, first6=[0.4071, 0.0002, 0.0004, 0.0000, 0.0004, 0.0002]
+[2025-12-14T09:38:05.426Z] [VAD-Parse] outputLen=1736, numFrames=7, dims=248
+[2025-12-14T09:38:05.427Z] [VAD-Result] numFrames=7, avgProb=0.4571
+[2025-12-14T09:38:05.427Z] [VAD-Detect] Prob=0.4571 | Amp=0.0067
+[2025-12-14T09:38:05.523Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0301, 0.0002, 0.0045, 0.0000, 0.0003, 0.0003]
+[2025-12-14T09:38:05.524Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:05.524Z] [VAD-Result] numFrames=13, avgProb=0.5198
+[2025-12-14T09:38:05.524Z] [VAD-Detect] Prob=0.5198 | Amp=0.0078
+[2025-12-14T09:38:05.524Z] [VAD-Event] START SPEAKING (Prob=0.520)
+[2025-12-14T09:38:05.662Z] [VAD-Model] dims=[1,12,248], len=2976, first6=[0.0340, 0.0014, 0.0253, 0.0000, 0.0108, 0.0117]
+[2025-12-14T09:38:05.663Z] [VAD-Parse] outputLen=2976, numFrames=12, dims=248
+[2025-12-14T09:38:05.663Z] [VAD-Result] numFrames=12, avgProb=0.5201
+[2025-12-14T09:38:05.784Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0533, 0.0013, 0.0140, 0.0000, 0.0016, 0.0012]
+[2025-12-14T09:38:05.785Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:05.785Z] [VAD-Result] numFrames=13, avgProb=0.5091
+[2025-12-14T09:38:05.785Z] [VAD-Detect] Prob=0.5091 | Amp=0.0046
+[2025-12-14T09:38:05.917Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0557, 0.0011, 0.0051, 0.0000, 0.0018, 0.0014]
+[2025-12-14T09:38:05.917Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:05.918Z] [VAD-Result] numFrames=13, avgProb=0.5105
+[2025-12-14T09:38:06.032Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0794, 0.0038, 0.0151, 0.0001, 0.0012, 0.0010]
+[2025-12-14T09:38:06.032Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:06.032Z] [VAD-Result] numFrames=13, avgProb=0.5441
+[2025-12-14T09:38:06.033Z] [VAD-Detect] Prob=0.5441 | Amp=0.0053
+[2025-12-14T09:38:06.196Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0667, 0.0122, 0.0100, 0.0002, 0.0007, 0.0006]
+[2025-12-14T09:38:06.196Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:06.197Z] [VAD-Result] numFrames=13, avgProb=0.5410
+[2025-12-14T09:38:06.313Z] [VAD-Model] dims=[1,12,248], len=2976, first6=[0.0399, 0.0274, 0.0133, 0.0001, 0.0008, 0.0018]
+[2025-12-14T09:38:06.313Z] [VAD-Parse] outputLen=2976, numFrames=12, dims=248
+[2025-12-14T09:38:06.313Z] [VAD-Result] numFrames=12, avgProb=0.5873
+[2025-12-14T09:38:06.313Z] [VAD-Detect] Prob=0.5873 | Amp=0.0062
+[2025-12-14T09:38:06.420Z] [AudioFlow] Amp=0.0058 Avg=0.0013 | Mode=vad | Buffer=8 | isSpeaking=true
+[2025-12-14T09:38:06.451Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0536, 0.0253, 0.0110, 0.0003, 0.0001, 0.0002]
+[2025-12-14T09:38:06.451Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:06.451Z] [VAD-Result] numFrames=13, avgProb=0.5793
+[2025-12-14T09:38:06.566Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0659, 0.0639, 0.0095, 0.0010, 0.0002, 0.0002]
+[2025-12-14T09:38:06.566Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:06.566Z] [VAD-Result] numFrames=13, avgProb=0.5777
+[2025-12-14T09:38:06.706Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0437, 0.0033, 0.0065, 0.0002, 0.0000, 0.0000]
+[2025-12-14T09:38:06.706Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:06.706Z] [VAD-Result] numFrames=13, avgProb=0.5804
+[2025-12-14T09:38:06.822Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0366, 0.0094, 0.0060, 0.0011, 0.0001, 0.0001]
+[2025-12-14T09:38:06.823Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:06.824Z] [VAD-Result] numFrames=13, avgProb=0.5902
+[2025-12-14T09:38:06.960Z] [VAD-Model] dims=[1,12,248], len=2976, first6=[0.0651, 0.0085, 0.0048, 0.0015, 0.0001, 0.0001]
+[2025-12-14T09:38:06.960Z] [VAD-Parse] outputLen=2976, numFrames=12, dims=248
+[2025-12-14T09:38:06.960Z] [VAD-Result] numFrames=12, avgProb=0.5625
+[2025-12-14T09:38:06.961Z] [VAD-Detect] Prob=0.5625 | Amp=0.0054
+[2025-12-14T09:38:07.076Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0411, 0.0167, 0.0047, 0.0005, 0.0001, 0.0000]
+[2025-12-14T09:38:07.077Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:07.077Z] [VAD-Result] numFrames=13, avgProb=0.5783
+[2025-12-14T09:38:07.077Z] [VAD-Detect] Prob=0.5783 | Amp=0.0065
+[2025-12-14T09:38:07.241Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0454, 0.0307, 0.0125, 0.0002, 0.0006, 0.0004]
+[2025-12-14T09:38:07.241Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:07.241Z] [VAD-Result] numFrames=13, avgProb=0.5446
+[2025-12-14T09:38:07.242Z] [VAD-Detect] Prob=0.5446 | Amp=0.0043
+[2025-12-14T09:38:07.355Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0640, 0.0154, 0.0110, 0.0005, 0.0004, 0.0004]
+[2025-12-14T09:38:07.356Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:07.356Z] [VAD-Result] numFrames=13, avgProb=0.5666
+[2025-12-14T09:38:07.356Z] [VAD-Detect] Prob=0.5666 | Amp=0.0165
+[2025-12-14T09:38:07.465Z] [AudioFlow] Amp=0.0058 Avg=0.0015 | Mode=vad | Buffer=16 | isSpeaking=true
+[2025-12-14T09:38:07.495Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0557, 0.0060, 0.0091, 0.0005, 0.0002, 0.0004]
+[2025-12-14T09:38:07.495Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:07.495Z] [VAD-Result] numFrames=13, avgProb=0.5270
+[2025-12-14T09:38:07.495Z] [VAD-Detect] Prob=0.5270 | Amp=0.0058
+[2025-12-14T09:38:07.609Z] [VAD-Model] dims=[1,12,248], len=2976, first6=[0.0723, 0.0055, 0.0043, 0.0007, 0.0004, 0.0002]
+[2025-12-14T09:38:07.609Z] [VAD-Parse] outputLen=2976, numFrames=12, dims=248
+[2025-12-14T09:38:07.609Z] [VAD-Result] numFrames=12, avgProb=0.5190
+[2025-12-14T09:38:07.752Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.1244, 0.0056, 0.0056, 0.0005, 0.0006, 0.0002]
+[2025-12-14T09:38:07.752Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:07.753Z] [VAD-Result] numFrames=13, avgProb=0.5224
+[2025-12-14T09:38:07.867Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.1226, 0.0257, 0.0065, 0.0005, 0.0003, 0.0003]
+[2025-12-14T09:38:07.867Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:07.867Z] [VAD-Result] numFrames=13, avgProb=0.5569
+[2025-12-14T09:38:07.867Z] [VAD-Detect] Prob=0.5569 | Amp=0.0050
+[2025-12-14T09:38:08.006Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.1031, 0.0211, 0.0080, 0.0007, 0.0005, 0.0002]
+[2025-12-14T09:38:08.006Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:08.006Z] [VAD-Result] numFrames=13, avgProb=0.5533
+[2025-12-14T09:38:08.122Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.1167, 0.0580, 0.0160, 0.0008, 0.0005, 0.0007]
+[2025-12-14T09:38:08.122Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:08.122Z] [VAD-Result] numFrames=13, avgProb=0.5121
+[2025-12-14T09:38:08.122Z] [VAD-Detect] Prob=0.5121 | Amp=0.0105
+[2025-12-14T09:38:08.260Z] [VAD-Model] dims=[1,12,248], len=2976, first6=[0.1299, 0.0036, 0.0078, 0.0007, 0.0002, 0.0004]
+[2025-12-14T09:38:08.261Z] [VAD-Parse] outputLen=2976, numFrames=12, dims=248
+[2025-12-14T09:38:08.262Z] [VAD-Result] numFrames=12, avgProb=0.5531
+[2025-12-14T09:38:08.262Z] [VAD-Detect] Prob=0.5531 | Amp=0.0051
+[2025-12-14T09:38:08.377Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.1197, 0.0087, 0.0060, 0.0008, 0.0003, 0.0004]
+[2025-12-14T09:38:08.377Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:08.377Z] [VAD-Result] numFrames=13, avgProb=0.5656
+[2025-12-14T09:38:08.377Z] [VAD-Detect] Prob=0.5656 | Amp=0.0043
+[2025-12-14T09:38:08.487Z] [AudioFlow] Amp=0.0044 Avg=0.0011 | Mode=vad | Buffer=24 | isSpeaking=true
+[2025-12-14T09:38:08.518Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0829, 0.0120, 0.0142, 0.0007, 0.0002, 0.0001]
+[2025-12-14T09:38:08.518Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:08.518Z] [VAD-Result] numFrames=13, avgProb=0.5753
+[2025-12-14T09:38:08.632Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0789, 0.0054, 0.0072, 0.0001, 0.0001, 0.0001]
+[2025-12-14T09:38:08.633Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:08.633Z] [VAD-Result] numFrames=13, avgProb=0.5679
+[2025-12-14T09:38:08.774Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0566, 0.0074, 0.0054, 0.0002, 0.0001, 0.0002]
+[2025-12-14T09:38:08.774Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:08.774Z] [VAD-Result] numFrames=13, avgProb=0.5897
+[2025-12-14T09:38:08.774Z] [VAD-Detect] Prob=0.5897 | Amp=0.1109
+[2025-12-14T09:38:08.885Z] [VAD-Model] dims=[1,12,248], len=2976, first6=[0.0037, 0.3022, 0.0123, 0.0001, 0.0001, 0.0001]
+[2025-12-14T09:38:08.886Z] [VAD-Parse] outputLen=2976, numFrames=12, dims=248
+[2025-12-14T09:38:08.886Z] [VAD-Result] numFrames=12, avgProb=0.6125
+[2025-12-14T09:38:08.886Z] [VAD-Detect] Prob=0.6125 | Amp=0.1725
+[2025-12-14T09:38:09.027Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0057, 0.1736, 0.0097, 0.0001, 0.0004, 0.0002]
+[2025-12-14T09:38:09.027Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:09.027Z] [VAD-Result] numFrames=13, avgProb=0.5780
+[2025-12-14T09:38:09.027Z] [VAD-Detect] Prob=0.5780 | Amp=0.0086
+[2025-12-14T09:38:09.153Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0125, 0.0800, 0.0045, 0.0002, 0.0000, 0.0000]
+[2025-12-14T09:38:09.153Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:09.153Z] [VAD-Result] numFrames=13, avgProb=0.5504
+[2025-12-14T09:38:09.153Z] [VAD-Detect] Prob=0.5504 | Amp=0.1351
+[2025-12-14T09:38:09.283Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0184, 0.0124, 0.0086, 0.0002, 0.0000, 0.0000]
+[2025-12-14T09:38:09.284Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:09.284Z] [VAD-Result] numFrames=13, avgProb=0.5744
+[2025-12-14T09:38:09.284Z] [VAD-Detect] Prob=0.5744 | Amp=0.1798
+[2025-12-14T09:38:09.398Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0089, 0.0126, 0.0175, 0.0004, 0.0002, 0.0001]
+[2025-12-14T09:38:09.399Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:09.399Z] [VAD-Result] numFrames=13, avgProb=0.5768
+[2025-12-14T09:38:09.508Z] [AudioFlow] Amp=0.1579 Avg=0.0348 | Mode=vad | Buffer=32 | isSpeaking=true
+[2025-12-14T09:38:09.537Z] [VAD-Model] dims=[1,12,248], len=2976, first6=[0.0054, 0.0461, 0.0039, 0.0002, 0.0000, 0.0000]
+[2025-12-14T09:38:09.538Z] [VAD-Parse] outputLen=2976, numFrames=12, dims=248
+[2025-12-14T09:38:09.538Z] [VAD-Result] numFrames=12, avgProb=0.5574
+[2025-12-14T09:38:09.538Z] [VAD-Detect] Prob=0.5574 | Amp=0.1579
+[2025-12-14T09:38:09.654Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0214, 0.0256, 0.0091, 0.0009, 0.0000, 0.0000]
+[2025-12-14T09:38:09.654Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:09.655Z] [VAD-Result] numFrames=13, avgProb=0.5801
+[2025-12-14T09:38:09.655Z] [VAD-Detect] Prob=0.5801 | Amp=0.2505
+[2025-12-14T09:38:09.794Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0034, 0.1206, 0.0058, 0.0004, 0.0000, 0.0000]
+[2025-12-14T09:38:09.794Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:09.795Z] [VAD-Result] numFrames=13, avgProb=0.5529
+[2025-12-14T09:38:09.795Z] [VAD-Detect] Prob=0.5529 | Amp=0.2376
+[2025-12-14T09:38:09.933Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0099, 0.2632, 0.0076, 0.0002, 0.0000, 0.0000]
+[2025-12-14T09:38:09.934Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:09.934Z] [VAD-Result] numFrames=13, avgProb=0.5717
+[2025-12-14T09:38:09.934Z] [VAD-Detect] Prob=0.5717 | Amp=0.1340
+[2025-12-14T09:38:10.049Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0056, 0.0323, 0.0006, 0.0011, 0.0000, 0.0000]
+[2025-12-14T09:38:10.049Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:10.049Z] [VAD-Result] numFrames=13, avgProb=0.6023
+[2025-12-14T09:38:10.049Z] [VAD-Detect] Prob=0.6023 | Amp=0.2490
+[2025-12-14T09:38:10.187Z] [VAD-Model] dims=[1,12,248], len=2976, first6=[0.0172, 0.0054, 0.0147, 0.0043, 0.0001, 0.0001]
+[2025-12-14T09:38:10.187Z] [VAD-Parse] outputLen=2976, numFrames=12, dims=248
+[2025-12-14T09:38:10.187Z] [VAD-Result] numFrames=12, avgProb=0.5621
+[2025-12-14T09:38:10.187Z] [VAD-Detect] Prob=0.5621 | Amp=0.4352
+[2025-12-14T09:38:10.305Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0273, 0.0278, 0.0272, 0.0004, 0.0002, 0.0004]
+[2025-12-14T09:38:10.305Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:10.305Z] [VAD-Result] numFrames=13, avgProb=0.5669
+[2025-12-14T09:38:10.445Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0106, 0.0615, 0.0109, 0.0004, 0.0002, 0.0005]
+[2025-12-14T09:38:10.445Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:10.445Z] [VAD-Result] numFrames=13, avgProb=0.5610
+[2025-12-14T09:38:10.530Z] [AudioFlow] Amp=0.0740 Avg=0.0088 | Mode=vad | Buffer=40 | isSpeaking=true
+[2025-12-14T09:38:10.561Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0035, 0.0214, 0.0031, 0.0001, 0.0001, 0.0007]
+[2025-12-14T09:38:10.561Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:10.562Z] [VAD-Result] numFrames=13, avgProb=0.5799
+[2025-12-14T09:38:10.562Z] [VAD-Detect] Prob=0.5799 | Amp=0.0740
+[2025-12-14T09:38:10.702Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0319, 0.0544, 0.0088, 0.0000, 0.0000, 0.0000]
+[2025-12-14T09:38:10.702Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:10.702Z] [VAD-Result] numFrames=13, avgProb=0.5803
+[2025-12-14T09:38:10.812Z] [VAD-Model] dims=[1,12,248], len=2976, first6=[0.0073, 0.0058, 0.0022, 0.0000, 0.0001, 0.0001]
+[2025-12-14T09:38:10.812Z] [VAD-Parse] outputLen=2976, numFrames=12, dims=248
+[2025-12-14T09:38:10.812Z] [VAD-Result] numFrames=12, avgProb=0.5825
+[2025-12-14T09:38:10.955Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0049, 0.0299, 0.0023, 0.0004, 0.0000, 0.0000]
+[2025-12-14T09:38:10.956Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:10.956Z] [VAD-Result] numFrames=13, avgProb=0.5646
+[2025-12-14T09:38:10.956Z] [VAD-Detect] Prob=0.5646 | Amp=0.0947
+[2025-12-14T09:38:11.072Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0045, 0.0319, 0.0043, 0.0065, 0.0000, 0.0000]
+[2025-12-14T09:38:11.072Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:11.072Z] [VAD-Result] numFrames=13, avgProb=0.6046
+[2025-12-14T09:38:11.073Z] [VAD-Detect] Prob=0.6046 | Amp=0.0482
+[2025-12-14T09:38:11.210Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0017, 0.0017, 0.0020, 0.0002, 0.0000, 0.0000]
+[2025-12-14T09:38:11.210Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:11.210Z] [VAD-Result] numFrames=13, avgProb=0.5991
+[2025-12-14T09:38:11.325Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0156, 0.0063, 0.0125, 0.0004, 0.0000, 0.0000]
+[2025-12-14T09:38:11.325Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:11.326Z] [VAD-Result] numFrames=13, avgProb=0.5941
+[2025-12-14T09:38:11.326Z] [VAD-Detect] Prob=0.5941 | Amp=0.0384
+[2025-12-14T09:38:11.463Z] [VAD-Model] dims=[1,12,248], len=2976, first6=[0.0045, 0.0128, 0.0021, 0.0000, 0.0000, 0.0000]
+[2025-12-14T09:38:11.463Z] [VAD-Parse] outputLen=2976, numFrames=12, dims=248
+[2025-12-14T09:38:11.463Z] [VAD-Result] numFrames=12, avgProb=0.5973
+[2025-12-14T09:38:11.551Z] [AudioFlow] Amp=0.1074 Avg=0.0122 | Mode=vad | Buffer=48 | isSpeaking=true
+[2025-12-14T09:38:11.581Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0051, 0.0020, 0.0031, 0.0000, 0.0000, 0.0000]
+[2025-12-14T09:38:11.581Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:11.581Z] [VAD-Result] numFrames=13, avgProb=0.5534
+[2025-12-14T09:38:11.582Z] [VAD-Detect] Prob=0.5534 | Amp=0.1074
+[2025-12-14T09:38:11.721Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0111, 0.0141, 0.0166, 0.0002, 0.0001, 0.0002]
+[2025-12-14T09:38:11.721Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:11.721Z] [VAD-Result] numFrames=13, avgProb=0.5861
+[2025-12-14T09:38:11.721Z] [VAD-Detect] Prob=0.5861 | Amp=0.0071
+[2025-12-14T09:38:11.835Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0062, 0.0269, 0.0015, 0.0000, 0.0000, 0.0000]
+[2025-12-14T09:38:11.836Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:11.836Z] [VAD-Result] numFrames=13, avgProb=0.5911
+[2025-12-14T09:38:11.976Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0102, 0.0114, 0.0008, 0.0008, 0.0000, 0.0000]
+[2025-12-14T09:38:11.976Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:11.977Z] [VAD-Result] numFrames=13, avgProb=0.6041
+[2025-12-14T09:38:11.977Z] [VAD-Detect] Prob=0.6041 | Amp=0.0054
+[2025-12-14T09:38:12.113Z] [VAD-Model] dims=[1,12,248], len=2976, first6=[0.0185, 0.0072, 0.0027, 0.0010, 0.0000, 0.0000]
+[2025-12-14T09:38:12.114Z] [VAD-Parse] outputLen=2976, numFrames=12, dims=248
+[2025-12-14T09:38:12.114Z] [VAD-Result] numFrames=12, avgProb=0.6171
+[2025-12-14T09:38:12.114Z] [VAD-Detect] Prob=0.6171 | Amp=0.0059
+[2025-12-14T09:38:12.232Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0368, 0.0094, 0.0053, 0.0005, 0.0001, 0.0000]
+[2025-12-14T09:38:12.232Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:12.232Z] [VAD-Result] numFrames=13, avgProb=0.6072
+[2025-12-14T09:38:12.371Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0478, 0.0068, 0.0220, 0.0002, 0.0001, 0.0000]
+[2025-12-14T09:38:12.371Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:12.371Z] [VAD-Result] numFrames=13, avgProb=0.5995
+[2025-12-14T09:38:12.372Z] [VAD-Detect] Prob=0.5995 | Amp=0.0064
+[2025-12-14T09:38:12.488Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0394, 0.0069, 0.0065, 0.0002, 0.0008, 0.0003]
+[2025-12-14T09:38:12.488Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:12.488Z] [VAD-Result] numFrames=13, avgProb=0.6267
+[2025-12-14T09:38:12.489Z] [VAD-Detect] Prob=0.6267 | Amp=0.1830
+[2025-12-14T09:38:12.596Z] [AudioFlow] Amp=0.2691 Avg=0.0478 | Mode=vad | Buffer=56 | isSpeaking=true
+[2025-12-14T09:38:12.626Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0020, 0.2707, 0.0630, 0.0002, 0.0000, 0.0000]
+[2025-12-14T09:38:12.626Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:12.627Z] [VAD-Result] numFrames=13, avgProb=0.5841
+[2025-12-14T09:38:12.627Z] [VAD-Detect] Prob=0.5841 | Amp=0.2691
+[2025-12-14T09:38:12.742Z] [VAD-Model] dims=[1,12,248], len=2976, first6=[0.0022, 0.4006, 0.0116, 0.0004, 0.0000, 0.0001]
+[2025-12-14T09:38:12.743Z] [VAD-Parse] outputLen=2976, numFrames=12, dims=248
+[2025-12-14T09:38:12.743Z] [VAD-Result] numFrames=12, avgProb=0.5795
+[2025-12-14T09:38:12.882Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0007, 0.2590, 0.0003, 0.0000, 0.0000, 0.0000]
+[2025-12-14T09:38:12.882Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:12.882Z] [VAD-Result] numFrames=13, avgProb=0.5632
+[2025-12-14T09:38:12.882Z] [VAD-Detect] Prob=0.5632 | Amp=0.1961
+[2025-12-14T09:38:13.021Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0030, 0.0830, 0.0013, 0.0001, 0.0000, 0.0000]
+[2025-12-14T09:38:13.021Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:13.021Z] [VAD-Result] numFrames=13, avgProb=0.5746
+[2025-12-14T09:38:13.021Z] [VAD-Detect] Prob=0.5746 | Amp=0.4404
+[2025-12-14T09:38:13.136Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0043, 0.0324, 0.0292, 0.0001, 0.0000, 0.0000]
+[2025-12-14T09:38:13.136Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:13.136Z] [VAD-Result] numFrames=13, avgProb=0.5689
+[2025-12-14T09:38:13.277Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0139, 0.0313, 0.0064, 0.0000, 0.0001, 0.0001]
+[2025-12-14T09:38:13.277Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:13.277Z] [VAD-Result] numFrames=13, avgProb=0.5552
+[2025-12-14T09:38:13.277Z] [VAD-Detect] Prob=0.5552 | Amp=0.0301
+[2025-12-14T09:38:13.390Z] [VAD-Model] dims=[1,12,248], len=2976, first6=[0.0047, 0.0146, 0.0003, 0.0020, 0.0000, 0.0000]
+[2025-12-14T09:38:13.390Z] [VAD-Parse] outputLen=2976, numFrames=12, dims=248
+[2025-12-14T09:38:13.390Z] [VAD-Result] numFrames=12, avgProb=0.5889
+[2025-12-14T09:38:13.390Z] [VAD-Detect] Prob=0.5889 | Amp=0.0082
+[2025-12-14T09:38:13.532Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0103, 0.0123, 0.0005, 0.0007, 0.0000, 0.0000]
+[2025-12-14T09:38:13.532Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:13.532Z] [VAD-Result] numFrames=13, avgProb=0.6074
+[2025-12-14T09:38:13.532Z] [VAD-Detect] Prob=0.6074 | Amp=0.1675
+[2025-12-14T09:38:13.617Z] [AudioFlow] Amp=0.4045 Avg=0.0635 | Mode=vad | Buffer=64 | isSpeaking=true
+[2025-12-14T09:38:13.647Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0028, 0.5035, 0.0046, 0.0001, 0.0000, 0.0000]
+[2025-12-14T09:38:13.648Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:13.648Z] [VAD-Result] numFrames=13, avgProb=0.5941
+[2025-12-14T09:38:13.648Z] [VAD-Detect] Prob=0.5941 | Amp=0.4045
+[2025-12-14T09:38:13.786Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0022, 0.3111, 0.0534, 0.0001, 0.0000, 0.0000]
+[2025-12-14T09:38:13.786Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:13.787Z] [VAD-Result] numFrames=13, avgProb=0.5594
+[2025-12-14T09:38:13.787Z] [VAD-Detect] Prob=0.5594 | Amp=0.1712
+[2025-12-14T09:38:13.903Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0057, 0.0850, 0.0057, 0.0000, 0.0004, 0.0009]
+[2025-12-14T09:38:13.903Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:13.903Z] [VAD-Result] numFrames=13, avgProb=0.5553
+[2025-12-14T09:38:14.041Z] [VAD-Model] dims=[1,12,248], len=2976, first6=[0.0291, 0.1283, 0.0034, 0.0000, 0.0005, 0.0008]
+[2025-12-14T09:38:14.042Z] [VAD-Parse] outputLen=2976, numFrames=12, dims=248
+[2025-12-14T09:38:14.042Z] [VAD-Result] numFrames=12, avgProb=0.5506
+[2025-12-14T09:38:14.172Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0250, 0.0932, 0.0023, 0.0003, 0.0000, 0.0000]
+[2025-12-14T09:38:14.172Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:14.172Z] [VAD-Result] numFrames=13, avgProb=0.5591
+[2025-12-14T09:38:14.297Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0426, 0.0315, 0.0039, 0.0001, 0.0001, 0.0000]
+[2025-12-14T09:38:14.298Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:14.298Z] [VAD-Result] numFrames=13, avgProb=0.5862
+[2025-12-14T09:38:14.298Z] [VAD-Detect] Prob=0.5862 | Amp=0.0024
+[2025-12-14T09:38:14.415Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0326, 0.0203, 0.0075, 0.0001, 0.0000, 0.0000]
+[2025-12-14T09:38:14.415Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:14.415Z] [VAD-Result] numFrames=13, avgProb=0.5632
+[2025-12-14T09:38:14.415Z] [VAD-Detect] Prob=0.5632 | Amp=0.2222
+[2025-12-14T09:38:14.553Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0180, 0.3262, 0.0303, 0.0001, 0.0011, 0.0015]
+[2025-12-14T09:38:14.553Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:14.553Z] [VAD-Result] numFrames=13, avgProb=0.5483
+[2025-12-14T09:38:14.553Z] [VAD-Detect] Prob=0.5483 | Amp=0.3514
+[2025-12-14T09:38:14.662Z] [AudioFlow] Amp=0.1122 Avg=0.0144 | Mode=vad | Buffer=72 | isSpeaking=true
+[2025-12-14T09:38:14.691Z] [VAD-Model] dims=[1,12,248], len=2976, first6=[0.0151, 0.0500, 0.0275, 0.0001, 0.0005, 0.0061]
+[2025-12-14T09:38:14.691Z] [VAD-Parse] outputLen=2976, numFrames=12, dims=248
+[2025-12-14T09:38:14.691Z] [VAD-Result] numFrames=12, avgProb=0.5363
+[2025-12-14T09:38:14.691Z] [VAD-Detect] Prob=0.5363 | Amp=0.1122
+[2025-12-14T09:38:14.808Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0096, 0.1209, 0.0037, 0.0000, 0.0053, 0.0035]
+[2025-12-14T09:38:14.809Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:14.809Z] [VAD-Result] numFrames=13, avgProb=0.5475
+[2025-12-14T09:38:14.809Z] [VAD-Detect] Prob=0.5475 | Amp=0.2038
+[2025-12-14T09:38:14.948Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0236, 0.1459, 0.0162, 0.0001, 0.0000, 0.0000]
+[2025-12-14T09:38:14.948Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:14.948Z] [VAD-Result] numFrames=13, avgProb=0.5443
+[2025-12-14T09:38:15.064Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0011, 0.5518, 0.0003, 0.0000, 0.0000, 0.0000]
+[2025-12-14T09:38:15.064Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:15.064Z] [VAD-Result] numFrames=13, avgProb=0.5662
+[2025-12-14T09:38:15.064Z] [VAD-Detect] Prob=0.5662 | Amp=0.2087
+[2025-12-14T09:38:15.203Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0035, 0.0213, 0.0193, 0.0002, 0.0000, 0.0000]
+[2025-12-14T09:38:15.203Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:15.204Z] [VAD-Result] numFrames=13, avgProb=0.6036
+[2025-12-14T09:38:15.204Z] [VAD-Detect] Prob=0.6036 | Amp=0.1697
+[2025-12-14T09:38:15.316Z] [VAD-Model] dims=[1,12,248], len=2976, first6=[0.0038, 0.0142, 0.0033, 0.0000, 0.0000, 0.0000]
+[2025-12-14T09:38:15.317Z] [VAD-Parse] outputLen=2976, numFrames=12, dims=248
+[2025-12-14T09:38:15.317Z] [VAD-Result] numFrames=12, avgProb=0.6014
+[2025-12-14T09:38:15.458Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0143, 0.0203, 0.0049, 0.0000, 0.0000, 0.0000]
+[2025-12-14T09:38:15.458Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:15.458Z] [VAD-Result] numFrames=13, avgProb=0.5571
+[2025-12-14T09:38:15.458Z] [VAD-Detect] Prob=0.5571 | Amp=0.1636
+[2025-12-14T09:38:15.598Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0366, 0.0066, 0.0037, 0.0000, 0.0009, 0.0009]
+[2025-12-14T09:38:15.598Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:15.598Z] [VAD-Result] numFrames=13, avgProb=0.5575
+[2025-12-14T09:38:15.684Z] [AudioFlow] Amp=0.4056 Avg=0.0290 | Mode=vad | Buffer=80 | isSpeaking=true
+[2025-12-14T09:38:15.715Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0255, 0.0375, 0.0028, 0.0000, 0.0007, 0.0001]
+[2025-12-14T09:38:15.716Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:15.716Z] [VAD-Result] numFrames=13, avgProb=0.5367
+[2025-12-14T09:38:15.716Z] [VAD-Detect] Prob=0.5367 | Amp=0.4056
+[2025-12-14T09:38:15.829Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0231, 0.0686, 0.0621, 0.0000, 0.0005, 0.0001]
+[2025-12-14T09:38:15.829Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:15.830Z] [VAD-Result] numFrames=13, avgProb=0.5589
+[2025-12-14T09:38:15.830Z] [VAD-Detect] Prob=0.5589 | Amp=0.2930
+[2025-12-14T09:38:15.967Z] [VAD-Model] dims=[1,12,248], len=2976, first6=[0.0152, 0.0172, 0.0049, 0.0000, 0.0008, 0.0024]
+[2025-12-14T09:38:15.967Z] [VAD-Parse] outputLen=2976, numFrames=12, dims=248
+[2025-12-14T09:38:15.967Z] [VAD-Result] numFrames=12, avgProb=0.5587
+[2025-12-14T09:38:16.086Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0050, 0.1000, 0.0005, 0.0000, 0.0000, 0.0000]
+[2025-12-14T09:38:16.086Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:16.086Z] [VAD-Result] numFrames=13, avgProb=0.5740
+[2025-12-14T09:38:16.086Z] [VAD-Detect] Prob=0.5740 | Amp=0.0219
+[2025-12-14T09:38:16.224Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0025, 0.4844, 0.0016, 0.0001, 0.0000, 0.0000]
+[2025-12-14T09:38:16.225Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:16.225Z] [VAD-Result] numFrames=13, avgProb=0.6069
+[2025-12-14T09:38:16.225Z] [VAD-Detect] Prob=0.6069 | Amp=0.0066
+[2025-12-14T09:38:16.340Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0038, 0.2277, 0.0029, 0.0001, 0.0000, 0.0000]
+[2025-12-14T09:38:16.341Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:16.341Z] [VAD-Result] numFrames=13, avgProb=0.5452
+[2025-12-14T09:38:16.341Z] [VAD-Detect] Prob=0.5452 | Amp=0.0171
+[2025-12-14T09:38:16.482Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0051, 0.0367, 0.0032, 0.0001, 0.0000, 0.0000]
+[2025-12-14T09:38:16.483Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:16.483Z] [VAD-Result] numFrames=13, avgProb=0.6007
+[2025-12-14T09:38:16.483Z] [VAD-Detect] Prob=0.6007 | Amp=0.0300
+[2025-12-14T09:38:16.595Z] [VAD-Model] dims=[1,12,248], len=2976, first6=[0.0203, 0.0133, 0.0040, 0.0001, 0.0000, 0.0000]
+[2025-12-14T09:38:16.595Z] [VAD-Parse] outputLen=2976, numFrames=12, dims=248
+[2025-12-14T09:38:16.595Z] [VAD-Result] numFrames=12, avgProb=0.5741
+[2025-12-14T09:38:16.595Z] [VAD-Detect] Prob=0.5741 | Amp=0.0027
+[2025-12-14T09:38:16.705Z] [AudioFlow] Amp=0.0016 Avg=0.0003 | Mode=vad | Buffer=88 | isSpeaking=true
+[2025-12-14T09:38:16.736Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0648, 0.0129, 0.0030, 0.0002, 0.0001, 0.0000]
+[2025-12-14T09:38:16.736Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:16.736Z] [VAD-Result] numFrames=13, avgProb=0.5665
+[2025-12-14T09:38:16.852Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0769, 0.0264, 0.0036, 0.0007, 0.0001, 0.0000]
+[2025-12-14T09:38:16.852Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:16.852Z] [VAD-Result] numFrames=13, avgProb=0.5733
+[2025-12-14T09:38:16.991Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0874, 0.0189, 0.0041, 0.0011, 0.0005, 0.0003]
+[2025-12-14T09:38:16.992Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:16.992Z] [VAD-Result] numFrames=13, avgProb=0.5805
+[2025-12-14T09:38:17.107Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0536, 0.0311, 0.0045, 0.0007, 0.0008, 0.0007]
+[2025-12-14T09:38:17.107Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:17.107Z] [VAD-Result] numFrames=13, avgProb=0.6118
+[2025-12-14T09:38:17.107Z] [VAD-Detect] Prob=0.6118 | Amp=0.0016
+[2025-12-14T09:38:17.244Z] [VAD-Model] dims=[1,12,248], len=2976, first6=[0.0499, 0.0242, 0.0042, 0.0003, 0.0003, 0.0003]
+[2025-12-14T09:38:17.244Z] [VAD-Parse] outputLen=2976, numFrames=12, dims=248
+[2025-12-14T09:38:17.244Z] [VAD-Result] numFrames=12, avgProb=0.5845
+[2025-12-14T09:38:17.244Z] [VAD-Detect] Prob=0.5845 | Amp=0.0013
+[2025-12-14T09:38:17.363Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0755, 0.0176, 0.0060, 0.0004, 0.0007, 0.0005]
+[2025-12-14T09:38:17.363Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:17.363Z] [VAD-Result] numFrames=13, avgProb=0.5447
+[2025-12-14T09:38:17.363Z] [VAD-Detect] Prob=0.5447 | Amp=0.0015
+[2025-12-14T09:38:17.502Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0408, 0.0213, 0.0047, 0.0001, 0.0023, 0.0011]
+[2025-12-14T09:38:17.502Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:17.502Z] [VAD-Result] numFrames=13, avgProb=0.5495
+[2025-12-14T09:38:17.617Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0386, 0.0156, 0.0048, 0.0001, 0.0030, 0.0015]
+[2025-12-14T09:38:17.617Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:17.617Z] [VAD-Result] numFrames=13, avgProb=0.5427
+[2025-12-14T09:38:17.727Z] [AudioFlow] Amp=0.0013 Avg=0.0003 | Mode=vad | Buffer=96 | isSpeaking=true
+[2025-12-14T09:38:17.756Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0409, 0.0236, 0.0022, 0.0001, 0.0013, 0.0009]
+[2025-12-14T09:38:17.757Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:17.757Z] [VAD-Result] numFrames=13, avgProb=0.5733
+[2025-12-14T09:38:17.757Z] [VAD-Detect] Prob=0.5733 | Amp=0.0013
+[2025-12-14T09:38:17.871Z] [VAD-Model] dims=[1,12,248], len=2976, first6=[0.0475, 0.0172, 0.0023, 0.0011, 0.0006, 0.0003]
+[2025-12-14T09:38:17.871Z] [VAD-Parse] outputLen=2976, numFrames=12, dims=248
+[2025-12-14T09:38:17.872Z] [VAD-Result] numFrames=12, avgProb=0.5782
+[2025-12-14T09:38:18.012Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0409, 0.0187, 0.0027, 0.0008, 0.0006, 0.0003]
+[2025-12-14T09:38:18.012Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:18.012Z] [VAD-Result] numFrames=13, avgProb=0.5820
+[2025-12-14T09:38:18.128Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0687, 0.0216, 0.0036, 0.0005, 0.0006, 0.0002]
+[2025-12-14T09:38:18.128Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:18.128Z] [VAD-Result] numFrames=13, avgProb=0.5594
+[2025-12-14T09:38:18.131Z] [VAD-Detect] Prob=0.5594 | Amp=0.0014
+[2025-12-14T09:38:18.267Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0550, 0.0172, 0.0065, 0.0011, 0.0006, 0.0004]
+[2025-12-14T09:38:18.268Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:18.268Z] [VAD-Result] numFrames=13, avgProb=0.5480
+[2025-12-14T09:38:18.268Z] [VAD-Detect] Prob=0.5480 | Amp=0.2595
+[2025-12-14T09:38:18.385Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0253, 0.1691, 0.0500, 0.0002, 0.0043, 0.0040]
+[2025-12-14T09:38:18.386Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:18.386Z] [VAD-Result] numFrames=13, avgProb=0.5356
+[2025-12-14T09:38:18.387Z] [VAD-Detect] Prob=0.5356 | Amp=0.1428
+[2025-12-14T09:38:18.521Z] [VAD-Model] dims=[1,12,248], len=2976, first6=[0.0068, 0.0991, 0.0015, 0.0001, 0.0021, 0.0015]
+[2025-12-14T09:38:18.522Z] [VAD-Parse] outputLen=2976, numFrames=12, dims=248
+[2025-12-14T09:38:18.522Z] [VAD-Result] numFrames=12, avgProb=0.5676
+[2025-12-14T09:38:18.522Z] [VAD-Detect] Prob=0.5676 | Amp=0.1318
+[2025-12-14T09:38:18.640Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0081, 0.0055, 0.0006, 0.0012, 0.0001, 0.0000]
+[2025-12-14T09:38:18.640Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:18.640Z] [VAD-Result] numFrames=13, avgProb=0.5629
+[2025-12-14T09:38:18.749Z] [AudioFlow] Amp=0.0686 Avg=0.0109 | Mode=vad | Buffer=104 | isSpeaking=true
+[2025-12-14T09:38:18.779Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0058, 0.0129, 0.0006, 0.0004, 0.0000, 0.0000]
+[2025-12-14T09:38:18.779Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:18.779Z] [VAD-Result] numFrames=13, avgProb=0.6286
+[2025-12-14T09:38:18.780Z] [VAD-Detect] Prob=0.6286 | Amp=0.0686
+[2025-12-14T09:38:18.895Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0052, 0.0057, 0.0002, 0.0006, 0.0000, 0.0000]
+[2025-12-14T09:38:18.895Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:18.895Z] [VAD-Result] numFrames=13, avgProb=0.5794
+[2025-12-14T09:38:18.895Z] [VAD-Detect] Prob=0.5794 | Amp=0.0519
+[2025-12-14T09:38:19.033Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0049, 0.0080, 0.0009, 0.0003, 0.0000, 0.0000]
+[2025-12-14T09:38:19.034Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:19.034Z] [VAD-Result] numFrames=13, avgProb=0.6155
+[2025-12-14T09:38:19.034Z] [VAD-Detect] Prob=0.6155 | Amp=0.0042
+[2025-12-14T09:38:19.150Z] [VAD-Model] dims=[1,12,248], len=2976, first6=[0.0200, 0.0224, 0.0025, 0.0006, 0.0001, 0.0000]
+[2025-12-14T09:38:19.150Z] [VAD-Parse] outputLen=2976, numFrames=12, dims=248
+[2025-12-14T09:38:19.150Z] [VAD-Result] numFrames=12, avgProb=0.6081
+[2025-12-14T09:38:19.289Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0258, 0.0515, 0.0068, 0.0004, 0.0000, 0.0000]
+[2025-12-14T09:38:19.289Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:19.290Z] [VAD-Result] numFrames=13, avgProb=0.5413
+[2025-12-14T09:38:19.290Z] [VAD-Detect] Prob=0.5413 | Amp=0.5939
+[2025-12-14T09:38:19.406Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0219, 0.0902, 0.0374, 0.0000, 0.0000, 0.0005]
+[2025-12-14T09:38:19.406Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:19.407Z] [VAD-Result] numFrames=13, avgProb=0.5320
+[2025-12-14T09:38:19.545Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0261, 0.0332, 0.0209, 0.0000, 0.0032, 0.0041]
+[2025-12-14T09:38:19.545Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:19.545Z] [VAD-Result] numFrames=13, avgProb=0.5314
+[2025-12-14T09:38:19.684Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0191, 0.0879, 0.0054, 0.0000, 0.0041, 0.0012]
+[2025-12-14T09:38:19.684Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:19.684Z] [VAD-Result] numFrames=13, avgProb=0.5390
+[2025-12-14T09:38:19.771Z] [AudioFlow] Amp=0.1723 Avg=0.0338 | Mode=vad | Buffer=112 | isSpeaking=true
+[2025-12-14T09:38:19.798Z] [VAD-Model] dims=[1,12,248], len=2976, first6=[0.0112, 0.0066, 0.0008, 0.0003, 0.0006, 0.0006]
+[2025-12-14T09:38:19.798Z] [VAD-Parse] outputLen=2976, numFrames=12, dims=248
+[2025-12-14T09:38:19.799Z] [VAD-Result] numFrames=12, avgProb=0.5560
+[2025-12-14T09:38:19.799Z] [VAD-Detect] Prob=0.5560 | Amp=0.1723
+[2025-12-14T09:38:19.940Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0030, 0.0054, 0.0003, 0.0004, 0.0000, 0.0000]
+[2025-12-14T09:38:19.940Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:19.940Z] [VAD-Result] numFrames=13, avgProb=0.5821
+[2025-12-14T09:38:19.940Z] [VAD-Detect] Prob=0.5821 | Amp=0.0908
+[2025-12-14T09:38:20.055Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0027, 0.0721, 0.0006, 0.0006, 0.0000, 0.0000]
+[2025-12-14T09:38:20.055Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:20.055Z] [VAD-Result] numFrames=13, avgProb=0.5928
+[2025-12-14T09:38:20.056Z] [VAD-Detect] Prob=0.5928 | Amp=0.0487
+[2025-12-14T09:38:20.218Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0078, 0.0696, 0.0011, 0.0002, 0.0000, 0.0000]
+[2025-12-14T09:38:20.218Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:20.218Z] [VAD-Result] numFrames=13, avgProb=0.6126
+[2025-12-14T09:38:20.218Z] [VAD-Detect] Prob=0.6126 | Amp=0.0175
+[2025-12-14T09:38:20.334Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0055, 0.0383, 0.0009, 0.0004, 0.0000, 0.0000]
+[2025-12-14T09:38:20.334Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:20.335Z] [VAD-Result] numFrames=13, avgProb=0.6225
+[2025-12-14T09:38:20.471Z] [VAD-Model] dims=[1,12,248], len=2976, first6=[0.0085, 0.0192, 0.0015, 0.0003, 0.0000, 0.0000]
+[2025-12-14T09:38:20.472Z] [VAD-Parse] outputLen=2976, numFrames=12, dims=248
+[2025-12-14T09:38:20.472Z] [VAD-Result] numFrames=12, avgProb=0.6140
+[2025-12-14T09:38:20.590Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0159, 0.0103, 0.0016, 0.0002, 0.0000, 0.0000]
+[2025-12-14T09:38:20.591Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:20.591Z] [VAD-Result] numFrames=13, avgProb=0.5753
+[2025-12-14T09:38:20.591Z] [VAD-Detect] Prob=0.5753 | Amp=0.4543
+[2025-12-14T09:38:20.731Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0201, 0.0312, 0.0319, 0.0000, 0.0005, 0.0022]
+[2025-12-14T09:38:20.731Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:20.732Z] [VAD-Result] numFrames=13, avgProb=0.5367
+[2025-12-14T09:38:20.732Z] [VAD-Detect] Prob=0.5367 | Amp=0.0892
+[2025-12-14T09:38:20.815Z] [AudioFlow] Amp=0.1367 Avg=0.0223 | Mode=vad | Buffer=120 | isSpeaking=true
+[2025-12-14T09:38:20.845Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0096, 0.1270, 0.0014, 0.0002, 0.0000, 0.0000]
+[2025-12-14T09:38:20.846Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:20.846Z] [VAD-Result] numFrames=13, avgProb=0.5508
+[2025-12-14T09:38:20.846Z] [VAD-Detect] Prob=0.5508 | Amp=0.1367
+[2025-12-14T09:38:20.983Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0093, 0.0111, 0.0035, 0.0005, 0.0000, 0.0001]
+[2025-12-14T09:38:20.984Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:20.984Z] [VAD-Result] numFrames=13, avgProb=0.5397
+[2025-12-14T09:38:20.984Z] [VAD-Detect] Prob=0.5397 | Amp=0.0772
+[2025-12-14T09:38:21.097Z] [VAD-Model] dims=[1,12,248], len=2976, first6=[0.0242, 0.0393, 0.0035, 0.0000, 0.0000, 0.0000]
+[2025-12-14T09:38:21.097Z] [VAD-Parse] outputLen=2976, numFrames=12, dims=248
+[2025-12-14T09:38:21.097Z] [VAD-Result] numFrames=12, avgProb=0.5329
+[2025-12-14T09:38:21.241Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0179, 0.1489, 0.0019, 0.0000, 0.0000, 0.0000]
+[2025-12-14T09:38:21.242Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:21.242Z] [VAD-Result] numFrames=13, avgProb=0.5466
+[2025-12-14T09:38:21.379Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0281, 0.0392, 0.0273, 0.0001, 0.0004, 0.0031]
+[2025-12-14T09:38:21.379Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:21.379Z] [VAD-Result] numFrames=13, avgProb=0.5553
+[2025-12-14T09:38:21.379Z] [VAD-Detect] Prob=0.5553 | Amp=0.1188
+[2025-12-14T09:38:21.495Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0285, 0.0019, 0.0073, 0.0001, 0.0037, 0.0168]
+[2025-12-14T09:38:21.495Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:21.495Z] [VAD-Result] numFrames=13, avgProb=0.5554
+[2025-12-14T09:38:21.634Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0216, 0.0106, 0.0018, 0.0000, 0.0001, 0.0010]
+[2025-12-14T09:38:21.634Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:21.634Z] [VAD-Result] numFrames=13, avgProb=0.5620
+[2025-12-14T09:38:21.749Z] [VAD-Model] dims=[1,12,248], len=2976, first6=[0.0034, 0.2445, 0.0137, 0.0001, 0.0001, 0.0002]
+[2025-12-14T09:38:21.749Z] [VAD-Parse] outputLen=2976, numFrames=12, dims=248
+[2025-12-14T09:38:21.749Z] [VAD-Result] numFrames=12, avgProb=0.5701
+[2025-12-14T09:38:21.749Z] [VAD-Detect] Prob=0.5701 | Amp=0.4049
+[2025-12-14T09:38:21.861Z] [AudioFlow] Amp=0.0576 Avg=0.0088 | Mode=vad | Buffer=128 | isSpeaking=true
+[2025-12-14T09:38:21.891Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0061, 0.0235, 0.0193, 0.0000, 0.0033, 0.0079]
+[2025-12-14T09:38:21.891Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:21.891Z] [VAD-Result] numFrames=13, avgProb=0.5841
+[2025-12-14T09:38:21.891Z] [VAD-Detect] Prob=0.5841 | Amp=0.0576
+[2025-12-14T09:38:22.006Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0080, 0.0518, 0.0007, 0.0002, 0.0001, 0.0000]
+[2025-12-14T09:38:22.007Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:22.007Z] [VAD-Result] numFrames=13, avgProb=0.5617
+[2025-12-14T09:38:22.007Z] [VAD-Detect] Prob=0.5617 | Amp=0.0183
+[2025-12-14T09:38:22.150Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0027, 0.0546, 0.0002, 0.0002, 0.0000, 0.0000]
+[2025-12-14T09:38:22.150Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:22.150Z] [VAD-Result] numFrames=13, avgProb=0.5899
+[2025-12-14T09:38:22.150Z] [VAD-Detect] Prob=0.5899 | Amp=0.0020
+[2025-12-14T09:38:22.261Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0082, 0.0433, 0.0004, 0.0003, 0.0000, 0.0000]
+[2025-12-14T09:38:22.262Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:22.262Z] [VAD-Result] numFrames=13, avgProb=0.5829
+[2025-12-14T09:38:22.399Z] [VAD-Model] dims=[1,12,248], len=2976, first6=[0.0050, 0.0223, 0.0011, 0.0003, 0.0000, 0.0000]
+[2025-12-14T09:38:22.399Z] [VAD-Parse] outputLen=2976, numFrames=12, dims=248
+[2025-12-14T09:38:22.399Z] [VAD-Result] numFrames=12, avgProb=0.6188
+[2025-12-14T09:38:22.400Z] [VAD-Detect] Prob=0.6188 | Amp=0.0021
+[2025-12-14T09:38:22.516Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0071, 0.0077, 0.0024, 0.0001, 0.0000, 0.0000]
+[2025-12-14T09:38:22.516Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:22.517Z] [VAD-Result] numFrames=13, avgProb=0.6384
+[2025-12-14T09:38:22.517Z] [VAD-Detect] Prob=0.6384 | Amp=0.0017
+[2025-12-14T09:38:22.657Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0147, 0.0386, 0.0046, 0.0001, 0.0001, 0.0001]
+[2025-12-14T09:38:22.657Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:22.657Z] [VAD-Result] numFrames=13, avgProb=0.6058
+[2025-12-14T09:38:22.657Z] [VAD-Detect] Prob=0.6058 | Amp=0.0017
+[2025-12-14T09:38:22.774Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0474, 0.0192, 0.0075, 0.0006, 0.0006, 0.0005]
+[2025-12-14T09:38:22.774Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:22.774Z] [VAD-Result] numFrames=13, avgProb=0.5703
+[2025-12-14T09:38:22.774Z] [VAD-Detect] Prob=0.5703 | Amp=0.0014
+[2025-12-14T09:38:22.881Z] [AudioFlow] Amp=0.0015 Avg=0.0004 | Mode=vad | Buffer=136 | isSpeaking=true
+[2025-12-14T09:38:22.912Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0685, 0.0071, 0.0146, 0.0002, 0.0006, 0.0005]
+[2025-12-14T09:38:22.912Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:22.912Z] [VAD-Result] numFrames=13, avgProb=0.5538
+[2025-12-14T09:38:22.913Z] [VAD-Detect] Prob=0.5538 | Amp=0.0015
+[2025-12-14T09:38:23.025Z] [VAD-Model] dims=[1,12,248], len=2976, first6=[0.0600, 0.0138, 0.0045, 0.0002, 0.0006, 0.0005]
+[2025-12-14T09:38:23.025Z] [VAD-Parse] outputLen=2976, numFrames=12, dims=248
+[2025-12-14T09:38:23.025Z] [VAD-Result] numFrames=12, avgProb=0.5357
+[2025-12-14T09:38:23.025Z] [VAD-Detect] Prob=0.5357 | Amp=0.0015
+[2025-12-14T09:38:23.166Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0646, 0.0095, 0.0033, 0.0002, 0.0025, 0.0011]
+[2025-12-14T09:38:23.167Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:23.167Z] [VAD-Result] numFrames=13, avgProb=0.5233
+[2025-12-14T09:38:23.167Z] [VAD-Detect] Prob=0.5233 | Amp=0.0016
+[2025-12-14T09:38:23.283Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0457, 0.0129, 0.0048, 0.0002, 0.0037, 0.0015]
+[2025-12-14T09:38:23.284Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:23.284Z] [VAD-Result] numFrames=13, avgProb=0.5383
+[2025-12-14T09:38:23.284Z] [VAD-Detect] Prob=0.5383 | Amp=0.0044
+[2025-12-14T09:38:23.422Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0903, 0.0085, 0.0064, 0.0002, 0.0011, 0.0010]
+[2025-12-14T09:38:23.422Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:23.422Z] [VAD-Result] numFrames=13, avgProb=0.5257
+[2025-12-14T09:38:23.422Z] [VAD-Detect] Prob=0.5257 | Amp=0.0050
+[2025-12-14T09:38:23.538Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0935, 0.0032, 0.0074, 0.0001, 0.0006, 0.0010]
+[2025-12-14T09:38:23.538Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:23.538Z] [VAD-Result] numFrames=13, avgProb=0.5336
+[2025-12-14T09:38:23.676Z] [VAD-Model] dims=[1,12,248], len=2976, first6=[0.0481, 0.0146, 0.0048, 0.0001, 0.0004, 0.0005]
+[2025-12-14T09:38:23.676Z] [VAD-Parse] outputLen=2976, numFrames=12, dims=248
+[2025-12-14T09:38:23.676Z] [VAD-Result] numFrames=12, avgProb=0.5731
+[2025-12-14T09:38:23.676Z] [VAD-Detect] Prob=0.5731 | Amp=0.1447
+[2025-12-14T09:38:23.794Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0557, 0.0441, 0.0323, 0.0002, 0.0004, 0.0002]
+[2025-12-14T09:38:23.795Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:23.795Z] [VAD-Result] numFrames=13, avgProb=0.5516
+[2025-12-14T09:38:23.795Z] [VAD-Detect] Prob=0.5516 | Amp=0.2864
+[2025-12-14T09:38:23.903Z] [AudioFlow] Amp=0.2954 Avg=0.0460 | Mode=vad | Buffer=144 | isSpeaking=true
+[2025-12-14T09:38:23.932Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0419, 0.0787, 0.0036, 0.0001, 0.0016, 0.0166]
+[2025-12-14T09:38:23.933Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:23.933Z] [VAD-Result] numFrames=13, avgProb=0.5319
+[2025-12-14T09:38:23.933Z] [VAD-Detect] Prob=0.5319 | Amp=0.2954
+[2025-12-14T09:38:24.050Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0058, 0.0043, 0.0027, 0.0002, 0.0002, 0.0017]
+[2025-12-14T09:38:24.051Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:24.052Z] [VAD-Result] numFrames=13, avgProb=0.5401
+[2025-12-14T09:38:24.191Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0169, 0.0360, 0.0139, 0.0007, 0.0002, 0.0012]
+[2025-12-14T09:38:24.192Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:24.192Z] [VAD-Result] numFrames=13, avgProb=0.5376
+[2025-12-14T09:38:24.302Z] [VAD-Model] dims=[1,12,248], len=2976, first6=[0.0397, 0.0243, 0.0033, 0.0001, 0.0003, 0.0040]
+[2025-12-14T09:38:24.302Z] [VAD-Parse] outputLen=2976, numFrames=12, dims=248
+[2025-12-14T09:38:24.302Z] [VAD-Result] numFrames=12, avgProb=0.5553
+[2025-12-14T09:38:24.302Z] [VAD-Detect] Prob=0.5553 | Amp=0.0809
+[2025-12-14T09:38:24.443Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0314, 0.0212, 0.0106, 0.0002, 0.0001, 0.0005]
+[2025-12-14T09:38:24.444Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:24.444Z] [VAD-Result] numFrames=13, avgProb=0.5670
+[2025-12-14T09:38:24.444Z] [VAD-Detect] Prob=0.5670 | Amp=0.0741
+[2025-12-14T09:38:24.560Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0145, 0.0406, 0.0017, 0.0001, 0.0000, 0.0000]
+[2025-12-14T09:38:24.560Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:24.560Z] [VAD-Result] numFrames=13, avgProb=0.5791
+[2025-12-14T09:38:24.560Z] [VAD-Detect] Prob=0.5791 | Amp=0.1029
+[2025-12-14T09:38:24.699Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0007, 0.0051, 0.0004, 0.0000, 0.0000, 0.0000]
+[2025-12-14T09:38:24.701Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:24.701Z] [VAD-Result] numFrames=13, avgProb=0.5806
+[2025-12-14T09:38:24.816Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0035, 0.0625, 0.0025, 0.0000, 0.0000, 0.0000]
+[2025-12-14T09:38:24.816Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:24.817Z] [VAD-Result] numFrames=13, avgProb=0.5733
+[2025-12-14T09:38:24.925Z] [AudioFlow] Amp=0.0631 Avg=0.0096 | Mode=vad | Buffer=152 | isSpeaking=true
+[2025-12-14T09:38:24.952Z] [VAD-Model] dims=[1,12,248], len=2976, first6=[0.0156, 0.0509, 0.0036, 0.0001, 0.0000, 0.0000]
+[2025-12-14T09:38:24.952Z] [VAD-Parse] outputLen=2976, numFrames=12, dims=248
+[2025-12-14T09:38:24.952Z] [VAD-Result] numFrames=12, avgProb=0.5476
+[2025-12-14T09:38:24.953Z] [VAD-Detect] Prob=0.5476 | Amp=0.0631
+[2025-12-14T09:38:25.072Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0111, 0.0129, 0.0313, 0.0000, 0.0000, 0.0002]
+[2025-12-14T09:38:25.073Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:25.075Z] [VAD-Result] numFrames=13, avgProb=0.5694
+[2025-12-14T09:38:25.077Z] [VAD-Detect] Prob=0.5694 | Amp=0.1686
+[2025-12-14T09:38:25.211Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0023, 0.0135, 0.0014, 0.0000, 0.0002, 0.0004]
+[2025-12-14T09:38:25.211Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:25.211Z] [VAD-Result] numFrames=13, avgProb=0.5537
+[2025-12-14T09:38:25.211Z] [VAD-Detect] Prob=0.5537 | Amp=0.0917
+[2025-12-14T09:38:25.326Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0025, 0.0158, 0.0030, 0.0002, 0.0000, 0.0000]
+[2025-12-14T09:38:25.326Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:25.326Z] [VAD-Result] numFrames=13, avgProb=0.5364
+[2025-12-14T09:38:25.326Z] [VAD-Detect] Prob=0.5364 | Amp=0.2675
+[2025-12-14T09:38:25.465Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0128, 0.0166, 0.0025, 0.0002, 0.0012, 0.0041]
+[2025-12-14T09:38:25.466Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:25.466Z] [VAD-Result] numFrames=13, avgProb=0.5737
+[2025-12-14T09:38:25.466Z] [VAD-Detect] Prob=0.5737 | Amp=0.1138
+[2025-12-14T09:38:25.579Z] [VAD-Model] dims=[1,12,248], len=2976, first6=[0.0035, 0.2729, 0.0043, 0.0000, 0.0000, 0.0000]
+[2025-12-14T09:38:25.579Z] [VAD-Parse] outputLen=2976, numFrames=12, dims=248
+[2025-12-14T09:38:25.579Z] [VAD-Result] numFrames=12, avgProb=0.5514
+[2025-12-14T09:38:25.579Z] [VAD-Detect] Prob=0.5514 | Amp=0.1951
+[2025-12-14T09:38:25.721Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0189, 0.0669, 0.0094, 0.0000, 0.0004, 0.0002]
+[2025-12-14T09:38:25.722Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:25.722Z] [VAD-Result] numFrames=13, avgProb=0.5329
+[2025-12-14T09:38:25.722Z] [VAD-Detect] Prob=0.5329 | Amp=0.3023
+[2025-12-14T09:38:25.860Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0289, 0.0386, 0.0296, 0.0001, 0.0022, 0.0017]
+[2025-12-14T09:38:25.860Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:25.860Z] [VAD-Result] numFrames=13, avgProb=0.5401
+[2025-12-14T09:38:25.946Z] [AudioFlow] Amp=0.3328 Avg=0.0663 | Mode=vad | Buffer=160 | isSpeaking=true
+[2025-12-14T09:38:25.976Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0072, 0.0855, 0.0031, 0.0000, 0.0001, 0.0002]
+[2025-12-14T09:38:25.976Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:25.976Z] [VAD-Result] numFrames=13, avgProb=0.5577
+[2025-12-14T09:38:25.977Z] [VAD-Detect] Prob=0.5577 | Amp=0.3328
+[2025-12-14T09:38:26.092Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0317, 0.1606, 0.0158, 0.0002, 0.0001, 0.0000]
+[2025-12-14T09:38:26.092Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:26.092Z] [VAD-Result] numFrames=13, avgProb=0.5500
+[2025-12-14T09:38:26.231Z] [VAD-Model] dims=[1,12,248], len=2976, first6=[0.0265, 0.0821, 0.0062, 0.0001, 0.0003, 0.0002]
+[2025-12-14T09:38:26.231Z] [VAD-Parse] outputLen=2976, numFrames=12, dims=248
+[2025-12-14T09:38:26.231Z] [VAD-Result] numFrames=12, avgProb=0.5686
+[2025-12-14T09:38:26.231Z] [VAD-Detect] Prob=0.5686 | Amp=0.0086
+[2025-12-14T09:38:26.348Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0360, 0.0855, 0.0045, 0.0004, 0.0001, 0.0000]
+[2025-12-14T09:38:26.348Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:26.348Z] [VAD-Result] numFrames=13, avgProb=0.5650
+[2025-12-14T09:38:26.486Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0211, 0.0526, 0.0033, 0.0008, 0.0000, 0.0000]
+[2025-12-14T09:38:26.487Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:26.487Z] [VAD-Result] numFrames=13, avgProb=0.5859
+[2025-12-14T09:38:26.487Z] [VAD-Detect] Prob=0.5859 | Amp=0.0023
+[2025-12-14T09:38:26.625Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0315, 0.0275, 0.0043, 0.0010, 0.0000, 0.0000]
+[2025-12-14T09:38:26.625Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:26.625Z] [VAD-Result] numFrames=13, avgProb=0.6222
+[2025-12-14T09:38:26.626Z] [VAD-Detect] Prob=0.6222 | Amp=0.0024
+[2025-12-14T09:38:26.743Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0107, 0.0155, 0.0029, 0.0012, 0.0000, 0.0000]
+[2025-12-14T09:38:26.744Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:26.744Z] [VAD-Result] numFrames=13, avgProb=0.6043
+[2025-12-14T09:38:26.744Z] [VAD-Detect] Prob=0.6043 | Amp=0.3044
+[2025-12-14T09:38:26.879Z] [VAD-Model] dims=[1,12,248], len=2976, first6=[0.0079, 0.1439, 0.0437, 0.0000, 0.0003, 0.0002]
+[2025-12-14T09:38:26.880Z] [VAD-Parse] outputLen=2976, numFrames=12, dims=248
+[2025-12-14T09:38:26.880Z] [VAD-Result] numFrames=12, avgProb=0.5374
+[2025-12-14T09:38:26.880Z] [VAD-Detect] Prob=0.5374 | Amp=0.2125
+[2025-12-14T09:38:26.968Z] [AudioFlow] Amp=0.1786 Avg=0.0852 | Mode=vad | Buffer=168 | isSpeaking=true
+[2025-12-14T09:38:26.998Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0198, 0.1306, 0.0090, 0.0001, 0.0001, 0.0006]
+[2025-12-14T09:38:26.998Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:26.998Z] [VAD-Result] numFrames=13, avgProb=0.5523
+[2025-12-14T09:38:26.998Z] [VAD-Detect] Prob=0.5523 | Amp=0.1786
+[2025-12-14T09:38:27.137Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0313, 0.0452, 0.0020, 0.0000, 0.0007, 0.0047]
+[2025-12-14T09:38:27.137Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:27.138Z] [VAD-Result] numFrames=13, avgProb=0.5421
+[2025-12-14T09:38:27.138Z] [VAD-Detect] Prob=0.5421 | Amp=0.2610
+[2025-12-14T09:38:27.254Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0646, 0.0104, 0.0077, 0.0002, 0.0023, 0.0038]
+[2025-12-14T09:38:27.254Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:27.254Z] [VAD-Result] numFrames=13, avgProb=0.5768
+[2025-12-14T09:38:27.254Z] [VAD-Detect] Prob=0.5768 | Amp=0.1997
+[2025-12-14T09:38:27.392Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0028, 0.4036, 0.0011, 0.0004, 0.0000, 0.0000]
+[2025-12-14T09:38:27.393Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:27.393Z] [VAD-Result] numFrames=13, avgProb=0.5752
+[2025-12-14T09:38:27.506Z] [VAD-Model] dims=[1,12,248], len=2976, first6=[0.0051, 0.0925, 0.0128, 0.0001, 0.0001, 0.0002]
+[2025-12-14T09:38:27.506Z] [VAD-Parse] outputLen=2976, numFrames=12, dims=248
+[2025-12-14T09:38:27.506Z] [VAD-Result] numFrames=12, avgProb=0.5603
+[2025-12-14T09:38:27.506Z] [VAD-Detect] Prob=0.5603 | Amp=0.0519
+[2025-12-14T09:38:27.647Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0081, 0.1205, 0.0040, 0.0000, 0.0000, 0.0000]
+[2025-12-14T09:38:27.648Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:27.648Z] [VAD-Result] numFrames=13, avgProb=0.5568
+[2025-12-14T09:38:27.763Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0245, 0.2021, 0.0040, 0.0005, 0.0001, 0.0001]
+[2025-12-14T09:38:27.764Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:27.764Z] [VAD-Result] numFrames=13, avgProb=0.5879
+[2025-12-14T09:38:27.764Z] [VAD-Detect] Prob=0.5879 | Amp=0.0020
+[2025-12-14T09:38:27.903Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0115, 0.1171, 0.0058, 0.0003, 0.0000, 0.0000]
+[2025-12-14T09:38:27.903Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:27.904Z] [VAD-Result] numFrames=13, avgProb=0.6223
+[2025-12-14T09:38:27.904Z] [VAD-Detect] Prob=0.6223 | Amp=0.0021
+[2025-12-14T09:38:27.990Z] [AudioFlow] Amp=0.0895 Avg=0.0186 | Mode=vad | Buffer=176 | isSpeaking=true
+[2025-12-14T09:38:28.021Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0050, 0.0088, 0.0031, 0.0001, 0.0000, 0.0000]
+[2025-12-14T09:38:28.021Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:28.021Z] [VAD-Result] numFrames=13, avgProb=0.5750
+[2025-12-14T09:38:28.022Z] [VAD-Detect] Prob=0.5750 | Amp=0.0895
+[2025-12-14T09:38:28.164Z] [VAD-Model] dims=[1,12,248], len=2976, first6=[0.0066, 0.2605, 0.0142, 0.0017, 0.0000, 0.0000]
+[2025-12-14T09:38:28.164Z] [VAD-Parse] outputLen=2976, numFrames=12, dims=248
+[2025-12-14T09:38:28.164Z] [VAD-Result] numFrames=12, avgProb=0.5772
+[2025-12-14T09:38:28.274Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0024, 0.0198, 0.0018, 0.0015, 0.0000, 0.0000]
+[2025-12-14T09:38:28.274Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:28.274Z] [VAD-Result] numFrames=13, avgProb=0.5553
+[2025-12-14T09:38:28.274Z] [VAD-Detect] Prob=0.5553 | Amp=0.2894
+[2025-12-14T09:38:28.414Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0021, 0.0567, 0.0043, 0.0001, 0.0007, 0.0016]
+[2025-12-14T09:38:28.414Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:28.414Z] [VAD-Result] numFrames=13, avgProb=0.5562
+[2025-12-14T09:38:28.531Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0063, 0.0800, 0.0146, 0.0001, 0.0000, 0.0001]
+[2025-12-14T09:38:28.531Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:28.531Z] [VAD-Result] numFrames=13, avgProb=0.5400
+[2025-12-14T09:38:28.531Z] [VAD-Detect] Prob=0.5400 | Amp=0.0726
+[2025-12-14T09:38:28.671Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0122, 0.0423, 0.0078, 0.0001, 0.0000, 0.0001]
+[2025-12-14T09:38:28.671Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:28.671Z] [VAD-Result] numFrames=13, avgProb=0.5502
+[2025-12-14T09:38:28.672Z] [VAD-Detect] Prob=0.5502 | Amp=0.2005
+[2025-12-14T09:38:28.787Z] [VAD-Model] dims=[1,12,248], len=2976, first6=[0.0059, 0.0096, 0.0021, 0.0001, 0.0000, 0.0000]
+[2025-12-14T09:38:28.787Z] [VAD-Parse] outputLen=2976, numFrames=12, dims=248
+[2025-12-14T09:38:28.787Z] [VAD-Result] numFrames=12, avgProb=0.5795
+[2025-12-14T09:38:28.787Z] [VAD-Detect] Prob=0.5795 | Amp=0.1129
+[2025-12-14T09:38:28.928Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0078, 0.0054, 0.0006, 0.0000, 0.0000, 0.0000]
+[2025-12-14T09:38:28.928Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:28.929Z] [VAD-Result] numFrames=13, avgProb=0.5654
+[2025-12-14T09:38:28.929Z] [VAD-Detect] Prob=0.5654 | Amp=0.1139
+[2025-12-14T09:38:29.011Z] [AudioFlow] Amp=0.2081 Avg=0.0365 | Mode=vad | Buffer=184 | isSpeaking=true
+[2025-12-14T09:38:29.047Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0046, 0.0117, 0.0020, 0.0000, 0.0000, 0.0000]
+[2025-12-14T09:38:29.047Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:29.048Z] [VAD-Result] numFrames=13, avgProb=0.5723
+[2025-12-14T09:38:29.191Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0128, 0.0859, 0.0025, 0.0001, 0.0000, 0.0006]
+[2025-12-14T09:38:29.191Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:29.191Z] [VAD-Result] numFrames=13, avgProb=0.5890
+[2025-12-14T09:38:29.191Z] [VAD-Detect] Prob=0.5890 | Amp=0.0474
+[2025-12-14T09:38:29.294Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0048, 0.0387, 0.0003, 0.0000, 0.0000, 0.0001]
+[2025-12-14T09:38:29.294Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:29.295Z] [VAD-Result] numFrames=13, avgProb=0.5619
+[2025-12-14T09:38:29.295Z] [VAD-Detect] Prob=0.5619 | Amp=0.0740
+[2025-12-14T09:38:29.433Z] [VAD-Model] dims=[1,12,248], len=2976, first6=[0.0143, 0.0962, 0.0011, 0.0005, 0.0000, 0.0000]
+[2025-12-14T09:38:29.434Z] [VAD-Parse] outputLen=2976, numFrames=12, dims=248
+[2025-12-14T09:38:29.434Z] [VAD-Result] numFrames=12, avgProb=0.5682
+[2025-12-14T09:38:29.553Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0066, 0.0140, 0.0003, 0.0032, 0.0000, 0.0000]
+[2025-12-14T09:38:29.553Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:29.553Z] [VAD-Result] numFrames=13, avgProb=0.5862
+[2025-12-14T09:38:29.554Z] [VAD-Detect] Prob=0.5862 | Amp=0.1902
+[2025-12-14T09:38:29.691Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0014, 0.0232, 0.0037, 0.0017, 0.0000, 0.0000]
+[2025-12-14T09:38:29.691Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:29.691Z] [VAD-Result] numFrames=13, avgProb=0.6058
+[2025-12-14T09:38:29.691Z] [VAD-Detect] Prob=0.6058 | Amp=0.0723
+[2025-12-14T09:38:29.808Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0070, 0.0449, 0.0033, 0.0003, 0.0000, 0.0000]
+[2025-12-14T09:38:29.808Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:29.808Z] [VAD-Result] numFrames=13, avgProb=0.5677
+[2025-12-14T09:38:29.808Z] [VAD-Detect] Prob=0.5677 | Amp=0.0574
+[2025-12-14T09:38:29.946Z] [VAD-Model] dims=[1,13,248], len=3224, first6=[0.0141, 0.0415, 0.0031, 0.0000, 0.0000, 0.0000]
+[2025-12-14T09:38:29.947Z] [VAD-Parse] outputLen=3224, numFrames=13, dims=248
+[2025-12-14T09:38:29.947Z] [VAD-Result] numFrames=13, avgProb=0.5461
+[2025-12-14T09:38:29.947Z] [VAD-Detect] Prob=0.5461 | Amp=0.1808

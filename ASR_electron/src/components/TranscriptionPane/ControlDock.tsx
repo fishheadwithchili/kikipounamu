@@ -77,9 +77,7 @@ export const ControlDock = React.memo(({ isRecording, isLoading, onRecordToggle,
             {isRecording ? (
                 <Waveform isRecording={isRecording} stream={stream} />
             ) : (
-                <div style={{ width: '100%', textAlign: 'center', color: 'rgba(255, 255, 255, 0.5)', fontSize: '14px' }}>
-                    Tap microphone to speak
-                </div>
+                <div className="w-full text-center text-white/50 text-sm">Tap microphone to speak</div>
             )}
         </div>
 

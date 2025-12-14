@@ -48,13 +48,17 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
+            willChange: 'opacity',
+            transform: 'translateZ(0)',
             backgroundColor: 'rgba(0, 0, 0, 0.4)',
             backdropFilter: 'blur(4px)',
             WebkitBackdropFilter: 'blur(4px)',
-            animation: 'fadeIn 0.3s ease-out'
+            animation: 'fadeIn 0.1s ease-out'
         }} role="dialog" aria-label="Settings">
             <div style={{
                 position: 'relative',
+                willChange: 'transform, opacity',
+                backfaceVisibility: 'hidden',
                 backgroundColor: 'rgba(17, 24, 39, 0.6)',
                 backdropFilter: 'blur(24px)',
                 WebkitBackdropFilter: 'blur(24px)',
@@ -64,7 +68,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                 border: '1px solid rgba(255, 255, 255, 0.1)',
                 boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
                 overflow: 'hidden',
-                animation: 'zoomIn 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
+                animation: 'zoomIn 0.1s cubic-bezier(0.16, 1, 0.3, 1)'
             }}>
                 {/* Decorative Top Glow */}
                 <div style={{
@@ -119,8 +123,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(1, minmax(0, 1fr))', gap: '12px' }}>
                             {[
                                 { value: 'unlimited', label: 'Unlimited (No Auto-Cut)', desc: 'Best for long stream dictation.' },
-                                { value: 'time_limit', label: 'Time Limit', desc: 'Forces a cut after a set duration.' },
-                                { value: 'vad', label: 'VAD (Auto-Cut)', desc: 'Automatically cuts audio based on voice activity.' }
+                                { value: 'time_limit', label: 'Time Limit', desc: 'Forces a cut after a set duration.' }
                             ].map((option) => {
                                 const isActive = currentMode === option.value;
                                 return (
@@ -166,37 +169,12 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                                 );
                             })}
                         </div>
-
-                        {/* Time Limit Input - 始终显示，非time_limit模式时灰掉 */}
-                        <div style={{ marginTop: '12px', paddingLeft: '32px' }}>
-                            <input
-                                type="number"
-                                min="10"
-                                max="3600"
-                                value={timeLimit}
-                                onChange={(e) => setTimeLimit(parseInt(e.target.value) || 60)}
-                                disabled={currentMode !== 'time_limit'}
-                                style={{
-                                    backgroundColor: 'rgba(0, 0, 0, 0.2)',
-                                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                                    borderRadius: '12px',
-                                    padding: '10px',
-                                    color: currentMode === 'time_limit' ? 'white' : 'rgba(255, 255, 255, 0.3)',
-                                    width: '100%',
-                                    boxSizing: 'border-box',
-                                    outline: 'none',
-                                    transition: 'color 0.2s, border-color 0.2s',
-                                    opacity: currentMode === 'time_limit' ? 1 : 0.5,
-                                    cursor: currentMode === 'time_limit' ? 'text' : 'not-allowed'
-                                }}
-                                onFocus={e => currentMode === 'time_limit' && (e.target.style.borderColor = 'rgba(59, 130, 246, 0.5)')}
-                                onBlur={e => e.target.style.borderColor = 'rgba(255, 255, 255, 0.1)'}
-                            />
-                        </div>
                     </div>
 
+
+
                     {/* Path & Limits */}
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px' }}>
                         <div>
                             <label style={{
                                 display: 'block',
@@ -250,6 +228,40 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                                     outline: 'none'
                                 }}
                                 onFocus={e => e.target.style.borderColor = 'rgba(59, 130, 246, 0.5)'}
+                                onBlur={e => e.target.style.borderColor = 'rgba(255, 255, 255, 0.1)'}
+                            />
+                        </div>
+                        <div>
+                            <label style={{
+                                display: 'block',
+                                fontSize: '12px',
+                                fontWeight: 600,
+                                color: 'rgba(255, 255, 255, 0.5)',
+                                textTransform: 'uppercase',
+                                letterSpacing: '0.05em',
+                                marginBottom: '8px'
+                            }}>Time Split (s)</label>
+                            <input
+                                type="number"
+                                min="10"
+                                max="3600"
+                                value={timeLimit}
+                                onChange={(e) => setTimeLimit(parseInt(e.target.value) || 60)}
+                                disabled={currentMode !== 'time_limit'}
+                                style={{
+                                    width: '100%',
+                                    boxSizing: 'border-box',
+                                    backgroundColor: 'rgba(0, 0, 0, 0.2)',
+                                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                                    borderRadius: '12px',
+                                    padding: '10px',
+                                    color: currentMode === 'time_limit' ? 'white' : 'rgba(255, 255, 255, 0.3)',
+                                    outline: 'none',
+                                    transition: 'color 0.2s, border-color 0.2s',
+                                    opacity: currentMode === 'time_limit' ? 1 : 0.5,
+                                    cursor: currentMode === 'time_limit' ? 'text' : 'not-allowed'
+                                }}
+                                onFocus={e => currentMode === 'time_limit' && (e.target.style.borderColor = 'rgba(59, 130, 246, 0.5)')}
                                 onBlur={e => e.target.style.borderColor = 'rgba(255, 255, 255, 0.1)'}
                             />
                         </div>

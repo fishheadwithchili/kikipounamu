@@ -26,13 +26,17 @@ export const AboutModal: React.FC<AboutModalProps> = ({ onClose }) => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
+            willChange: 'opacity',
+            transform: 'translateZ(0)',
             backgroundColor: 'rgba(0, 0, 0, 0.4)',
             backdropFilter: 'blur(4px)',
             WebkitBackdropFilter: 'blur(4px)',
-            animation: 'fadeIn 0.3s ease-out'
+            animation: 'fadeIn 0.1s ease-out'
         }} role="dialog" aria-label="About Kikipounamu">
             <div style={{
                 position: 'relative',
+                willChange: 'transform, opacity',
+                backfaceVisibility: 'hidden',
                 backgroundColor: 'rgba(17, 24, 39, 0.8)',
                 backdropFilter: 'blur(24px)',
                 WebkitBackdropFilter: 'blur(24px)',
@@ -42,7 +46,7 @@ export const AboutModal: React.FC<AboutModalProps> = ({ onClose }) => {
                 border: '1px solid rgba(255, 255, 255, 0.1)',
                 boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
                 overflow: 'hidden',
-                animation: 'zoomIn 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+                animation: 'zoomIn 0.1s cubic-bezier(0.16, 1, 0.3, 1)',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',

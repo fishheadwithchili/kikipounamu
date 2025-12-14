@@ -1,0 +1,200 @@
+[2025-12-14T09:46:53.206Z] === LOG STARTED ===
+ID: 20251214224653_vad
+[2025-12-14T09:46:53.207Z] [Cycle] START RECORDING | Mode=vad
+[2025-12-14T09:46:53.493Z] [AudioFlow] Amp=0.0081 Avg=0.0004 | Mode=vad | Buffer=0 | isSpeaking=false
+[2025-12-14T09:46:53.494Z] [VAD-Amplitude] Prob=0.0041 | Amp=0.0081 | AvgAmp=0.0004
+[2025-12-14T09:46:53.865Z] [VAD-Amplitude] Prob=0.0288 | Amp=0.0218 | AvgAmp=0.0029
+[2025-12-14T09:46:53.866Z] [VAD-Event] Silence threshold met (512ms) but not speaking, no cut. (Suppressing next 50 logs)
+[2025-12-14T09:46:54.005Z] [VAD-Amplitude] Prob=0.0094 | Amp=0.0066 | AvgAmp=0.0009
+[2025-12-14T09:46:54.515Z] [AudioFlow] Amp=0.0012 Avg=0.0003 | Mode=vad | Buffer=8 | isSpeaking=false
+[2025-12-14T09:46:55.397Z] [VAD-Amplitude] Prob=0.0305 | Amp=0.0258 | AvgAmp=0.0030
+[2025-12-14T09:46:55.536Z] [AudioFlow] Amp=0.0485 Avg=0.0110 | Mode=vad | Buffer=16 | isSpeaking=false
+[2025-12-14T09:46:55.537Z] [VAD-Amplitude] Prob=0.1098 | Amp=0.0485 | AvgAmp=0.0110
+[2025-12-14T09:46:55.653Z] [VAD-Amplitude] Prob=0.0758 | Amp=0.0527 | AvgAmp=0.0076
+[2025-12-14T09:46:55.793Z] [VAD-Amplitude] Prob=0.0388 | Amp=0.0203 | AvgAmp=0.0039
+[2025-12-14T09:46:55.909Z] [VAD-Amplitude] Prob=0.3203 | Amp=0.1716 | AvgAmp=0.0320
+[2025-12-14T09:46:56.047Z] [VAD-Amplitude] Prob=0.2100 | Amp=0.1117 | AvgAmp=0.0210
+[2025-12-14T09:46:56.048Z] [VAD-Event] START SPEAKING (Prob=0.210)
+[2025-12-14T09:46:56.165Z] [VAD-Amplitude] Prob=0.3344 | Amp=0.0976 | AvgAmp=0.0334
+[2025-12-14T09:46:56.303Z] [VAD-Amplitude] Prob=0.4899 | Amp=0.5220 | AvgAmp=0.0490
+[2025-12-14T09:46:56.419Z] [VAD-Amplitude] Prob=0.5274 | Amp=0.3796 | AvgAmp=0.0527
+[2025-12-14T09:46:56.558Z] [AudioFlow] Amp=0.1573 Avg=0.0311 | Mode=vad | Buffer=24 | isSpeaking=true
+[2025-12-14T09:46:56.558Z] [VAD-Amplitude] Prob=0.3107 | Amp=0.1573 | AvgAmp=0.0311
+[2025-12-14T09:46:56.674Z] [VAD-Amplitude] Prob=0.2348 | Amp=0.1285 | AvgAmp=0.0235
+[2025-12-14T09:46:56.813Z] [VAD-Amplitude] Prob=0.0802 | Amp=0.0419 | AvgAmp=0.0080
+[2025-12-14T09:46:56.930Z] [VAD-Amplitude] Prob=0.0105 | Amp=0.0077 | AvgAmp=0.0011
+[2025-12-14T09:46:57.185Z] [VAD-Amplitude] Prob=0.2366 | Amp=0.1811 | AvgAmp=0.0237
+[2025-12-14T09:46:57.325Z] [VAD-Amplitude] Prob=0.1907 | Amp=0.1385 | AvgAmp=0.0191
+[2025-12-14T09:46:57.441Z] [VAD-Amplitude] Prob=0.0085 | Amp=0.0081 | AvgAmp=0.0009
+[2025-12-14T09:46:57.580Z] [AudioFlow] Amp=0.0017 Avg=0.0004 | Mode=vad | Buffer=32 | isSpeaking=true
+[2025-12-14T09:46:57.835Z] [VAD-Event] SILENCE DETECTED (512ms) -> CUTTING
+[2025-12-14T09:46:57.837Z] [Chunk-Cut] Sending Chunk #0 | Size=143404 bytes | Duration=4.48s
+[2025-12-14T09:46:58.347Z] [VAD-Event] Silence threshold met (512ms) but not speaking, no cut. (Suppressing next 50 logs)
+[2025-12-14T09:46:58.602Z] [AudioFlow] Amp=0.0012 Avg=0.0003 | Mode=vad | Buffer=5 | isSpeaking=false
+[2025-12-14T09:46:59.393Z] [VAD-Amplitude] Prob=0.1319 | Amp=0.0962 | AvgAmp=0.0132
+[2025-12-14T09:46:59.531Z] [VAD-Amplitude] Prob=0.0678 | Amp=0.0298 | AvgAmp=0.0068
+[2025-12-14T09:46:59.646Z] [AudioFlow] Amp=0.0783 Avg=0.0125 | Mode=vad | Buffer=13 | isSpeaking=false
+[2025-12-14T09:46:59.647Z] [VAD-Amplitude] Prob=0.1252 | Amp=0.0783 | AvgAmp=0.0125
+[2025-12-14T09:46:59.785Z] [VAD-Amplitude] Prob=0.1472 | Amp=0.0627 | AvgAmp=0.0147
+[2025-12-14T09:46:59.785Z] [VAD-Event] START SPEAKING (Prob=0.147)
+[2025-12-14T09:46:59.902Z] [VAD-Amplitude] Prob=0.2146 | Amp=0.1495 | AvgAmp=0.0215
+[2025-12-14T09:47:00.041Z] [VAD-Amplitude] Prob=0.3499 | Amp=0.1773 | AvgAmp=0.0350
+[2025-12-14T09:47:00.180Z] [VAD-Amplitude] Prob=0.0677 | Amp=0.0541 | AvgAmp=0.0068
+[2025-12-14T09:47:00.296Z] [VAD-Amplitude] Prob=0.0954 | Amp=0.0622 | AvgAmp=0.0095
+[2025-12-14T09:47:00.436Z] [VAD-Amplitude] Prob=0.1560 | Amp=0.0678 | AvgAmp=0.0156
+[2025-12-14T09:47:00.552Z] [VAD-Amplitude] Prob=0.0152 | Amp=0.0188 | AvgAmp=0.0015
+[2025-12-14T09:47:00.691Z] [AudioFlow] Amp=0.0964 Avg=0.0151 | Mode=vad | Buffer=21 | isSpeaking=true
+[2025-12-14T09:47:00.691Z] [VAD-Amplitude] Prob=0.1511 | Amp=0.0964 | AvgAmp=0.0151
+[2025-12-14T09:47:00.807Z] [VAD-Amplitude] Prob=0.4242 | Amp=0.3364 | AvgAmp=0.0424
+[2025-12-14T09:47:00.947Z] [VAD-Amplitude] Prob=0.2136 | Amp=0.1528 | AvgAmp=0.0214
+[2025-12-14T09:47:01.086Z] [VAD-Amplitude] Prob=0.1941 | Amp=0.1050 | AvgAmp=0.0194
+[2025-12-14T09:47:01.203Z] [VAD-Amplitude] Prob=0.2823 | Amp=0.1570 | AvgAmp=0.0282
+[2025-12-14T09:47:01.341Z] [VAD-Amplitude] Prob=0.3245 | Amp=0.2592 | AvgAmp=0.0324
+[2025-12-14T09:47:01.457Z] [VAD-Amplitude] Prob=0.4708 | Amp=0.2251 | AvgAmp=0.0471
+[2025-12-14T09:47:01.597Z] [VAD-Amplitude] Prob=0.2203 | Amp=0.0979 | AvgAmp=0.0220
+[2025-12-14T09:47:01.712Z] [AudioFlow] Amp=0.0460 Avg=0.0082 | Mode=vad | Buffer=29 | isSpeaking=true
+[2025-12-14T09:47:01.713Z] [VAD-Amplitude] Prob=0.0816 | Amp=0.0460 | AvgAmp=0.0082
+[2025-12-14T09:47:01.852Z] [VAD-Amplitude] Prob=0.0213 | Amp=0.0172 | AvgAmp=0.0021
+[2025-12-14T09:47:01.968Z] [VAD-Amplitude] Prob=0.0086 | Amp=0.0062 | AvgAmp=0.0009
+[2025-12-14T09:47:02.107Z] [VAD-Amplitude] Prob=0.0704 | Amp=0.0476 | AvgAmp=0.0070
+[2025-12-14T09:47:02.108Z] [VAD-Event] SILENCE DETECTED (512ms) -> CUTTING
+[2025-12-14T09:47:02.109Z] [Chunk-Cut] Sending Chunk #1 | Size=135212 bytes | Duration=4.22s
+[2025-12-14T09:47:02.232Z] [VAD-Amplitude] Prob=0.0397 | Amp=0.0598 | AvgAmp=0.0040
+[2025-12-14T09:47:02.363Z] [VAD-Amplitude] Prob=0.2384 | Amp=0.1131 | AvgAmp=0.0238
+[2025-12-14T09:47:02.479Z] [VAD-Amplitude] Prob=0.2874 | Amp=0.1602 | AvgAmp=0.0287
+[2025-12-14T09:47:02.479Z] [VAD-Event] START SPEAKING (Prob=0.287)
+[2025-12-14T09:47:02.619Z] [VAD-Amplitude] Prob=0.1245 | Amp=0.0699 | AvgAmp=0.0124
+[2025-12-14T09:47:02.734Z] [AudioFlow] Amp=0.1923 Avg=0.0369 | Mode=vad | Buffer=4 | isSpeaking=true
+[2025-12-14T09:47:02.735Z] [VAD-Amplitude] Prob=0.3695 | Amp=0.1923 | AvgAmp=0.0369
+[2025-12-14T09:47:02.876Z] [VAD-Amplitude] Prob=0.2649 | Amp=0.1861 | AvgAmp=0.0265
+[2025-12-14T09:47:02.990Z] [VAD-Amplitude] Prob=0.1776 | Amp=0.1066 | AvgAmp=0.0178
+[2025-12-14T09:47:03.129Z] [VAD-Amplitude] Prob=0.0832 | Amp=0.0437 | AvgAmp=0.0083
+[2025-12-14T09:47:03.252Z] [VAD-Amplitude] Prob=0.0196 | Amp=0.0127 | AvgAmp=0.0020
+[2025-12-14T09:47:03.385Z] [VAD-Amplitude] Prob=0.2013 | Amp=0.1031 | AvgAmp=0.0201
+[2025-12-14T09:47:03.501Z] [VAD-Amplitude] Prob=0.1614 | Amp=0.0715 | AvgAmp=0.0161
+[2025-12-14T09:47:03.640Z] [VAD-Amplitude] Prob=0.0788 | Amp=0.0368 | AvgAmp=0.0079
+[2025-12-14T09:47:03.757Z] [AudioFlow] Amp=0.0326 Avg=0.0034 | Mode=vad | Buffer=12 | isSpeaking=true
+[2025-12-14T09:47:03.758Z] [VAD-Amplitude] Prob=0.0335 | Amp=0.0326 | AvgAmp=0.0034
+[2025-12-14T09:47:03.896Z] [VAD-Amplitude] Prob=0.0072 | Amp=0.0045 | AvgAmp=0.0007
+[2025-12-14T09:47:04.012Z] [VAD-Event] SILENCE DETECTED (512ms) -> CUTTING
+[2025-12-14T09:47:04.012Z] [Chunk-Cut] Sending Chunk #2 | Size=61484 bytes | Duration=1.92s
+[2025-12-14T09:47:04.523Z] [VAD-Event] Silence threshold met (512ms) but not speaking, no cut. (Suppressing next 50 logs)
+[2025-12-14T09:47:04.778Z] [AudioFlow] Amp=0.1077 Avg=0.0164 | Mode=vad | Buffer=5 | isSpeaking=false
+[2025-12-14T09:47:04.778Z] [VAD-Amplitude] Prob=0.1640 | Amp=0.1077 | AvgAmp=0.0164
+[2025-12-14T09:47:04.918Z] [VAD-Amplitude] Prob=0.4193 | Amp=0.2121 | AvgAmp=0.0419
+[2025-12-14T09:47:04.918Z] [VAD-Event] START SPEAKING (Prob=0.419)
+[2025-12-14T09:47:05.033Z] [VAD-Amplitude] Prob=0.0222 | Amp=0.0159 | AvgAmp=0.0022
+[2025-12-14T09:47:05.173Z] [VAD-Amplitude] Prob=0.6679 | Amp=0.3788 | AvgAmp=0.0668
+[2025-12-14T09:47:05.289Z] [VAD-Amplitude] Prob=0.3464 | Amp=0.2455 | AvgAmp=0.0346
+[2025-12-14T09:47:05.428Z] [VAD-Amplitude] Prob=0.2840 | Amp=0.1608 | AvgAmp=0.0284
+[2025-12-14T09:47:05.545Z] [VAD-Amplitude] Prob=0.3289 | Amp=0.1889 | AvgAmp=0.0329
+[2025-12-14T09:47:05.683Z] [VAD-Amplitude] Prob=0.0848 | Amp=0.0411 | AvgAmp=0.0085
+[2025-12-14T09:47:05.799Z] [AudioFlow] Amp=0.0250 Avg=0.0045 | Mode=vad | Buffer=13 | isSpeaking=true
+[2025-12-14T09:47:05.799Z] [VAD-Amplitude] Prob=0.0455 | Amp=0.0250 | AvgAmp=0.0045
+[2025-12-14T09:47:05.939Z] [VAD-Amplitude] Prob=0.0947 | Amp=0.1110 | AvgAmp=0.0095
+[2025-12-14T09:47:06.054Z] [VAD-Amplitude] Prob=0.0615 | Amp=0.0389 | AvgAmp=0.0062
+[2025-12-14T09:47:06.055Z] [VAD-Event] SILENCE DETECTED (512ms) -> CUTTING
+[2025-12-14T09:47:06.055Z] [Chunk-Cut] Sending Chunk #3 | Size=65580 bytes | Duration=2.05s
+[2025-12-14T09:47:06.195Z] [VAD-Amplitude] Prob=0.3811 | Amp=0.2808 | AvgAmp=0.0381
+[2025-12-14T09:47:06.334Z] [VAD-Amplitude] Prob=0.3991 | Amp=0.3409 | AvgAmp=0.0399
+[2025-12-14T09:47:06.334Z] [VAD-Event] START SPEAKING (Prob=0.399)
+[2025-12-14T09:47:06.451Z] [VAD-Amplitude] Prob=0.2117 | Amp=0.1945 | AvgAmp=0.0212
+[2025-12-14T09:47:06.590Z] [VAD-Amplitude] Prob=0.1276 | Amp=0.0665 | AvgAmp=0.0128
+[2025-12-14T09:47:06.705Z] [VAD-Amplitude] Prob=0.1453 | Amp=0.1015 | AvgAmp=0.0145
+[2025-12-14T09:47:06.844Z] [AudioFlow] Amp=0.0736 Avg=0.0159 | Mode=vad | Buffer=5 | isSpeaking=true
+[2025-12-14T09:47:06.844Z] [VAD-Amplitude] Prob=0.1593 | Amp=0.0736 | AvgAmp=0.0159
+[2025-12-14T09:47:06.961Z] [VAD-Amplitude] Prob=0.0183 | Amp=0.0093 | AvgAmp=0.0018
+[2025-12-14T09:47:07.100Z] [VAD-Amplitude] Prob=0.0051 | Amp=0.0020 | AvgAmp=0.0005
+[2025-12-14T09:47:07.355Z] [VAD-Event] SILENCE DETECTED (512ms) -> CUTTING
+[2025-12-14T09:47:07.355Z] [Chunk-Cut] Sending Chunk #4 | Size=41004 bytes | Duration=1.28s
+[2025-12-14T09:47:07.866Z] [AudioFlow] Amp=0.0077 Avg=0.0010 | Mode=vad | Buffer=3 | isSpeaking=false
+[2025-12-14T09:47:07.867Z] [VAD-Event] Silence threshold met (512ms) but not speaking, no cut. (Suppressing next 50 logs)
+[2025-12-14T09:47:08.122Z] [VAD-Amplitude] Prob=0.2232 | Amp=0.1107 | AvgAmp=0.0223
+[2025-12-14T09:47:08.284Z] [VAD-Amplitude] Prob=0.0292 | Amp=0.0175 | AvgAmp=0.0029
+[2025-12-14T09:47:08.402Z] [VAD-Amplitude] Prob=0.0106 | Amp=0.0135 | AvgAmp=0.0011
+[2025-12-14T09:47:08.540Z] [VAD-Amplitude] Prob=0.0676 | Amp=0.0420 | AvgAmp=0.0068
+[2025-12-14T09:47:08.655Z] [VAD-Amplitude] Prob=0.0140 | Amp=0.0346 | AvgAmp=0.0014
+[2025-12-14T09:47:08.795Z] [VAD-Amplitude] Prob=0.6109 | Amp=0.3888 | AvgAmp=0.0611
+[2025-12-14T09:47:08.911Z] [AudioFlow] Amp=0.2869 Avg=0.0396 | Mode=vad | Buffer=11 | isSpeaking=false
+[2025-12-14T09:47:08.911Z] [VAD-Amplitude] Prob=0.3959 | Amp=0.2869 | AvgAmp=0.0396
+[2025-12-14T09:47:08.912Z] [VAD-Event] START SPEAKING (Prob=0.396)
+[2025-12-14T09:47:09.050Z] [VAD-Amplitude] Prob=0.4748 | Amp=0.3344 | AvgAmp=0.0475
+[2025-12-14T09:47:09.166Z] [VAD-Amplitude] Prob=0.9750 | Amp=0.7619 | AvgAmp=0.0975
+[2025-12-14T09:47:09.305Z] [VAD-Amplitude] Prob=0.6261 | Amp=0.3758 | AvgAmp=0.0626
+[2025-12-14T09:47:09.444Z] [VAD-Amplitude] Prob=0.7303 | Amp=0.2300 | AvgAmp=0.0730
+[2025-12-14T09:47:09.561Z] [VAD-Amplitude] Prob=0.6776 | Amp=0.2562 | AvgAmp=0.0678
+[2025-12-14T09:47:09.700Z] [VAD-Amplitude] Prob=0.2487 | Amp=0.1534 | AvgAmp=0.0249
+[2025-12-14T09:47:09.816Z] [VAD-Amplitude] Prob=1.0000 | Amp=0.9435 | AvgAmp=0.1882
+[2025-12-14T09:47:09.955Z] [AudioFlow] Amp=0.6726 Avg=0.1494 | Mode=vad | Buffer=19 | isSpeaking=true
+[2025-12-14T09:47:10.071Z] [VAD-Amplitude] Prob=0.6342 | Amp=0.3863 | AvgAmp=0.0634
+[2025-12-14T09:47:10.211Z] [VAD-Amplitude] Prob=0.1874 | Amp=0.1085 | AvgAmp=0.0187
+[2025-12-14T09:47:10.327Z] [VAD-Amplitude] Prob=0.4090 | Amp=0.2151 | AvgAmp=0.0409
+[2025-12-14T09:47:10.466Z] [VAD-Amplitude] Prob=0.3657 | Amp=0.1580 | AvgAmp=0.0366
+[2025-12-14T09:47:10.582Z] [VAD-Amplitude] Prob=0.4841 | Amp=0.2770 | AvgAmp=0.0484
+[2025-12-14T09:47:10.722Z] [VAD-Amplitude] Prob=0.1650 | Amp=0.1111 | AvgAmp=0.0165
+[2025-12-14T09:47:10.838Z] [VAD-Amplitude] Prob=0.2441 | Amp=0.1700 | AvgAmp=0.0244
+[2025-12-14T09:47:10.977Z] [AudioFlow] Amp=0.0724 Avg=0.0069 | Mode=vad | Buffer=27 | isSpeaking=true
+[2025-12-14T09:47:10.977Z] [VAD-Amplitude] Prob=0.0686 | Amp=0.0724 | AvgAmp=0.0069
+[2025-12-14T09:47:11.116Z] [VAD-Amplitude] Prob=0.0103 | Amp=0.0059 | AvgAmp=0.0010
+[2025-12-14T09:47:11.233Z] [VAD-Amplitude] Prob=0.1970 | Amp=0.3649 | AvgAmp=0.0197
+[2025-12-14T09:47:11.372Z] [VAD-Amplitude] Prob=0.9309 | Amp=0.3820 | AvgAmp=0.0931
+[2025-12-14T09:47:11.489Z] [VAD-Amplitude] Prob=0.1701 | Amp=0.2097 | AvgAmp=0.0170
+[2025-12-14T09:47:11.627Z] [VAD-Amplitude] Prob=0.0502 | Amp=0.0319 | AvgAmp=0.0050
+[2025-12-14T09:47:11.743Z] [VAD-Amplitude] Prob=0.0105 | Amp=0.0075 | AvgAmp=0.0011
+[2025-12-14T09:47:11.998Z] [AudioFlow] Amp=0.0024 Avg=0.0007 | Mode=vad | Buffer=35 | isSpeaking=true
+[2025-12-14T09:47:11.999Z] [VAD-Event] SILENCE DETECTED (512ms) -> CUTTING
+[2025-12-14T09:47:11.999Z] [Chunk-Cut] Sending Chunk #5 | Size=147500 bytes | Duration=4.61s
+[2025-12-14T09:47:12.274Z] [VAD-Amplitude] Prob=0.9028 | Amp=0.7146 | AvgAmp=0.0903
+[2025-12-14T09:47:12.393Z] [VAD-Amplitude] Prob=0.4167 | Amp=0.2310 | AvgAmp=0.0417
+[2025-12-14T09:47:12.394Z] [VAD-Event] START SPEAKING (Prob=0.417)
+[2025-12-14T09:47:12.510Z] [VAD-Amplitude] Prob=0.0720 | Amp=0.0955 | AvgAmp=0.0072
+[2025-12-14T09:47:12.649Z] [VAD-Amplitude] Prob=0.2965 | Amp=0.2011 | AvgAmp=0.0297
+[2025-12-14T09:47:12.765Z] [VAD-Amplitude] Prob=0.6226 | Amp=0.3625 | AvgAmp=0.0623
+[2025-12-14T09:47:12.905Z] [VAD-Amplitude] Prob=1.0000 | Amp=0.7028 | AvgAmp=0.1044
+[2025-12-14T09:47:13.020Z] [AudioFlow] Amp=0.3688 Avg=0.0519 | Mode=vad | Buffer=7 | isSpeaking=true
+[2025-12-14T09:47:13.021Z] [VAD-Amplitude] Prob=0.5188 | Amp=0.3688 | AvgAmp=0.0519
+[2025-12-14T09:47:13.161Z] [VAD-Amplitude] Prob=0.2198 | Amp=0.2175 | AvgAmp=0.0220
+[2025-12-14T09:47:13.276Z] [VAD-Amplitude] Prob=0.6189 | Amp=0.4258 | AvgAmp=0.0619
+[2025-12-14T09:47:13.415Z] [VAD-Amplitude] Prob=0.2503 | Amp=0.1248 | AvgAmp=0.0250
+[2025-12-14T09:47:13.531Z] [VAD-Amplitude] Prob=0.3592 | Amp=0.2655 | AvgAmp=0.0359
+[2025-12-14T09:47:13.671Z] [VAD-Amplitude] Prob=0.8007 | Amp=0.4257 | AvgAmp=0.0801
+[2025-12-14T09:47:13.793Z] [VAD-Amplitude] Prob=0.5189 | Amp=0.3011 | AvgAmp=0.0519
+[2025-12-14T09:47:13.927Z] [VAD-Amplitude] Prob=0.4779 | Amp=0.2261 | AvgAmp=0.0478
+[2025-12-14T09:47:14.041Z] [AudioFlow] Amp=0.2354 Avg=0.0398 | Mode=vad | Buffer=15 | isSpeaking=true
+[2025-12-14T09:47:14.042Z] [VAD-Amplitude] Prob=0.3975 | Amp=0.2354 | AvgAmp=0.0398
+[2025-12-14T09:47:14.181Z] [VAD-Amplitude] Prob=0.1156 | Amp=0.1101 | AvgAmp=0.0116
+[2025-12-14T09:47:14.297Z] [VAD-Amplitude] Prob=0.0676 | Amp=0.0493 | AvgAmp=0.0068
+[2025-12-14T09:47:14.436Z] [VAD-Amplitude] Prob=0.0124 | Amp=0.0080 | AvgAmp=0.0012
+[2025-12-14T09:47:14.692Z] [VAD-Event] SILENCE DETECTED (512ms) -> CUTTING
+[2025-12-14T09:47:14.692Z] [Chunk-Cut] Sending Chunk #6 | Size=86060 bytes | Duration=2.69s
+[2025-12-14T09:47:14.947Z] [VAD-Amplitude] Prob=0.1140 | Amp=0.0712 | AvgAmp=0.0114
+[2025-12-14T09:47:15.063Z] [AudioFlow] Amp=0.3571 Avg=0.0444 | Mode=vad | Buffer=2 | isSpeaking=false
+[2025-12-14T09:47:15.064Z] [VAD-Amplitude] Prob=0.4444 | Amp=0.3571 | AvgAmp=0.0444
+[2025-12-14T09:47:15.064Z] [VAD-Event] START SPEAKING (Prob=0.444)
+[2025-12-14T09:47:15.203Z] [VAD-Amplitude] Prob=0.6355 | Amp=0.4422 | AvgAmp=0.0635
+[2025-12-14T09:47:15.319Z] [VAD-Amplitude] Prob=0.2052 | Amp=0.1149 | AvgAmp=0.0205
+[2025-12-14T09:47:15.459Z] [VAD-Amplitude] Prob=0.1675 | Amp=0.0780 | AvgAmp=0.0167
+[2025-12-14T09:47:15.575Z] [VAD-Amplitude] Prob=0.0115 | Amp=0.0070 | AvgAmp=0.0012
+[2025-12-14T09:47:15.969Z] [VAD-Event] SILENCE DETECTED (512ms) -> CUTTING
+[2025-12-14T09:47:15.969Z] [Chunk-Cut] Sending Chunk #7 | Size=41004 bytes | Duration=1.28s
+[2025-12-14T09:47:16.108Z] [AudioFlow] Amp=0.0410 Avg=0.0079 | Mode=vad | Buffer=0 | isSpeaking=false
+[2025-12-14T09:47:16.108Z] [VAD-Amplitude] Prob=0.0794 | Amp=0.0410 | AvgAmp=0.0079
+[2025-12-14T09:47:16.233Z] [VAD-Amplitude] Prob=0.0171 | Amp=0.0213 | AvgAmp=0.0017
+[2025-12-14T09:47:16.365Z] [VAD-Amplitude] Prob=0.0432 | Amp=0.0380 | AvgAmp=0.0043
+[2025-12-14T09:47:16.480Z] [VAD-Event] Silence threshold met (512ms) but not speaking, no cut. (Suppressing next 50 logs)
+[2025-12-14T09:47:16.619Z] [VAD-Amplitude] Prob=0.0141 | Amp=0.0090 | AvgAmp=0.0014
+[2025-12-14T09:47:16.735Z] [VAD-Amplitude] Prob=0.2414 | Amp=0.1420 | AvgAmp=0.0241
+[2025-12-14T09:47:16.874Z] [VAD-Amplitude] Prob=0.0864 | Amp=0.0450 | AvgAmp=0.0086
+[2025-12-14T09:47:16.991Z] [VAD-Amplitude] Prob=0.0077 | Amp=0.0037 | AvgAmp=0.0008
+[2025-12-14T09:47:17.129Z] [AudioFlow] Amp=0.0026 Avg=0.0006 | Mode=vad | Buffer=8 | isSpeaking=false
+[2025-12-14T09:47:17.385Z] [VAD-Amplitude] Prob=0.3755 | Amp=0.4156 | AvgAmp=0.0376
+[2025-12-14T09:47:17.501Z] [VAD-Amplitude] Prob=0.4484 | Amp=0.5086 | AvgAmp=0.0448
+[2025-12-14T09:47:17.501Z] [VAD-Event] START SPEAKING (Prob=0.448)
+[2025-12-14T09:47:17.641Z] [VAD-Amplitude] Prob=1.0000 | Amp=0.7372 | AvgAmp=0.1348
+[2025-12-14T09:47:17.756Z] [VAD-Amplitude] Prob=0.9488 | Amp=0.7062 | AvgAmp=0.0949
+[2025-12-14T09:47:17.895Z] [VAD-Amplitude] Prob=0.5099 | Amp=0.5084 | AvgAmp=0.0510
+[2025-12-14T09:47:18.012Z] [VAD-Amplitude] Prob=0.5270 | Amp=0.2872 | AvgAmp=0.0527
+[2025-12-14T09:47:18.151Z] [AudioFlow] Amp=0.2020 Avg=0.0471 | Mode=vad | Buffer=16 | isSpeaking=true
+[2025-12-14T09:47:18.151Z] [VAD-Amplitude] Prob=0.4714 | Amp=0.2020 | AvgAmp=0.0471
+[2025-12-14T09:47:18.272Z] [VAD-Amplitude] Prob=0.0553 | Amp=0.0437 | AvgAmp=0.0055
+[2025-12-14T09:47:18.406Z] [VAD-Amplitude] Prob=0.0089 | Amp=0.0038 | AvgAmp=0.0009

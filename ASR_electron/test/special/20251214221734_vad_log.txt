@@ -1,0 +1,38 @@
+[2025-12-14T09:17:34.810Z] === LOG STARTED ===
+ID: 20251214221734_vad
+[2025-12-14T09:17:34.813Z] [Cycle] START RECORDING | Mode=vad
+[2025-12-14T09:17:35.121Z] [AudioFlow] Amp=0.0048 Avg=0.0003 | Mode=vad | Buffer=0 | isSpeaking=false
+[2025-12-14T09:17:35.168Z] [VAD-Detect] Prob=0.0040 | Amp=0.0048
+[2025-12-14T09:17:35.524Z] [VAD-Event] Silence threshold met (512ms) but not speaking, no cut. (Suppressing next 50 logs)
+[2025-12-14T09:17:36.165Z] [AudioFlow] Amp=0.0110 Avg=0.0013 | Mode=vad | Buffer=8 | isSpeaking=false
+[2025-12-14T09:17:37.186Z] [AudioFlow] Amp=0.6746 Avg=0.1134 | Mode=vad | Buffer=16 | isSpeaking=false
+[2025-12-14T09:17:38.208Z] [AudioFlow] Amp=0.0015 Avg=0.0003 | Mode=vad | Buffer=24 | isSpeaking=false
+[2025-12-14T09:17:39.230Z] [AudioFlow] Amp=0.0013 Avg=0.0004 | Mode=vad | Buffer=32 | isSpeaking=false
+[2025-12-14T09:17:40.251Z] [AudioFlow] Amp=0.0021 Avg=0.0004 | Mode=vad | Buffer=40 | isSpeaking=false
+[2025-12-14T09:17:41.273Z] [AudioFlow] Amp=0.0971 Avg=0.0193 | Mode=vad | Buffer=48 | isSpeaking=false
+[2025-12-14T09:17:41.558Z] [VAD-Detect] Prob=0.0040 | Amp=0.2236
+[2025-12-14T09:17:41.952Z] [VAD-Event] Silence threshold met (6912ms) but not speaking, no cut. (Suppressing next 50 logs)
+[2025-12-14T09:17:42.295Z] [AudioFlow] Amp=0.1780 Avg=0.0419 | Mode=vad | Buffer=56 | isSpeaking=false
+[2025-12-14T09:17:43.316Z] [AudioFlow] Amp=0.0072 Avg=0.0008 | Mode=vad | Buffer=64 | isSpeaking=false
+[2025-12-14T09:17:44.337Z] [AudioFlow] Amp=0.0003 Avg=0.0001 | Mode=vad | Buffer=72 | isSpeaking=false
+[2025-12-14T09:17:45.382Z] [AudioFlow] Amp=0.0003 Avg=0.0001 | Mode=vad | Buffer=80 | isSpeaking=false
+[2025-12-14T09:17:46.404Z] [AudioFlow] Amp=0.0004 Avg=0.0001 | Mode=vad | Buffer=88 | isSpeaking=false
+[2025-12-14T09:17:47.425Z] [AudioFlow] Amp=0.0004 Avg=0.0001 | Mode=vad | Buffer=96 | isSpeaking=false
+[2025-12-14T09:17:47.967Z] [VAD-Detect] Prob=0.0040 | Amp=0.0005
+[2025-12-14T09:17:48.337Z] [VAD-Event] Silence threshold met (13312ms) but not speaking, no cut. (Suppressing next 50 logs)
+[2025-12-14T09:17:48.447Z] [AudioFlow] Amp=0.4156 Avg=0.0624 | Mode=vad | Buffer=104 | isSpeaking=false
+[2025-12-14T09:17:49.469Z] [AudioFlow] Amp=0.0455 Avg=0.0055 | Mode=vad | Buffer=112 | isSpeaking=false
+[2025-12-14T09:17:50.513Z] [AudioFlow] Amp=0.0004 Avg=0.0001 | Mode=vad | Buffer=120 | isSpeaking=false
+[2025-12-14T09:17:51.558Z] [AudioFlow] Amp=0.0008 Avg=0.0002 | Mode=vad | Buffer=128 | isSpeaking=false
+[2025-12-14T09:17:58.813Z] [ASRClient] Starting session 2f7404aa-6591-4371-973b-56d914840233
+[2025-12-14T09:17:58.829Z] [ASRClient-Rx] Type=ack Status=session_started
+[2025-12-14T09:17:58.829Z] [ASRClient-Rx] Session Started ACK
+[2025-12-14T09:18:23.262Z] [ASRClient] Sending Chunk #0
+[2025-12-14T09:18:23.272Z] [ASRClient] Sending Chunk #1
+[2025-12-14T09:18:23.278Z] [ASRClient-Rx] Type=ack Status=received
+[2025-12-14T09:18:23.282Z] [ASRClient] Sending Chunk #2
+[2025-12-14T09:18:23.285Z] [ASRClient-Rx] Type=ack Status=received
+[2025-12-14T09:18:23.285Z] [ASRClient] Stopping session 2f7404aa-6591-4371-973b-56d914840233. Sent frames: 3
+[2025-12-14T09:18:23.289Z] [ASRClient-Rx] Type=ack Status=received
+[2025-12-14T09:18:29.076Z] [ASRClient-Rx] Type=final_result Status=N/A
+[2025-12-14T09:18:29.077Z] [ASRClient-Rx] Final Result: Dur=30.259097914 Chunks=3 TextLen=156

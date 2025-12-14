@@ -48,7 +48,10 @@ export const RecoveryModal: React.FC<RecoveryModalProps> = ({ files, onRecover, 
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            zIndex: 200
+            zIndex: 200,
+            willChange: 'opacity',
+            transform: 'translateZ(0)',
+            animation: 'fadeIn 0.1s ease-out'
         }}>
             <div style={{
                 backgroundColor: '#1e293b',
@@ -58,7 +61,10 @@ export const RecoveryModal: React.FC<RecoveryModalProps> = ({ files, onRecover, 
                 maxHeight: '80vh',
                 overflowY: 'auto',
                 border: '1px solid #ef4444', // Red border to indicate alert
-                boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.5)'
+                boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.5)',
+                willChange: 'transform, opacity',
+                backfaceVisibility: 'hidden',
+                animation: 'zoomIn 0.1s cubic-bezier(0.16, 1, 0.3, 1)'
             }}>
                 <div style={{ marginBottom: '20px' }}>
                     <h2 style={{ margin: 0, fontSize: '1.25rem', color: '#fca5a5', display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -127,3 +133,19 @@ export const RecoveryModal: React.FC<RecoveryModalProps> = ({ files, onRecover, 
         </div>
     );
 };
+
+const styles = `
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+@keyframes zoomIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+`;
+
+const styleSheet = document.createElement("style");
+styleSheet.innerText = styles;
+document.head.appendChild(styleSheet);
+

@@ -98,3 +98,22 @@ cd ASR_electron
 ./scripts/start_electron.sh
 cd ..
 ```
+
+---
+
+## 👨‍💻 Developer's Note
+
+Hi everyone,
+
+This project works incredibly well for my personal use cases. It serves as a critical node in my **Super AI Agent** roadmap and will eventually be integrated into my Telegram automation system.
+
+This is also my **first open-source project**, creating a milestone for me. I hope you find it useful too!
+
+A few notes on the future:
+*   **LLM Refinement**: I'm aware that using LLMs to "repair" ASR output could improve readability, but I've decided not to prioritize it. The current accuracy is already high, and over-polishing risks altering the original meaning.
+*   **Next Focus**: My focus is shifting towards learning **AI Video Generation** (so stay tuned, I might plug this project there too 😏).
+*   **Status**: The project feels stable and complete for now. I haven't identified any critical missing features, but Issues are always welcome.
+*   **Taking a Break**: I'll be temporarily stepping back from active development on this repo to focus on my primary work (gotta pay the bills!), but I will continue using it daily as part of my automation pipeline.
+
+Thanks for your support!
+

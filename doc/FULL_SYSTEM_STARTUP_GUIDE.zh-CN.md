@@ -98,10 +98,8 @@ echo "ALTER USER postgres WITH PASSWORD '123456';" | sudo -u postgres psql
 
 3.  **启动 Worker**:
     ```bash
-    ```bash
     ./scripts/start_unified_worker.sh
     # 不建议手动启动统一 Worker
-    ```
     ```
 
 4.  **启动 API 服务**:
@@ -174,3 +172,12 @@ cd ASR_electron
 相比 CPU 模式：
 *   **CPU**: 延迟约 200-500ms，识别长句可能卡顿。
 *   **RTX 5060**: 延迟 < 50ms，高性能体验。
+
+## 🧪 系统验证 (System Verification)
+
+要验证所有组件（Redis, ASR Server, WebSocket）是否协同工作正常，请运行系统测试：
+
+```bash
+python3 tests/system_test.py
+```
+

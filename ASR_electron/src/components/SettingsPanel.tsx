@@ -123,8 +123,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(1, minmax(0, 1fr))', gap: '12px' }}>
                             {[
                                 { value: 'unlimited', label: 'Unlimited (No Auto-Cut)', desc: 'Best for long stream dictation.' },
-                                { value: 'time_limit', label: 'Time Limit', desc: 'Forces a cut after a set duration.' },
-                                { value: 'vad', label: 'VAD (Auto-Cut)', desc: 'Automatically cuts audio based on voice activity.' }
+                                { value: 'time_limit', label: 'Time Limit', desc: 'Forces a cut after a set duration.' }
                             ].map((option) => {
                                 const isActive = currentMode === option.value;
                                 return (

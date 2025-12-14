@@ -15,31 +15,16 @@ if ! command -v node &> /dev/null; then
     exit 1
 fi
 
-# 2. 检查 pnpm 是否安装
-if ! command -v pnpm &> /dev/null; then
-    echo "📦 pnpm not found. Installing pnpm via npm..."
-    if command -v npm &> /dev/null; then
-        npm install -g pnpm
-        if [ $? -ne 0 ]; then
-             echo "❌ Error: Failed to install pnpm. Please install it manually."
-             exit 1
-        fi
-    else
-        echo "❌ Error: npm is not installed, cannot install pnpm automatically."
-        exit 1
-    fi
-fi
-
-# 3. 检查并安装依赖
+# 2. 检查并安装依赖
 echo "📦 Checking dependencies..."
 if [ ! -d "node_modules" ]; then
     echo "   node_modules not found. Installing dependencies..."
-    pnpm install
+    npm install
 else
     # 简单的检查，如果 package.json 比 node_modules 新，可能需要更新
     if [ "package.json" -nt "node_modules" ]; then
         echo "   package.json is newer than node_modules. Updating dependencies..."
-        pnpm install
+        npm install
     else
         echo "   Dependencies look up to date."
     fi
@@ -82,4 +67,4 @@ fi
 
 # 5. 启动应用
 echo "⚛️ Starting Electron..."
-pnpm dev
+npm run dev

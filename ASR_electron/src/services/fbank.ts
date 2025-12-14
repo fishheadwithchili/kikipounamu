@@ -234,27 +234,33 @@ export function parseCMVN(mvnContent: string): { means: Float32Array; scales: Fl
     let means: Float32Array | null = null;
     let scales: Float32Array | null = null;
 
+    const findData = (startIndex: number): Float32Array | null => {
+        for (let i = startIndex; i < lines.length; i++) {
+            const line = lines[i].trim();
+            if (!line) continue; // Skip empty lines
+
+            const match = line.match(/\[([\s\S]*?)\]/);
+            if (match) {
+                const values = match[1].trim().split(/\s+/).map(Number);
+                return new Float32Array(values);
+            }
+            // If we hit another tag or something else that isn't data, stop? 
+            // Actually, the file format seems to be Tag -> Data. 
+            // If we hit another tag, we probably missed the data.
+            if (line.startsWith('<')) return null;
+        }
+        return null;
+    };
+
     for (let i = 0; i < lines.length; i++) {
         const line = lines[i].trim();
 
         if (line.includes('<AddShift>')) {
-            // 下一行是 means
-            const nextLine = lines[i + 1];
-            const match = nextLine.match(/\[([\s\S]*?)\]/);
-            if (match) {
-                const values = match[1].trim().split(/\s+/).map(Number);
-                means = new Float32Array(values);
-            }
+            means = findData(i + 1);
         }
 
         if (line.includes('<Rescale>')) {
-            // 下一行是 scales
-            const nextLine = lines[i + 1];
-            const match = nextLine.match(/\[([\s\S]*?)\]/);
-            if (match) {
-                const values = match[1].trim().split(/\s+/).map(Number);
-                scales = new Float32Array(values);
-            }
+            scales = findData(i + 1);
         }
     }
 

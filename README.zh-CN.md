@@ -61,6 +61,18 @@
 
 ---
 
+## 🛡️ 监控与高可用 (Monitoring & HA)
+
+*   **心跳机制 (Heartbeat)**: Python Worker 每 15 秒主动向 Redis 上报状态（负载、时间戳）。
+*   **负载均衡**: Go Backend 会检查心跳。如果活跃 Worker 不足，自动拒绝新的 WebSocket 连接 (HTTP 503) 以保护系统。
+*   **Redis 持久化**: 启用了 AOF (Append Only File) 机制，确保重启时不丢失数据。
+
+## 🧪 测试 (Testing)
+
+*   **系统测试**: 运行 `python3 tests/system_test.py` 可对 ASR 服务、Redis 和 WebSocket 流程进行完整的端到端验证。
+
+---
+
 ## 🚀 快速开始
 
 请参阅 [部署指南](doc/FULL_SYSTEM_STARTUP_GUIDE.zh-CN.md) 获取详细步骤。

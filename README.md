@@ -61,6 +61,18 @@ This project is developed and tested in the following specific environment.
 
 ---
 
+## 🛡️ Monitoring & High Availability
+
+*   **Heartbeat Mechanism**: Python Workers actively report their status (load, timestamp) to Redis every 15 seconds.
+*   **Load Balancing**: The Go Backend checks these heartbeats. If active workers are insufficient, it automatically rejects new WebSocket connections (HTTP 503) to protect the system.
+*   **Redis Persistence**: AOF (Append Only File) is enabled to ensure no data loss during restarts.
+
+## 🧪 Testing
+
+*   **System Test**: Run `python3 tests/system_test.py` for a complete end-to-end verification of the ASR service, Redis, and WebSocket flows.
+
+---
+
 ## 🚀 Quick Start
 
 Please refer to the [Deployment Guide](doc/FULL_SYSTEM_STARTUP_GUIDE.en.md) for detailed instructions.

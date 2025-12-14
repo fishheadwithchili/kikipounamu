@@ -168,3 +168,12 @@ If you see something like `Processing on cuda:0` or increased GPU memory usage, 
 Compared to CPU mode:
 *   **CPU**: Latency ~200-500ms, long sentences may lag.
 *   **RTX 5060**: Latency < 50ms, high performance.
+
+## 🧪 System Verification
+
+To verify that all components (Redis, ASR Server, WebSocket) are working correctly together, run the system test:
+
+```bash
+python3 tests/system_test.py
+```
+

@@ -25,6 +25,12 @@ echo "👥 Group: $GROUP_NAME"
 echo "🔢 Workers: $WORKER_COUNT"
 echo ""
 
+# P1 Fix: Ensure Redis Persistence (AOF) is enabled
+if [ -f "scripts/enable_local_aof.sh" ]; then
+    bash scripts/enable_local_aof.sh
+fi
+
+
 # Check for ffmpeg
 if ! command -v ffmpeg &> /dev/null; then
     echo "⚠️  ffmpeg not found. Installing..."

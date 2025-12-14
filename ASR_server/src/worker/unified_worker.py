@@ -16,6 +16,7 @@ import json
 import os
 import signal
 import sys
+import threading
 import time
 import uuid
 import tracemalloc
@@ -239,9 +240,41 @@ class UnifiedWorker:
             self.recognizer.cleanup()
             force_memory_release()
     
+    def start_heartbeat(self):
+        """Start background heartbeat thread."""
+        def heartbeat_loop():
+            log_worker(f"Heartbeat thread started for {self.worker_name}")
+            while self.running:
+                try:
+                    # Construct heartbeat payload
+                    payload = {
+                        "ts": int(time.time()),
+                        "worker": self.worker_name,
+                        "status": "running",
+                        # TODO: Add real load metrics (cpu, memory, queue depth)
+                        "load": {} 
+                    }
+                    
+                    # Write to Redis with TTL
+                    key = f"worker:{self.worker_name}:heartbeat"
+                    # Use set with ex (expiration)
+                    redis_client.client.set(key, json.dumps(payload), ex=30)
+                    
+                except Exception as e:
+                    log_error(f"Heartbeat error: {e}")
+                
+                # Sleep for 15 seconds
+                time.sleep(15)
+        
+        t = threading.Thread(target=heartbeat_loop, daemon=True)
+        t.start()
+
     def run(self):
         """Main worker loop using Consumer Groups."""
         log_worker(f"Worker {self.worker_name} starting main loop...")
+        
+        # Start heartbeat
+        self.start_heartbeat()
         
         # Ensure consumer group exists
         ensure_consumer_group()

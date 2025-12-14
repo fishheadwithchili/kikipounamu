@@ -184,9 +184,8 @@ export const Waveform: React.FC<WaveformProps> = ({ isRecording, stream }) => {
             height={40}
             style={{
                 borderRadius: '8px',
-                // Removed background color for cleaner look as per "transparent" vibe in design
-                // backgroundColor: 'rgba(30, 41, 59, 0.5)', 
                 maxHeight: '40px',
+                width: '100%',
                 contain: 'strict',
             }}
         />

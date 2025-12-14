@@ -10,7 +10,11 @@ import { useVADRecording, VADMode } from './hooks/useVADRecording';
 import { arrayBufferToBase64 } from './utils/audioHelper';
 import { storageService } from './services/storage';
 
-type ProcessingStatus = 'idle' | 'recording' | 'processing' | 'finalizing' | 'done';
+import { useAppIpcListeners, ProcessingStatus } from './hooks/useAppIpcListeners';
+
+// Removed local type definition in favor of imported one
+// type ProcessingStatus = 'idle' | 'recording' | 'processing' | 'finalizing' | 'done';
+
 
 function App() {
   const [status, setStatus] = useState<'connected' | 'disconnected' | 'error' | 'connecting'>('connecting');
@@ -192,72 +196,21 @@ function App() {
     });
   }, [vad.onChunkReady]);
 
-  // IPC Event Listeners
+  // IPC Event Listeners - Extracted to Custom Hook
+  useAppIpcListeners({
+    setStatus,
+    setProcessingStatus,
+    setQueueCount,
+    setSegments,
+    setInterimText,
+    setAlertState,
+    toggleRecording,
+    vad,
+    autoPaste,
+    maxTextHistory
+  });
+
   useEffect(() => {
-    const cleanupStatus = window.ipcRenderer.on('asr-status', (_event, s: string) => {
-      setStatus(s as any);
-    });
-
-    const cleanupResult = window.ipcRenderer.on('asr-result', (_event, data: any) => {
-      // Handle final result first - MUST decrement queue even if text is empty
-      if (data.is_final) {
-        window.ipcRenderer.invoke('write-debug-log', `[App-Result] FINAL: "${(data.text || '').substring(0, 50)}..."`);
-
-        // Update Queue - Use chunk_count from backend if available
-        const processedCount = data.chunk_count || 1;
-        setQueueCount(prev => Math.max(0, prev - processedCount));
-        setProcessingStatus('done');
-
-        // Only add to segments/history if there's actual text
-        if (data.text) {
-
-          // 1. Add to segments
-          setSegments(prev => [...prev, data.text]);
-
-          // 2. Add to History
-          // REMOVED: setHistory(prev => [newItem, ...prev].slice(0, maxTextHistory));
-
-          // 3. Clear interim
-          setInterimText('');
-
-          if (autoPaste) {
-            window.ipcRenderer.invoke('insert-text', data.text);
-          }
-
-
-        } else {
-          // Empty result - just clear interim
-          setInterimText('');
-        }
-      } else if (data.text) {
-        // INTERIM RESULT (only if there's text)
-        window.ipcRenderer.invoke('write-debug-log', `[App-Result] INTERIM: "${data.text.substring(0, 50)}..."`);
-        setInterimText(data.text);
-      }
-    });
-
-    const cleanupProcessing = window.ipcRenderer.on('asr-processing', (_event, data: any) => {
-      if (data.status) {
-        setProcessingStatus(data.status as ProcessingStatus);
-      }
-    });
-
-    const cleanupState = window.ipcRenderer.on('recording-state', (_event, state: boolean) => {
-      if (!state && vad.isRecording) {
-        toggleRecording();
-      }
-    });
-
-    const cleanupError = window.ipcRenderer.on('asr-error', (_event, msg: string) => {
-      setProcessingStatus('idle');
-      setQueueCount(prev => Math.max(0, prev - 1));
-      setAlertState({
-        type: 'error',
-        title: 'Backend Error',
-        description: msg
-      });
-    });
-
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.code === 'Space' && e.ctrlKey) {
         e.preventDefault();
@@ -268,16 +221,11 @@ function App() {
       }
     };
     window.addEventListener('keydown', handleKeyDown);
-
     return () => {
-      cleanupStatus();
-      cleanupResult();
-      cleanupProcessing();
-      cleanupState();
-      cleanupError();
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [toggleRecording, autoPaste, vad, maxTextHistory]);
+  }, [toggleRecording]);
+
 
   // Check for crash files on mount
   useEffect(() => {

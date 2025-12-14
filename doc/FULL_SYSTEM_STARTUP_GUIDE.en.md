@@ -119,31 +119,7 @@ cd ASR_go_backend
 ./scripts/start_backend.sh
 ```
 
-## 🌐 Nginx Reverse Proxy (Optional)
 
-If you need domain access, configure Nginx:
-
-```nginx
-server {
-    listen 80;
-    server_name asr.example.com;
-
-    location / {
-        proxy_pass http://localhost:5173; # Frontend
-    }
-
-    location /api/ {
-        proxy_pass http://localhost:8080; # Backend API
-    }
-
-    location /ws/ {
-        proxy_pass http://localhost:8080; # WebSocket
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection "upgrade";
-    }
-}
-```
 
 ---
 

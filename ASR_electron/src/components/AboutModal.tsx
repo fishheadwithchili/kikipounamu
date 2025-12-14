@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import { HydroButton } from './HydroButton';
 import { X, Github, Copy, Check } from 'lucide-react';
 import { Logo3D } from './Logo3D';
+import shortIcon from '../icon/short.png';
 
 interface AboutModalProps {
     onClose: () => void;
@@ -104,7 +105,7 @@ export const AboutModal: React.FC<AboutModalProps> = ({ onClose }) => {
                     }}>
                         {/* We use a static div here to host the Logo3D but disable its internal click if needed, 
                             or just reuse the component. Since Logo3D now accepts onClick, we can pass no-op. */}
-                        <Logo3D onClick={() => { }} size={128} />
+                        <Logo3D onClick={() => { }} size={128} src={shortIcon} />
                     </div>
 
                     <h2 style={{

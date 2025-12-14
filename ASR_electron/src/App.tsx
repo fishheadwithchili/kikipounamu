@@ -11,6 +11,7 @@ import { arrayBufferToBase64 } from './utils/audioHelper';
 import { storageService } from './services/storage';
 
 import { useAppIpcListeners, ProcessingStatus } from './hooks/useAppIpcListeners';
+import welcomeVideo from './video/welcome.mp4';
 
 // Removed local type definition in favor of imported one
 // type ProcessingStatus = 'idle' | 'recording' | 'processing' | 'finalizing' | 'done';
@@ -20,6 +21,7 @@ function App() {
   const [status, setStatus] = useState<'connected' | 'disconnected' | 'error' | 'connecting'>('connecting');
   const [history, setHistory] = useState<{ timestamp: string, text: string }[]>([]);
   const [audioHistory, setAudioHistory] = useState<AudioHistoryItem[]>([]);
+  const [showWelcome, setShowWelcome] = useState(true);
 
   // Workspace State
   const [segments, setSegments] = useState<string[]>([]);
@@ -518,6 +520,46 @@ function App() {
           description={vad.error}
           onDismiss={() => { }}
         />
+      )}
+
+      {/* Startup Animation */}
+      {showWelcome && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          zIndex: 9999,
+          backgroundColor: '#000',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          animation: 'fadeOut 0.5s ease-out forwards',
+          animationDelay: '99s' // Hack to only fade out when we change class or unmount? No, we just unmount.
+        }}>
+          {/* We can use CSS transition for fade out if we used opacity state, but simple removal is fine for MP4 end */}
+          <video
+            src={welcomeVideo}
+            autoPlay
+            muted
+            style={{
+              width: 'auto',
+              height: '100%',
+              minWidth: '100%',
+              maxWidth: 'none',
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              objectFit: 'cover'
+            }}
+            onEnded={() => {
+              // Optional: Fade out logic could be better, but direct removal is requested "finally disappear"
+              setShowWelcome(false);
+            }}
+          />
+        </div>
       )}
     </div>
   );

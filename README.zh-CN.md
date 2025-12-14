@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="ASR_electron/src/icon/icon_128.png" width="128" height="128">
+  <img src="ASR_electron/src/icon/long.jpg" width="128" height="128">
 </div>
 
 <h1 align="center">KikiPounamu (ASR System)</h1>
@@ -57,7 +57,7 @@
 | **RTX 5060 加速** | ✅ **已验证** | 超低延迟 (<50ms)。 |
 | **跨平台** | ⚠️ **未测试** | 原生 Win/Linux/Mac 环境暂未充分测试。 |
 | **分布式热扩容** | ⚠️ **未测试** | 分布式热扩容暂未测试。 |
-| **Nginx 反向代理** | ⚠️ **未使用** | Nginx 反向代理配置暂未使用。 |
+
 
 ---
 

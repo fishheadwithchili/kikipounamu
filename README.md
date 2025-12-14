@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="ASR_electron/src/icon/icon_128.png" width="128" height="128">
+  <img src="ASR_electron/src/icon/long.jpg" width="128" height="128">
 </div>
 
 <h1 align="center">KikiPounamu (ASR System)</h1>
@@ -57,7 +57,7 @@ This project is developed and tested in the following specific environment.
 | **RTX 5060 Acceleration** | ✅ **Verified** | Ultra-low latency (<50ms). |
 | **Cross-Platform** | ⚠️ **Untested** | Native Windows, Linux, and macOS environments have **not** been fully tested. |
 | **Distributed Scaling** | ⚠️ **Untested** | Distributed hot-scaling has **not** been tested. |
-| **Nginx Proxy** | ⚠️ **Unused** | Nginx reverse proxy is currently **not** in use. |
+
 
 ---
 

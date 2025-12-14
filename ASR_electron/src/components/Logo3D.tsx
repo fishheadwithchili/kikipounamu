@@ -12,9 +12,10 @@ import React from 'react';
 interface Logo3DProps {
     onClick?: () => void;
     size?: number;
+    src?: string;
 }
 
-export const Logo3D = React.memo(({ onClick, size = 32 }: Logo3DProps) => (
+export const Logo3D = React.memo(({ onClick, size = 32, src = "/icon.png" }: Logo3DProps) => (
     <div
         className="relative group cursor-pointer"
         style={{ perspective: '800px' }}
@@ -50,7 +51,7 @@ export const Logo3D = React.memo(({ onClick, size = 32 }: Logo3DProps) => (
                 pointerEvents: 'none' // Pass clicks to parent
             }}>
             <img
-                src="/icon.png"
+                src={src}
                 alt="App Logo"
                 style={{
                     width: `${size}px`,

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Check, X, Loader2, Users, ChevronLeft, History, Plus } from 'lucide-react';
+import { Check, X, Loader2, Users, ChevronLeft, History, Plus, Copy } from 'lucide-react';
 import { HydroButton } from '../HydroButton';
 import { ControlDock } from './ControlDock';
 import { SelectionDock } from './SelectionDock';
@@ -41,6 +41,8 @@ export const TranscriptionPane: React.FC<TranscriptionPaneProps> = ({
     const [viewMode, setViewMode] = useState<'edit' | 'select'>('edit');
     const [selectedIndices, setSelectedIndices] = useState<Set<number>>(new Set());
     const [isCopied, setIsCopied] = useState(false);
+
+    const [isCopiedAll, setIsCopiedAll] = useState(false);
 
     // Scroll to bottom on new text
     useEffect(() => {
@@ -85,6 +87,15 @@ export const TranscriptionPane: React.FC<TranscriptionPaneProps> = ({
         }
     };
 
+    const handleCopyAll = async () => {
+        const allText = segments.join('\n\n');
+        if (allText) {
+            await navigator.clipboard.writeText(allText);
+            setIsCopiedAll(true);
+            setTimeout(() => setIsCopiedAll(false), 2000);
+        }
+    };
+
     const hasContent = segments.length > 0 || interimText;
 
     return (
@@ -115,7 +126,7 @@ export const TranscriptionPane: React.FC<TranscriptionPaneProps> = ({
                     backgroundColor: 'rgba(17, 24, 39, 0.4)',
                     backdropFilter: 'blur(12px)',
                     border: '1px solid rgba(255, 255, 255, 0.1)',
-                    padding: '6px 16px 6px 8px', /** Adjusted padding for button */
+                    padding: '6px 6px', /** Minimal padding for icon only */
                     borderRadius: '9999px',
                     boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
                 }}>
@@ -141,16 +152,32 @@ export const TranscriptionPane: React.FC<TranscriptionPaneProps> = ({
                     >
                         {showHistory ? <ChevronLeft size={20} /> : <History size={20} />}
                     </HydroButton>
-
-                    <div style={{ width: '1px', height: '16px', backgroundColor: 'rgba(255, 255, 255, 0.1)' }}></div>
-
-                    <div style={{ fontSize: '14px', fontWeight: 500, color: 'rgba(255, 255, 255, 0.9)', paddingRight: '4px' }}>
-                        {viewMode === 'select' ? 'Select Items' : 'Workspace'}
-                        {segments.length > 0 && <span style={{ marginLeft: '8px', opacity: 0.5 }}>({segments.length})</span>}
-                    </div>
                 </div>
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    {/* Copy All Button */}
+                    <HydroButton
+                        onClick={handleCopyAll}
+                        disabled={!hasContent}
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                            padding: '6px 16px',
+                            borderRadius: '9999px',
+                            fontSize: '14px',
+                            transition: 'all 0.2s',
+                            border: '1px solid',
+                            backgroundColor: isCopiedAll ? 'rgba(74, 222, 128, 0.1)' : 'transparent',
+                            color: isCopiedAll ? '#4ade80' : 'rgba(255, 255, 255, 0.7)',
+                            borderColor: isCopiedAll ? '#4ade80' : 'transparent',
+                            fontWeight: 500
+                        }}
+                    >
+                        {isCopiedAll ? <Check size={16} /> : <Copy size={16} />}
+                        {isCopiedAll ? 'Copied' : 'Copy All'}
+                    </HydroButton>
+
                     <HydroButton
                         onClick={handleToggleSelectionMode}
                         disabled={!hasContent}

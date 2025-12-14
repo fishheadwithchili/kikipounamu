@@ -98,8 +98,8 @@ echo "ALTER USER postgres WITH PASSWORD '123456';" | sudo -u postgres psql
 
 3.  **启动 Worker**:
     ```bash
+    cd ASR_server
     ./scripts/start_unified_worker.sh
-    # 不建议手动启动统一 Worker
     ```
 
 4.  **启动 API 服务**:
@@ -121,31 +121,7 @@ cd ASR_go_backend
 ./scripts/start_backend.sh
 ```
 
-## 🌐 Nginx 反向代理 (可选)
 
-如果你需要通过域名访问，建议配置 Nginx:
-
-```nginx
-server {
-    listen 80;
-    server_name asr.example.com;
-
-    location / {
-        proxy_pass http://localhost:5173; # 前端
-    }
-
-    location /api/ {
-        proxy_pass http://localhost:8080; # 后端 API
-    }
-
-    location /ws/ {
-        proxy_pass http://localhost:8080; # WebSocket
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection "upgrade";
-    }
-}
-```
 
 ---
 

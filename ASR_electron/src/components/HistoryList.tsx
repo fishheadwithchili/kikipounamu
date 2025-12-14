@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
 import { Type, FileAudio, Settings, Copy, Check, Play, Pause } from 'lucide-react';
 import { HydroButton } from './HydroButton';
-import { Logo3D } from './Logo3D';
 import { AboutModal } from './AboutModal';
-
-import { ConnectionIndicator } from './ConnectionIndicator';
+import shortLogo from '../icon/short.png';
 
 export interface HistoryItem {
     timestamp: string;
@@ -39,8 +37,7 @@ export const HistoryList: React.FC<HistoryListProps> = ({
     onPlayAudio,
     playingFilePath,
     isPlaying,
-    onOpenSettings,
-    connectionStatus = 'disconnected'
+    onOpenSettings
 }) => {
     const [activeTab, setActiveTab] = useState<'text' | 'audio'>('text');
     const [copiedId, setCopiedId] = useState<number | null>(null);
@@ -69,7 +66,19 @@ export const HistoryList: React.FC<HistoryListProps> = ({
             {/* Logo and Status */}
             <div style={{ padding: '20px', flexShrink: 0 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
-                    <Logo3D onClick={() => setShowAboutModal(true)} size={48} />
+                    <img
+                        src={shortLogo}
+                        alt="Logo"
+                        width={48}
+                        height={48}
+                        style={{
+                            width: '48px',
+                            height: '48px',
+                            objectFit: 'contain',
+                            cursor: 'pointer'
+                        }}
+                        onClick={() => setShowAboutModal(true)}
+                    />
                     <div>
                         <h2 style={{
                             fontWeight: 600,
@@ -88,7 +97,6 @@ export const HistoryList: React.FC<HistoryListProps> = ({
                             textTransform: 'uppercase',
                             margin: '0'
                         }}>Version 1.0</p>
-                        <ConnectionIndicator status={connectionStatus} />
                     </div>
                 </div>
 

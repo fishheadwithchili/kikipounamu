@@ -38,23 +38,54 @@ else
     echo "✅ ffmpeg found."
 fi
 
-# Check if venv exists (prefer .venv created by uv)
+# Check and Install uv
+if ! command -v uv &> /dev/null; then
+    echo "⚠️  'uv' not found. Installing..."
+    
+    # Try installing via pip first (most common in Python environments)
+    if command -v pip &> /dev/null; then
+        echo "   Installing uv via pip..."
+        pip install uv
+    elif command -v pip3 &> /dev/null; then
+        echo "   Installing uv via pip3..."
+        pip3 install uv
+    else
+        echo "   pip not found. Installing uv via curl..."
+        curl -LsSf https://astral.sh/uv/install.sh | sh
+        
+        # Add to path for current session
+        if [ -f "$HOME/.cargo/env" ]; then
+            source "$HOME/.cargo/env"
+        else
+            export PATH="$HOME/.local/bin:$PATH"
+        fi
+    fi
+fi
+
+# Re-check uv validity and update PATH if needed
+if ! command -v uv &> /dev/null; then
+    # Try adding common paths explicitly
+    export PATH="$HOME/.local/bin:$HOME/.cargo/bin:$PATH"
+fi
+
+if ! command -v uv &> /dev/null; then
+     echo "❌ Error: Failed to install 'uv'. Please install it manually."
+     exit 1
+fi
+
+echo "✅ uv is available."
+
+# Sync dependencies (creates .venv if missing)
+echo "📦 Syncing dependencies with uv..."
+uv sync
+
+# Activate virtual environment
 if [ -d ".venv" ]; then
     echo "📦 Activating virtual environment (.venv)..."
     source .venv/bin/activate
 elif [ -d "venv" ]; then
     echo "📦 Activating virtual environment (venv)..."
     source venv/bin/activate
-fi
-
-# Auto-install dependencies
-echo "📦 Checking and updating dependencies..."
-if command -v uv >/dev/null 2>&1; then
-    echo "   Using uv to sync dependencies..."
-    uv sync
-else
-    echo "⚠️ 'uv' not found. Falling back to pip..."
-    pip install -e .
 fi
 
 # Trap to cleanup background jobs on exit

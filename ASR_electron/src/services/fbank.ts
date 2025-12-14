@@ -294,8 +294,30 @@ function getMelFilters(): Float32Array[] {
  * @returns Log Mel 帧数组，每帧 80 维
  */
 export function computeLogMelFrames(audioData: Float32Array): Float32Array[] {
-    // 1. 分帧
-    const frames = frameSignal(audioData, FRAME_LENGTH, FRAME_SHIFT);
+    // 🔧 FIX: Scale from Web Audio API range [-1, 1] to 16-bit PCM range [-32768, 32767]
+    // FunASR FSMN-VAD model expects audio data in 16-bit integer magnitude
+    const scaledData = new Float32Array(audioData.length);
+    for (let i = 0; i < audioData.length; i++) {
+        scaledData[i] = audioData[i] * 32768;
+    }
+
+    // [DEBUG] Check input amplitude range (now showing scaled values)
+    if (Math.random() < 0.02) {
+        let min = Infinity, max = -Infinity;
+        let sum = 0;
+        const limit = Math.min(scaledData.length, 100);
+        for (let i = 0; i < limit; i++) {
+            if (scaledData[i] < min) min = scaledData[i];
+            if (scaledData[i] > max) max = scaledData[i];
+            sum += Math.abs(scaledData[i]);
+        }
+        if (sum > 100) {
+            console.log(`📊 [fbank Input SCALED] len=${scaledData.length}, range=[${min.toFixed(0)}, ${max.toFixed(0)}]`);
+        }
+    }
+
+    // 1. 分帧 (使用缩放后的数据)
+    const frames = frameSignal(scaledData, FRAME_LENGTH, FRAME_SHIFT);
     if (frames.length === 0) return [];
 
     // 2. 加 Hamming 窗
@@ -316,6 +338,17 @@ export function computeLogMelFrames(audioData: Float32Array): Float32Array[] {
         }
         return logMel;
     });
+
+    // [DEBUG FORCED] 每次都打印 LogMel 范围验证缩放生效
+    if (logMelSpectrum.length > 0) {
+        const sample = logMelSpectrum[0];
+        let min = Infinity, max = -Infinity;
+        for (let i = 0; i < sample.length; i++) {
+            if (sample[i] < min) min = sample[i];
+            if (sample[i] > max) max = sample[i];
+        }
+        console.log(`📊 [fbank LogMel] frames=${logMelSpectrum.length}, range=[${min.toFixed(2)}, ${max.toFixed(2)}]`);
+    }
 
     return logMelSpectrum;
 }

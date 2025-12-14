@@ -45,6 +45,9 @@ export class FunASRVAD {
     private config: VADConfig;
     private isReady = false;
 
+    // 调试日志回调 (用于写入文件)
+    private debugLog: ((msg: string) => void) | null = null;
+
     // FSMN 模型隐藏状态缓存
     private cache: Record<string, Float32Array> = {};
 
@@ -58,6 +61,20 @@ export class FunASRVAD {
 
     constructor(config: Partial<VADConfig> = {}) {
         this.config = { ...DEFAULT_CONFIG, ...config };
+    }
+
+    /**
+     * 设置调试日志回调
+     */
+    setDebugLogger(logger: (msg: string) => void): void {
+        this.debugLog = logger;
+    }
+
+    private log(msg: string): void {
+        if (this.debugLog) {
+            this.debugLog(msg);
+        }
+        console.log(msg);
     }
 
     /**
@@ -83,9 +100,20 @@ export class FunASRVAD {
             this.cmvnMeans = means;
             this.cmvnScales = scales;
 
+            // [DEBUG] Verify CMVN stats
+            const meansSum = means.reduce((a, b) => a + b, 0);
+            const scalesSum = scales.reduce((a, b) => a + b, 0);
+            console.log(`📊 [VAD Init] CMVN Loaded: MeansSum=${meansSum.toFixed(2)}, ScalesSum=${scalesSum.toFixed(2)}, Dim=${means.length}`);
+
             // 获取模型输入/输出信息
             console.log('📊 模型输入:', this.session.inputNames);
             console.log('📊 模型输出:', this.session.outputNames);
+            console.log('📊 输出数量:', this.session.outputNames.length);
+
+            // 如果有多个输出，打印所有输出名称
+            for (let i = 0; i < this.session.outputNames.length; i++) {
+                console.log(`📊 输出[${i}]: ${this.session.outputNames[i]}`);
+            }
 
             this.isReady = true;
             console.log('✅ FunASR VAD 模型加载完成');
@@ -233,8 +261,8 @@ export class FunASRVAD {
         const totalDim = 400; // 80 * 5
         const inputDataArray = new Float32Array(numInferFrames * totalDim);
 
-        // Debug: Check first frame stats
-        if (numInferFrames > 0 && Math.random() < 0.02) {
+        // Debug: Check first frame stats (Increased sampling to 5% for debug)
+        if (numInferFrames > 0 && Math.random() < 0.05) {
             const firstFrame = cmvnFeatures[0];
             let min = Infinity, max = -Infinity, avg = 0;
             for (let val of firstFrame) {
@@ -243,7 +271,7 @@ export class FunASRVAD {
                 avg += val;
             }
             avg /= firstFrame.length;
-            console.log(`📊 [VAD Input Test] Shape=${numInferFrames}x${totalDim}, Min=${min.toFixed(2)}, Max=${max.toFixed(2)}, Avg=${avg.toFixed(2)}`);
+            console.log(`📊 [VAD Input Test] Shape=${numInferFrames}x${totalDim}, Min=${min.toFixed(4)}, Max=${max.toFixed(4)}, Avg=${avg.toFixed(4)}`);
         }
 
         for (let k = 0; k < numInferFrames; k++) {
@@ -284,23 +312,42 @@ export class FunASRVAD {
         const outputName = this.session.outputNames[0];
         const outputData = results[outputName].data as Float32Array;
 
-        let speechProb = 0;
-        // 输出 shape [1, numInferFrames, 2] ? 或者是 [1, numInferFrames, 1] ?
-        // 之前代码假设是 [silence, speech] layout (length = numFrames * 2)
-        // 确认：FSMN VAD output shape is usually [batch, frames, 2]
+        // [DEBUG] 输出模型原始数据到文件日志
+        this.log(`[VAD-Model] dims=[${results[outputName].dims}], len=${outputData.length}, first6=[${Array.from(outputData.slice(0, 6)).map(v => v.toFixed(4)).join(', ')}]`);
 
-        if (outputData.length === numInferFrames * 2) {
-            for (let i = 0; i < outputData.length; i += 2) {
-                speechProb += outputData[i + 1];
+
+        let speechProb = 0;
+
+        // ⚠️ FALLBACK: 当前 ONNX 模型缺少分类层，248 维输出无法正确解析
+        // 使用振幅阈值检测作为临时解决方案
+        // 未来需要获取完整的 FSMN-VAD 模型或使用 Silero VAD
+
+        const outputDim = 248;
+        const numFrames = Math.floor(outputData.length / outputDim);
+
+        if (numFrames > 0) {
+            // 方案：使用每帧所有维度的平均值作为活动度指标
+            for (let f = 0; f < numFrames; f++) {
+                const frameStart = f * outputDim;
+                let frameSum = 0;
+                for (let d = 0; d < outputDim; d++) {
+                    frameSum += Math.abs(outputData[frameStart + d]);
+                }
+                const frameAvg = frameSum / outputDim;
+
+                // 使用阈值：平均值 > 0.01 认为是语音
+                // 并用 sigmoid 平滑
+                const logit = (frameAvg - 0.015) * 200; // 以 0.015 为中心，放大差异
+                const frameSpeechProb = 1 / (1 + Math.exp(-logit));
+                speechProb += frameSpeechProb;
             }
-            return speechProb / numInferFrames;
+
+            const finalProb = speechProb / numFrames;
+            this.log(`[VAD-AmplitudeFallback] numFrames=${numFrames}, avgProb=${finalProb.toFixed(4)}`);
+            return finalProb;
         } else {
-            // Fallback just in case shape is differs
-            // 假设单输出是 speech prob
-            for (let i = 0; i < outputData.length; i++) {
-                speechProb += outputData[i];
-            }
-            return speechProb / outputData.length;
+            this.log(`[VAD-Error] No frames in output`);
+            return 0;
         }
     }
 

@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import dotenv from 'dotenv';
 import path from 'path';
 import { createLogger } from './logger';
+import { specialLogger } from './specialLogger';
 
 // Load .env from project root
 dotenv.config({ path: path.join(process.cwd(), '.env') });
@@ -19,6 +20,7 @@ export class ASRClient {
     private sessionId: string | null = null;
     private isRecording: boolean = false;
     private chunkIndex: number = 0;
+    private logId: string | undefined;
 
     constructor(mainWindow: BrowserWindow) {
         this.mainWindow = mainWindow;
@@ -40,10 +42,18 @@ export class ASRClient {
                 const message = JSON.parse(event.data.toString());
                 logger.debug('Received ASR message', { type: message.type });
 
+                if (this.logId) {
+                    // Log minimal info to avoid massive log files, but capture key events
+                    if (message.type !== 'chunk_result') {
+                        specialLogger.appendLog(this.logId, `[ASRClient-Rx] Type=${message.type} Status=${message.status || 'N/A'}`);
+                    }
+                }
+
                 switch (message.type) {
                     case 'ack':
                         if (message.status === 'session_started') {
                             logger.info('ASR session started');
+                            if (this.logId) specialLogger.appendLog(this.logId, `[ASRClient-Rx] Session Started ACK`);
                             this.mainWindow.webContents.send('asr-status', 'ready');
                         } else if (message.status === 'received') {
                             // Chunk received, show processing indicator
@@ -69,6 +79,8 @@ export class ASRClient {
                             chunkCount: message.chunk_count,
                             textLength: message.text?.length
                         });
+                        if (this.logId) specialLogger.appendLog(this.logId, `[ASRClient-Rx] Final Result: Dur=${message.duration} Chunks=${message.chunk_count} TextLen=${message.text?.length}`);
+
                         this.mainWindow.webContents.send('asr-result', {
                             text: message.text,
                             is_final: true,
@@ -79,6 +91,7 @@ export class ASRClient {
                         break;
                     case 'error':
                         logger.error('ASR backend error', { message: message.message });
+                        if (this.logId) specialLogger.appendLog(this.logId, `[ASRClient-Rx] Error: ${message.message}`);
                         this.mainWindow.webContents.send('asr-error', message.message);
                         break;
                 }
@@ -103,15 +116,19 @@ export class ASRClient {
         };
     }
 
-    startRecording() {
+    startRecording(logId?: string) {
+        this.logId = logId;
         if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
             logger.error('Cannot start recording: WebSocket not connected');
+            if (this.logId) specialLogger.appendLog(this.logId, `[ASRClient] Error: WebSocket not connected at start`);
             return;
         }
 
         this.sessionId = uuidv4();
         this.chunkIndex = 0;
         this.isRecording = true;
+
+        if (this.logId) specialLogger.appendLog(this.logId, `[ASRClient] Starting session ${this.sessionId}`);
 
         // Send start message
         this.ws.send(JSON.stringify({
@@ -127,10 +144,13 @@ export class ASRClient {
     stopRecording() {
         if (!this.ws || this.ws.readyState !== WebSocket.OPEN || !this.sessionId) {
             logger.warn('Cannot stop recording: invalid state');
+            if (this.logId) specialLogger.appendLog(this.logId, `[ASRClient] Warn: Stop requested but invalid state`);
             return;
         }
 
         this.isRecording = false;
+
+        if (this.logId) specialLogger.appendLog(this.logId, `[ASRClient] Stopping session ${this.sessionId}. Sent frames: ${this.chunkIndex}`);
 
         // Send finish message
         this.ws.send(JSON.stringify({
@@ -147,6 +167,8 @@ export class ASRClient {
         if (!this.ws || this.ws.readyState !== WebSocket.OPEN || !this.sessionId || !this.isRecording) {
             return;
         }
+
+        if (this.logId) specialLogger.appendLog(this.logId, `[ASRClient] Sending Chunk #${this.chunkIndex}`);
 
         this.ws.send(JSON.stringify({
             action: 'chunk',

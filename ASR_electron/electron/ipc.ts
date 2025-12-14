@@ -5,6 +5,7 @@ import Store from 'electron-store';
 import * as fs from 'fs';
 import * as path from 'path';
 import { createLogger } from './logger';
+import { specialLogger } from './specialLogger';
 
 const store = new Store();
 const logger = createLogger('IPC');
@@ -30,6 +31,16 @@ export function setupIpc(asrClient: ASRClient) {
             console.error('Failed to write debug log:', e);
             return false;
         }
+    });
+
+    // --- Special VAD Logger ---
+    ipcMain.handle('init-special-log', (_event, logId: string) => {
+        return specialLogger.initLog(logId);
+    });
+
+    ipcMain.handle('write-vad-special-log', (_event, logId: string, message: string) => {
+        specialLogger.appendLog(logId, message);
+        return true;
     });
 
     ipcMain.on('renderer-ready', (_event) => {
@@ -69,9 +80,9 @@ export function setupIpc(asrClient: ASRClient) {
     });
 
     // Forwarding ASR commands from UI
-    ipcMain.handle('start-recording', async () => {
-        logger.info('IPC: Start recording requested');
-        asrClient.startRecording();
+    ipcMain.handle('start-recording', async (_event, logId?: string) => {
+        logger.info(`IPC: Start recording requested. LogID: ${logId}`);
+        asrClient.startRecording(logId);
         return { success: true };
     });
 

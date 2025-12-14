@@ -89,15 +89,15 @@ function App() {
   // -------------------------
 
   const handleModeChange = useCallback((mode: VADMode) => {
-    if (mode === 'vad') {
-      // Warning Dialog using new AlertOverlay
-      setAlertState({
-        type: 'warning',
-        title: 'VAD Mode Warning',
-        description: "The VAD model output dimension mismatch (248 vs 2) prevents speech detection. System will revert to previous mode."
-      });
-      return;
-    }
+    // if (mode === 'vad') {
+    //   // Warning Dialog using new AlertOverlay
+    //   setAlertState({
+    //     type: 'warning',
+    //     title: 'VAD Mode Warning',
+    //     description: "The VAD model output dimension mismatch (248 vs 2) prevents speech detection. System will revert to previous mode."
+    //   });
+    //   return;
+    // }
 
     setVadModeState(mode);
     vad.setVadMode(mode);
@@ -151,10 +151,12 @@ function App() {
 
         await window.ipcRenderer.invoke('log-message', 'info', `User clicked record. Initializing VAD (Mode: ${vadMode})...`);
 
+
         const success = await vad.startRecording();
 
         if (success) {
-          await window.ipcRenderer.invoke('start-recording');
+          // Pass logId to backend start so it can link logs
+          await window.ipcRenderer.invoke('start-recording', vad.logId);
           await window.ipcRenderer.invoke('log-message', 'info', 'Backend session started.');
         } else {
           await window.ipcRenderer.invoke('log-message', 'error', 'Failed to start local VAD. Backend session NOT started.');
@@ -186,7 +188,11 @@ function App() {
       console.log(`Sending chunk #${chunkIndex}, size: ${audioData.byteLength}`);
 
       // LOG FLOW
-      window.ipcRenderer.invoke('write-debug-log', `[App-Chunk] Received Chunk #${chunkIndex} from VAD. Size=${audioData.byteLength}. Sending to IPC...`);
+      const msg = `[App-Chunk] Received Chunk #${chunkIndex} from VAD. Size=${audioData.byteLength}. Sending to IPC...`;
+      window.ipcRenderer.invoke('write-debug-log', msg);
+      if (vad.logId) {
+        window.ipcRenderer.invoke('write-vad-special-log', vad.logId, msg).catch(console.error);
+      }
 
       const base64 = arrayBufferToBase64(audioData);
       window.ipcRenderer.invoke('send-audio-chunk', base64);

@@ -32,6 +32,7 @@ interface VADRecordingResult {
     stopRecording: () => void;
     onChunkReady: (callback: (chunkIndex: number, audioData: ArrayBuffer, rawPCM: Float32Array) => void) => void;
     stream: MediaStream | null; // Shared stream for Visualizer
+    logId?: string; // Special logging ID
 }
 
 // VAD 配置
@@ -98,11 +99,24 @@ export function useVADRecording(
     const silenceFramesRef = useRef(0);
     const speechFramesRef = useRef(0);
 
+    // Log ID State
+    const [logId, setLogId] = useState<string | undefined>(undefined);
+    const logIdRef = useRef<string | undefined>(undefined);
+
     // Debug Logging State
     const lastLogTimeRef = useRef<number>(0);
+    const lastVADLogTimeRef = useRef<number>(0);
+    const lastSpeechProbRef = useRef<number>(-1);
+    const vadLogCounterRef = useRef<number>(0);
+    const silenceLogCounterRef = useRef<number>(0);
 
     const logDebug = useCallback((message: string) => {
         window.ipcRenderer.invoke('write-debug-log', message);
+        // Also write to special VAD log if active
+        if (logIdRef.current) {
+            window.ipcRenderer.invoke('write-vad-special-log', logIdRef.current, message)
+                .catch(e => console.error('Special log failed', e));
+        }
     }, []);
 
     // 注册回调
@@ -123,6 +137,13 @@ export function useVADRecording(
                 await vad.init('/models/model.onnx', '/models/vad.mvn');
 
                 if (isMounted) {
+                    // 设置日志回调，让 VAD 服务能写入文件日志
+                    vad.setDebugLogger((msg: string) => {
+                        if (logIdRef.current) {
+                            window.ipcRenderer.invoke('write-vad-special-log', logIdRef.current, msg)
+                                .catch(e => console.error('VAD log failed', e));
+                        }
+                    });
                     vadRef.current = vad;
                     setIsVADReady(true);
                     logger.info('VAD initialized successfully');
@@ -158,18 +179,24 @@ export function useVADRecording(
         try {
             // Calculate Amplitude for frequent logging
             let maxAmp = 0;
+            let minAmp = 1.0;
+            let sumAmp = 0;
             for (let i = 0; i < inputBuffer.length; i++) {
                 const abs = Math.abs(inputBuffer[i]);
                 if (abs > maxAmp) maxAmp = abs;
+                if (abs < minAmp) minAmp = abs;
+                sumAmp += abs;
             }
+            const avgAmp = sumAmp / inputBuffer.length;
 
             // 获取模式配置
             const vadMode = vadModeRef.current;
             const now = Date.now();
 
-            // Log flow every 100ms
-            if (now - lastLogTimeRef.current > 100) {
-                logDebug(`[AudioFlow] Amp=${maxAmp.toFixed(4)} | Mode=${vadMode} | Buffer=${speechBufferRef.current.length} | isSpeaking=${isSpeakingRef.current}`);
+            // Log flow every 1000ms (Reduced from 100ms)
+            if (now - lastLogTimeRef.current > 1000) {
+                const msg = `[AudioFlow] Amp=${maxAmp.toFixed(4)} Avg=${avgAmp.toFixed(4)} | Mode=${vadMode} | Buffer=${speechBufferRef.current.length} | isSpeaking=${isSpeakingRef.current}`;
+                logDebug(msg);
                 lastLogTimeRef.current = now;
             }
 
@@ -228,22 +255,24 @@ export function useVADRecording(
             }
 
             // --- VAD MODE ---
-            const speechProb = await vadRef.current.detect(inputBuffer);
+            // ⚠️ 临时方案：ONNX 模型输出不可靠，直接使用振幅作为语音检测
+            // 原因：当前 ONNX 模型缺少分类层，248 维输出无法正确解析
+            // 未来需要：获取完整的 FSMN-VAD 模型 或 使用 Silero VAD
 
-            // Log VAD result
-            logDebug(`[VAD-Detect] Prob=${speechProb.toFixed(4)} | Amp=${maxAmp.toFixed(4)}`);
+            // 使用平均振幅作为语音概率的估计
+            // avgAmp 通常在 0.01-0.1 范围，映射到 0-1 的概率
+            const speechProb = Math.min(1.0, avgAmp * 10); // 放大 10 倍，最大 1.0
 
-            if (speechProb < 0) {
-                logDebug(`[VAD-Skip] Insufficient data`);
-                // Only buffer if we were expecting VAD logic? 
-                // In pure VAD mode, we usually wait for speech. 
-                // The original code buffered for 'vad' or 'time_limit' here.
-                // Since 'time_limit' is handled above, we only care about 'vad'.
-                if (vadMode === 'vad') {
-                    speechBufferRef.current.push(inputBuffer.slice());
-                }
-                return;
+            // Log VAD result (Throttled)
+            // Only log if probability changed significantly OR every ~50 frames (~500ms)
+            vadLogCounterRef.current++;
+            if (Math.abs(speechProb - lastSpeechProbRef.current) > 0.01 || vadLogCounterRef.current >= 50) {
+                logDebug(`[VAD-Amplitude] Prob=${speechProb.toFixed(4)} | Amp=${maxAmp.toFixed(4)} | AvgAmp=${avgAmp.toFixed(4)}`);
+                lastSpeechProbRef.current = speechProb;
+                vadLogCounterRef.current = 0;
             }
+
+            // 振幅检测不会返回 -1，所以移除这个检查块
 
             if (speechProb >= VAD_CONFIG.speechThreshold) {
                 speechFramesRef.current++;
@@ -273,8 +302,13 @@ export function useVADRecording(
                         shouldCut = true;
                         setIsSpeaking(false);
                         isSpeakingRef.current = false;
+                        silenceLogCounterRef.current = 0;
                     } else if (silenceDurationMs >= VAD_CONFIG.minSilenceDurationMs) {
-                        logDebug(`[VAD-Event] Silence threshold met (${silenceDurationMs}ms) but not speaking, no cut.`);
+                        // Throttle this log: only every 50 frames (approx 5s)
+                        silenceLogCounterRef.current++;
+                        if (silenceLogCounterRef.current % 50 === 1) {
+                            logDebug(`[VAD-Event] Silence threshold met (${silenceDurationMs}ms) but not speaking, no cut. (Suppressing next 50 logs)`);
+                        }
                     }
                 }
                 // time_limit logic removed from here as it is handled at the top
@@ -330,6 +364,28 @@ export function useVADRecording(
             speechBufferRef.current = [];
             silenceFramesRef.current = 0;
             speechFramesRef.current = 0;
+
+            // Reset throttle counters
+            vadLogCounterRef.current = 0;
+            silenceLogCounterRef.current = 0;
+            lastSpeechProbRef.current = -1;
+
+            // Generate Log ID (YYYYMMDDHHmmss)
+            const now = new Date();
+            const logIdStr = now.getFullYear().toString() +
+                (now.getMonth() + 1).toString().padStart(2, '0') +
+                now.getDate().toString().padStart(2, '0') +
+                now.getHours().toString().padStart(2, '0') +
+                now.getMinutes().toString().padStart(2, '0') +
+                now.getSeconds().toString().padStart(2, '0') +
+                '_' + vadModeRef.current;
+
+            setLogId(logIdStr);
+            logIdRef.current = logIdStr;
+
+            // Init Log File
+            await window.ipcRenderer.invoke('init-special-log', logIdStr);
+            logDebug(`[Cycle] START RECORDING | Mode=${vadModeRef.current}`);
 
             // 获取麦克风
             const stream = await navigator.mediaDevices.getUserMedia({
@@ -512,6 +568,7 @@ export function useVADRecording(
         setVadMode,
         setTimeLimit,
         sessionId,
-        stream: streamState // Reactive state for Waveform visualization
+        stream: streamState, // Reactive state for Waveform visualization
+        logId // Expose logId for App.tsx to pass to IPC start-recording
     };
 }

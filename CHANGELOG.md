@@ -4,6 +4,22 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [1.1.0] - 2025-12-15
+
+### Added
+- **Waveform UI**: New visualization with gradient pills and "tap to speak" idle state.
+- **Styling**: Integrated UnoCSS for modern, atomic CSS styling.
+- **Monitoring**: Worker heartbeats and load balancing for better stability.
+- **Persistence**: Enabled Redis AOF to prevent data loss.
+
+### Changed
+- **VAD**: Removed legacy FunASR VAD; optimized internal logic.
+- **Performance**: Improved modal animation speed and rendering.
+
+### Fixed
+- **Stability**: Addressed Redis stream memory issues.
+- **Concurrency**: Configurable minimum worker count.
+
 ## [2025-12-14]
 
 ### Added

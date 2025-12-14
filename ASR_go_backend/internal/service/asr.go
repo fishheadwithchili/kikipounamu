@@ -5,6 +5,8 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"sync/atomic"
+	"time"
 
 	"github.com/fishheadwithchili/asr-go-backend/internal/config"
 	"github.com/fishheadwithchili/asr-go-backend/internal/db"
@@ -15,15 +17,59 @@ import (
 )
 
 // ASRService ASR 处理服务
+// ASRService ASR 处理服务
 type ASRService struct {
-	cfg *config.Config
+	cfg           *config.Config
+	activeWorkers int64
 }
 
 // NewASRService 创建 ASR 服务
 func NewASRService(cfg *config.Config) *ASRService {
-	return &ASRService{
+	s := &ASRService{
 		cfg: cfg,
 	}
+	s.StartHealthCheck()
+	return s
+}
+
+// StartHealthCheck starts the background health check loop
+func (s *ASRService) StartHealthCheck() {
+	go func() {
+		// Initial check
+		s.checkWorkers()
+
+		ticker := time.NewTicker(15 * time.Second)
+		defer ticker.Stop()
+
+		for range ticker.C {
+			s.checkWorkers()
+		}
+	}()
+}
+
+func (s *ASRService) checkWorkers() {
+	ctx := context.Background()
+	redisCli := db.GetRedis()
+	if redisCli == nil {
+		return
+	}
+
+	// Scan for heartbeat keys
+	keys, err := redisCli.Keys(ctx, "worker:*:heartbeat").Result()
+	if err != nil {
+		logger.Error("Failed to scan worker heartbeats", zap.Error(err))
+		return
+	}
+
+	count := int64(len(keys))
+	atomic.StoreInt64(&s.activeWorkers, count)
+	logger.Debug("Health check", zap.Int64("active_workers", count))
+}
+
+// IsSystemHealthy checks if there are enough active workers
+func (s *ASRService) IsSystemHealthy() bool {
+	// Threshold is 2 as per plan.
+	return atomic.LoadInt64(&s.activeWorkers) >= 2
 }
 
 // PushChunkToRedis 仅负责将任务推送到 Redis Streams (Fire and Forget)
@@ -99,7 +145,7 @@ func (s *ASRService) SubscribeResults(sessionID string) (<-chan *model.ChunkResu
 				if err := json.Unmarshal([]byte(msgStr), &result); err != nil {
 					continue
 				}
-				
+
 				chunkIndex := int(result["chunk_index"].(float64))
 				if sentIndices[chunkIndex] {
 					continue
@@ -160,7 +206,7 @@ func (s *ASRService) GetHealthStatus() *model.HealthStatus {
 		Status:       "ready",
 		FunASRReady:  true,
 		RedisReady:   redisReady,
-		WorkersReady: 0,
+		WorkersReady: int(atomic.LoadInt64(&s.activeWorkers)),
 	}
 }
 

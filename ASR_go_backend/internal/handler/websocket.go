@@ -42,6 +42,15 @@ func GetConnectionCount() int64 {
 // WebSocketHandler 处理 WebSocket 连接
 func WebSocketHandler(asrService *service.ASRService, sessionService *service.SessionService) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		// P0 Fix: Connection Rejection - Check system health
+		if !asrService.IsSystemHealthy() {
+			logger.Warn("⚠️ 系统不健康 (Worker不足)，拒绝新连接")
+			c.JSON(http.StatusServiceUnavailable, gin.H{
+				"error": "系统繁忙 (Worker不足)，请稍后再试",
+			})
+			return
+		}
+
 		// 检查连接数限制
 		currentCount := atomic.LoadInt64(&connectionCount)
 		if currentCount >= MaxConnections {

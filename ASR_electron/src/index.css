@@ -94,3 +94,148 @@ body {
     opacity: 0.9;
   }
 }
+
+/* Utility Classes */
+.mask-gradient {
+  mask-image: linear-gradient(to bottom, transparent 0%, black 2%, black 98%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 2%, black 98%, transparent 100%);
+}
+
+/* Animation Keyframes */
+@keyframes wave {
+
+  0%,
+  100% {
+    transform: scaleY(0.4);
+    opacity: 0.5;
+  }
+
+  50% {
+    transform: scaleY(1.2);
+    opacity: 1;
+  }
+}
+
+.animate-wave {
+  animation: wave 1s infinite ease-in-out;
+}
+
+@keyframes float3d {
+
+  0%,
+  100% {
+    transform: translateY(0px) rotateX(0deg) rotateY(0deg);
+  }
+
+  25% {
+    transform: translateY(-4px) rotateX(3deg) rotateY(2deg);
+  }
+
+  50% {
+    transform: translateY(0px) rotateX(0deg) rotateY(0deg);
+  }
+
+  75% {
+    transform: translateY(4px) rotateX(-3deg) rotateY(-2deg);
+  }
+}
+
+.animate-float3d {
+  animation: float3d 6s ease-in-out infinite;
+}
+
+@keyframes shadow-breathe {
+
+  0%,
+  100% {
+    transform: translateX(-50%) scaleX(1);
+    opacity: 0.3;
+  }
+
+  25% {
+    transform: translateX(-50%) scaleX(0.8);
+    opacity: 0.2;
+  }
+
+  50% {
+    transform: translateX(-50%) scaleX(1);
+    opacity: 0.3;
+  }
+
+  75% {
+    transform: translateX(-50%) scaleX(1.1);
+    opacity: 0.4;
+  }
+}
+
+.animate-shadow-breathe {
+  animation: shadow-breathe 6s ease-in-out infinite;
+}
+
+@keyframes float-info {
+
+  0%,
+  100% {
+    transform: translateY(0px) rotate3d(0, 1, 0, 0deg);
+  }
+
+  50% {
+    transform: translateY(-12px) rotate3d(0, 1, 0, 15deg);
+  }
+}
+
+.animate-float-info {
+  animation: float-info 6s ease-in-out infinite;
+}
+
+@keyframes float-warning {
+
+  0%,
+  100% {
+    transform: translateY(0px) rotateZ(-3deg);
+  }
+
+  50% {
+    transform: translateY(-8px) rotateZ(3deg);
+  }
+}
+
+.animate-float-warning {
+  animation: float-warning 2.5s ease-in-out infinite;
+}
+
+@keyframes float-error {
+
+  0%,
+  100% {
+    transform: translateY(0px) scale(1) skewX(0deg);
+  }
+
+  40% {
+    transform: translateY(-5px) scale(1.02) skewX(2deg);
+  }
+
+  60% {
+    transform: translateY(2px) scale(0.98) skewX(-2deg);
+  }
+}
+
+@keyframes zoomIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-zoom-in {
+  animation: zoomIn 0.3s ease-out;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}

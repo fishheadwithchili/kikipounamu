@@ -30,7 +30,7 @@ export const AlertOverlay: React.FC<AlertOverlayProps> = ({
             bgColor: 'rgba(239, 68, 68, 0.2)',
             defaultTitle: 'Device Conflict',
             defaultDesc: 'Audio device busy.',
-            animation: 'float-error'
+            animation: 'animate-float-error'
         },
         warning: {
             icon: <AlertCircle size={36} />,
@@ -38,7 +38,7 @@ export const AlertOverlay: React.FC<AlertOverlayProps> = ({
             bgColor: 'rgba(249, 115, 22, 0.2)',
             defaultTitle: 'System Overload',
             defaultDesc: 'Slow down interaction.',
-            animation: 'float-warning'
+            animation: 'animate-float-warning'
         },
         info: {
             icon: <Info size={36} />,
@@ -46,12 +46,13 @@ export const AlertOverlay: React.FC<AlertOverlayProps> = ({
             bgColor: 'rgba(59, 130, 246, 0.2)',
             defaultTitle: 'Calibrated',
             defaultDesc: 'Sensitivity adjusted.',
-            animation: 'float-info'
+            animation: 'animate-float-info'
         }
     }[type]), [type]);
 
     return (
         <div
+            className="animate-fade-in"
             style={{
                 position: 'fixed',
                 inset: 0,
@@ -63,22 +64,22 @@ export const AlertOverlay: React.FC<AlertOverlayProps> = ({
                 backdropFilter: 'blur(12px)',
                 WebkitBackdropFilter: 'blur(12px)',
                 userSelect: 'none',
-                animation: 'fadeIn 0.3s ease-out'
             }}
             role="dialog"
             aria-modal="true"
         >
-            <div style={{
-                position: 'relative',
-                width: '100%',
-                maxWidth: '384px',
-                margin: '0 16px',
-                padding: '2px',
-                borderRadius: '24px',
-                background: 'linear-gradient(to bottom, rgba(255,255,255,0.1), transparent)',
-                boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
-                animation: 'zoomIn 0.3s ease-out'
-            }}>
+            <div
+                className="animate-zoom-in"
+                style={{
+                    position: 'relative',
+                    width: '100%',
+                    maxWidth: '384px',
+                    margin: '0 16px',
+                    padding: '2px',
+                    borderRadius: '24px',
+                    background: 'linear-gradient(to bottom, rgba(255,255,255,0.1), transparent)',
+                    boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
+                }}>
                 <div style={{
                     backgroundColor: '#161922',
                     borderRadius: '22px',
@@ -106,20 +107,21 @@ export const AlertOverlay: React.FC<AlertOverlayProps> = ({
                     }} />
 
                     {/* Animated Icon Container */}
-                    <div style={{
-                        position: 'relative',
-                        width: '80px',
-                        height: '80px',
-                        borderRadius: '24px',
-                        backgroundColor: config.color,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        boxShadow: `0 25px 50px -12px ${config.color}`,
-                        marginBottom: '24px',
-                        color: 'white',
-                        animation: `${config.animation} 3s ease-in-out infinite`
-                    }}>
+                    <div
+                        className={config.animation}
+                        style={{
+                            position: 'relative',
+                            width: '80px',
+                            height: '80px',
+                            borderRadius: '24px',
+                            backgroundColor: config.color,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            boxShadow: `0 25px 50px -12px ${config.color}`,
+                            marginBottom: '24px',
+                            color: 'white',
+                        }}>
                         {config.icon}
                         <div style={{
                             position: 'absolute',
@@ -162,37 +164,13 @@ export const AlertOverlay: React.FC<AlertOverlayProps> = ({
                             fontSize: '14px',
                             transition: 'filter 0.2s'
                         }}
-                        onMouseEnter={(e) => e.currentTarget.style.filter = 'brightness(1.1)'}
-                        onMouseLeave={(e) => e.currentTarget.style.filter = 'brightness(1)'}
+                        onMouseEnter={(e: React.MouseEvent<HTMLButtonElement>) => e.currentTarget.style.filter = 'brightness(1.1)'}
+                        onMouseLeave={(e: React.MouseEvent<HTMLButtonElement>) => e.currentTarget.style.filter = 'brightness(1)'}
                     >
                         Understood
                     </HydroButton>
                 </div>
             </div>
-
-            <style>{`
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-        @keyframes zoomIn {
-          from { opacity: 0; transform: scale(0.95); }
-          to { opacity: 1; transform: scale(1); }
-        }
-        @keyframes float-info {
-          0%, 100% { transform: translateY(0px) rotate3d(0, 1, 0, 0deg); }
-          50% { transform: translateY(-12px) rotate3d(0, 1, 0, 15deg); }
-        }
-        @keyframes float-warning {
-          0%, 100% { transform: translateY(0px) rotateZ(-3deg); }
-          50% { transform: translateY(-8px) rotateZ(3deg); }
-        }
-        @keyframes float-error {
-          0%, 100% { transform: translateY(0px) scale(1) skewX(0deg); }
-          40% { transform: translateY(-5px) scale(1.02) skewX(2deg); }
-          60% { transform: translateY(2px) scale(0.98) skewX(-2deg); }
-        }
-      `}</style>
         </div>
     );
 };

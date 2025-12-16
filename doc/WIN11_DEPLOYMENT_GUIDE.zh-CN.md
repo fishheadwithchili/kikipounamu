@@ -43,7 +43,10 @@
 
 1.  **Git**: [下载](https://git-scm.com/download/win)
 
-2.  **Python 3.10+**: [下载](https://www.python.org/downloads/windows/) (安装时务必勾选 "Add Python to PATH")
+2.  **Python 3.10 (必须/Mandatory)**: [下载 Python 3.10.11](https://www.python.org/downloads/release/python-31011/)
+    *   **注意**: 必须下载 **3.10.11** 版本 (这是最后一个有 Windows 安装包的版本)。
+    *   **选择文件**: 在页面底部 Files 列表中，下载 **"Windows installer (64-bit)"**。
+    *   **安装时**: 务必勾选底部的 **"Add Python 3.10 to PATH"**。
 3.  **Go 1.21+**: [下载](https://go.dev/dl/)
 4.  **Node.js 18+ (LTS)**: [下载](https://nodejs.org/en)
 5.  **FFmpeg**: [下载](https://www.gyan.dev/ffmpeg/builds/) (解压并将 `bin` 文件夹添加到系统环境变量 Path 中)

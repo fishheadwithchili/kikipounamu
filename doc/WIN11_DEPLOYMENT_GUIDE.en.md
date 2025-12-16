@@ -43,7 +43,10 @@ Before starting, ensure you have the following installed:
 
 1.  **Git**: [Download](https://git-scm.com/download/win)
 
-2.  **Python 3.10+**: [Download](https://www.python.org/downloads/windows/) (Make sure to check "Add Python to PATH" during installation)
+2.  **Python 3.10 (Mandatory)**: [Download Python 3.10.11](https://www.python.org/downloads/release/python-31011/)
+    *   **Note**: You MUST use version **3.10.11** (the last version with a Windows installer).
+    *   **File Selection**: Scroll to the "Files" section and download **"Windows installer (64-bit)"**.
+    *   **Installation**: IMPORTANT! Check the box **"Add Python 3.10 to PATH"** at the bottom of the installer.
 3.  **Go 1.21+**: [Download](https://go.dev/dl/)
 4.  **Node.js 18+ (LTS)**: [Download](https://nodejs.org/en)
 5.  **FFmpeg**: [Download](https://www.gyan.dev/ffmpeg/builds/) (Extract and add the `bin` folder to your System Environment Variables Path)

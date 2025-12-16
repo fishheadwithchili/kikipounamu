@@ -24,7 +24,11 @@
 
 ### ✅ 已具备 (Installed)
 - **Git**: 版本 `2.45.2.windows.1`
-- **Python**: 版本 `3.12.4` (符合 ASR_server 要求)
+- **Python**: 版本 `3.12.4` (❌ **版本不匹配**)。
+  - **路径**: `C:\Users\tiger_acer\AppData\Local\Programs\Python\Python312\python.exe`
+  - **来源**: 用户手动安装 (非系统预装)。
+  - **需求**: `ASR_server` 明确要求 `Python 3.10.*`。
+  - **解决方案**: 使用 `uv` 工具自动管理 Python 3.10 环境 (无需卸载当前的 3.12)。
 
 ### ❌ 待安装 (To be Installed)
 以下工具在当前命令行环境中无法找到，是运行项目必须的：

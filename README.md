@@ -58,7 +58,7 @@ The system consists of **3 Core Services** and **2 Infrastructure Dependencies**
 This project is developed and tested in the following specific environment.
 
 *   **OS**: WSL2 (Ubuntu 22.04.5 LTS) on Windows 11
-*   **Python**: 3.10.12
+*   **Python**: 3.10.11 (Last version with official Windows installer)
 *   **Go**: 1.24.5
 *   **Redis**: 6.0.16
 *   **PostgreSQL**: 14.20

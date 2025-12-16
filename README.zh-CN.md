@@ -15,6 +15,21 @@
 > *   **平台状态**: 本项目基于 **WSL2 (Ubuntu)** 开发。Windows 原生环境待测。暂不考虑 macOS。其他 Linux 系统理论可行，但“后果自负”。
 > *   **视频演示**: 商业大片制作中，敬请期待。
 
+## 什么是 "3+2" 架构？
+
+本系统由 **3 个核心服务** 和 **2 个基础依赖** 组成，统称为 "3+2" 架构。
+
+### 3 大核心服务 (Core Services)
+1.  **ASR Python Worker**: 系统的"大脑"。负责繁重的 AI 计算，从 Redis 队列中获取音频并进行转录。
+2.  **ASR Python API**: 系统的"大门"。提供 HTTP 接口，接收前端请求并将任务发送到 Redis。
+3.  **ASR Go Backend**: 系统的"管家"。管理业务逻辑、用户历史记录，并与 PostgreSQL 数据库交互。
+
+### 2 大基础依赖 (Infrastructure)
+1.  **Redis**: "传令兵"。作为消息队列，连接 API 和 Worker，确保任务高效分发。
+2.  **PostgreSQL**: "仓库"。持久化存储所有用户数据和转录历史。
+
+*(以及 1 个客户端: **ASR Electron App**，这是用户直接使用的界面)*
+
 ## 📚 文档
 
 *   **部署指南**: [简体中文](doc/FULL_SYSTEM_STARTUP_GUIDE.zh-CN.md)

@@ -15,6 +15,21 @@
 > *   **Platform Status**: Developed on **WSL2 (Ubuntu)**. Native Windows pending test. macOS not supported. Other Linux distros likely work but "expect the unexpected".
 > *   **Media**: Commercial demo video coming soon.
 
+## What is the "3+2" Architecture?
+
+The system consists of **3 Core Services** and **2 Infrastructure Dependencies**, collectively referred to as the "3+2" architecture.
+
+### 3 Core Services
+1.  **ASR Python Worker**: The "Brain". Handles heavy AI computations, fetching audio from the Redis queue and transcribing it.
+2.  **ASR Python API**: The "Gateway". Provides HTTP interfaces, receiving requests from the frontend and dispatching tasks to Redis.
+3.  **ASR Go Backend**: The "Steward". Manages business logic, user history, and interactions with the PostgreSQL database.
+
+### 2 Infrastructure Dependencies
+1.  **Redis**: The "Messenger". Acts as a message queue connecting the API and Worker, ensuring efficient task distribution.
+2.  **PostgreSQL**: The "Warehouse". Persistently stores all user data and transcription history.
+
+*(Plus 1 Client: **ASR Electron App**, which is the user-facing interface)*
+
 ## 📚 Documentation
 
 *   **Deployment Guide**: [English](doc/FULL_SYSTEM_STARTUP_GUIDE.en.md)

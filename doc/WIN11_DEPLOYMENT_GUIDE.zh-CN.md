@@ -53,8 +53,11 @@
     *   配置 PATH 方法：`Windows 设置` → `系统` → `高级系统设置` → `环境变量` → 在 `系统变量` 中找到 `Path` → `编辑` → `新建` → 粘贴 bin 路径 → `确定`
     *   验证安装：打开新的终端窗口，运行 `ffmpeg -version`
 6.  **数据库**:
-    *   **Redis 6.0.16**: 推荐使用 WSL2 安装 (Windows 原生版仅支持到 5.0)。
+    *   **Redis 5.0.14.1**: [下载 MSI 安装包](https://github.com/tporadowski/redis/releases/download/v5.0.14.1/Redis-x64-5.0.14.1.msi) (Windows 原生版，支持 Streams)。
+        *   **注意**: 安装时务必勾选 ✅ `Add the Redis installation folder to the PATH environment variable`。
+        *   **补救措施**: 如果安装后发现 `redis-server` 或 `redis-cli` 无法运行，请手动将 `C:\Program Files\Redis` 添加到系统环境变量 **Path** 中，并**重启终端**。
     *   **PostgreSQL 14.20**: [下载安装包](https://get.enterprisedb.com/postgresql/postgresql-14.20-1-windows-x64.exe) (默认用户 `postgres`，密码设为 `123456`)。
+        *   **注意**: 安装完成后会弹出 "Stack Builder" 提示，请直接点击 **Cancel** 取消，本项目不需要此步骤。
 
 ---
 
@@ -69,7 +72,8 @@
 确保 Redis 和 PostgreSQL 正在运行。
 
 ```powershell
-# 启动 Redis (如果使用 Windows 原生版)
+# 启动 Redis (假设已安装为 Windows 服务，通常会自动启动)
+# 如果手动启动：
 redis-server
 ```
 
@@ -208,3 +212,7 @@ npm run dev
     *   解决: 运行 `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser`。
 *   **找不到 FFmpeg**:
     *   确保已下载 FFmpeg 并将其 `bin` 目录添加到了 Windows 的系统环境变量 `Path` 中。重启终端生效。
+*   **找不到 Redis 命令 (redis-server / redis-cli)**:
+    *   错误: `The term 'redis-server' is not recognized...`
+    *   原因: Redis 安装目录未添加到系统 Path 环境变量，但服务可能已在后台运行。
+    *   解决: 将 `C:\Program Files\Redis` 添加到用户环境变量 Path 中。**修改后必须重启终端**才会生效。

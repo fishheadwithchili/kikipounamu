@@ -70,8 +70,8 @@ Ensure the following software is installed before starting:
 
 *   **Redis**: For the Python backend task queue.
 *   **PostgreSQL**: For the Go backend history storage.
-*   **Python 3.8+**: To run ASR_server.
-*   **Go 1.21+**: To run ASR_go_backend.
+*   **Python 3.10.11**: To run ASR_server.
+*   **Go 1.24.5**: To run ASR_go_backend.
 *   **Node.js & pnpm**: To run the frontend.
 
 ### Start Infrastructure

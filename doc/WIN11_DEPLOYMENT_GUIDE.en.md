@@ -43,7 +43,7 @@ Before starting, ensure you have the following installed:
 
 1.  **Git**: [Download](https://git-scm.com/download/win)
 
-2.  **Python 3.10.12**: [Download](https://www.python.org/ftp/python/3.10.12/python-3.10.12-amd64.exe) (Make sure to check "Add Python to PATH" during installation)
+2.  **Python 3.10.11**: [Download](https://www.python.org/ftp/python/3.10.11/python-3.10.11-amd64.exe) (Make sure to check "Add Python to PATH" during installation)
 3.  **Go 1.24.5**: [Download](https://go.dev/dl/go1.24.5.windows-amd64.msi)
 4.  **Node.js 24.11.1**: [Download](https://nodejs.org/dist/v24.11.1/node-v24.11.1-x64.msi)
 5.  **FFmpeg (Latest)**: 
@@ -53,8 +53,11 @@ Before starting, ensure you have the following installed:
     *   How to configure PATH: `Windows Settings` → `System` → `Advanced system settings` → `Environment Variables` → Find `Path` in `System variables` → `Edit` → `New` → Paste bin path → `OK`
     *   Verify installation: Open a new terminal and run `ffmpeg -version`
 6.  **Databases**:
-    *   **Redis 6.0.16**: Recommended to use WSL2 (Windows native only supports up to 5.0).
+    *   **Redis 5.0.14.1**: [Download MSI Installer](https://github.com/tporadowski/redis/releases/download/v5.0.14.1/Redis-x64-5.0.14.1.msi) (Native Windows, supports Streams).
+        *   **Note**: Ensure you check ✅ `Add the Redis installation folder to the PATH environment variable` during installation.
+        *   **Fix**: If `redis-server` or `redis-cli` commands are **not recognized**, manually add `C:\Program Files\Redis` to your system **Path** environment variable and **restart your terminal**.
     *   **PostgreSQL 14.20**: [Download Installer](https://get.enterprisedb.com/postgresql/postgresql-14.20-1-windows-x64.exe) (Default user `postgres`, set password to `123456`).
+        *   **Note**: After installation, if prompted for "Stack Builder", click **Cancel** to skip. It is not required for this project.
 
 ---
 
@@ -69,7 +72,8 @@ If you are comfortable with the native Windows PowerShell, follow these steps.
 Ensure Redis and PostgreSQL are running.
 
 ```powershell
-# Start Redis (if using Windows native version)
+# Start Redis (Assuming installed as Windows Service, usually starts auto)
+# If manual start needed:
 redis-server
 ```
 
@@ -208,3 +212,7 @@ npm run dev
     *   Fix: Run `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser`.
 *   **FFmpeg Not Found**:
     *   Ensure you have downloaded FFmpeg and added its `bin` directory to your Windows System Environment Variables `Path`. Restart your terminal for changes to take effect.
+*   **Redis Command Not Found (redis-server / redis-cli)**:
+    *   Error: `The term 'redis-server' is not recognized...`
+    *   Cause: Redis installation directory is not in the system Path, though the service might be running in the background.
+    *   Fix: Add `C:\Program Files\Redis` to your User Environment Variables Path. **You must restart your terminal** for changes to take effect.

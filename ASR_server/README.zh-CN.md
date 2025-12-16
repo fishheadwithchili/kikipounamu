@@ -94,9 +94,8 @@ uv sync
 ### 2. 启动服务 (3 个终端)
 
 ```bash
-# 终端 1: 启动 Redis (推荐使用 service 命令以兼容 WSL)
-sudo service redis-server start
-# 或者: sudo systemctl start redis-server
+# 终端 1: 启动 Redis
+redis-server
 
 # 终端 2: 启动 Workers
 ./scripts/start_unified_worker.sh
@@ -217,7 +216,7 @@ tail -f src/storage/logs/asr_worker.log
 - **Web 框架**: FastAPI 0.115.0
 - **ASGI 服务器**: Uvicorn 0.32.0
 - **任务队列**: Redis Streams (Consumer Groups)
-- **消息存储**: Redis 6.0.16
+- **消息存储**: Redis 5.0.14 (Windows Native)
 - **ASR 引擎**: FunASR (ModelScope)
 - **深度学习**: PyTorch 2.7.0
 

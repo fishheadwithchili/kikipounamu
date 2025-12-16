@@ -12,7 +12,7 @@
 
 > [!NOTE]
 > *   **Run via Terminal**: No pre-built binaries yet. Please run from source.
-> *   **Platform Status**: Developed on **WSL2 (Ubuntu)**. Native Windows pending test. macOS not supported. Other Linux distros likely work but "expect the unexpected".
+> *   **Platform Status**: Supports **Windows Native** and **WSL2**. Native Windows deployment is recommended for best compatibility.
 > *   **Media**: Commercial demo video coming soon.
 
 ## What is the "3+2" Architecture?
@@ -57,8 +57,8 @@ The system consists of **3 Core Services** and **2 Infrastructure Dependencies**
 
 This project is developed and tested in the following specific environment.
 
-*   **OS**: WSL2 (Ubuntu 22.04.5 LTS) on Windows 11
-*   **Python**: 3.10.11 (Last version with official Windows installer)
+*   **OS**: Windows 10/11 (Native) or WSL2 (Ubuntu 22.04)
+*   **Python**: 3.10.11 (Strict requirement for Windows compatibility)
 *   **Go**: 1.24.5
 *   **Redis**: 6.0.16
 *   **PostgreSQL**: 14.20

@@ -55,7 +55,7 @@ model = AutoModel(
 *   **Redis**: 用于 Python 后端的任务流 (Task Stream)。
 *   **PostgreSQL**: 用于 Go 后端的历史记录存储。
 *   **Python 3.8+**: 运行 ASR_server。
-*   **Go 1.21+**: 运行 ASR_go_backend。
+*   **Go 1.24.5**: 运行 ASR_go_backend。
 *   **Node.js & pnpm**: 运行前端。
 
 ### 启动基础设施

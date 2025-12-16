@@ -97,9 +97,8 @@ uv sync
 ### 2. Start Services (3 Terminals)
 
 ```bash
-# Terminal 1: Start Redis (Recommend using service command for WSL compatibility)
-sudo service redis-server start
-# Or: sudo systemctl start redis-server
+# Terminal 1: Start Redis
+redis-server
 
 # Terminal 2: Start Workers
 ./scripts/start_unified_worker.sh
@@ -220,7 +219,7 @@ tail -f src/storage/logs/asr_worker.log
 - **Web Framework**: FastAPI 0.115.0
 - **ASGI Server**: Uvicorn 0.32.0
 - **Task Queue**: Redis Streams (Consumer Groups)
-- **Message Store**: Redis 6.0.16
+- **Message Store**: Redis 5.0.14 (Windows Native)
 - **ASR Engine**: FunASR (ModelScope)
 - **Deep Learning**: PyTorch 2.7.0
 

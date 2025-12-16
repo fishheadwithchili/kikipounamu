@@ -25,7 +25,7 @@ I adopt **"Three-in-One" Modular Architecture** to ensure best recognition accur
 
 ## 2. Environment Preparation
 
-Ensure Python 3.8+ is installed.
+Ensure Python 3.10.11 is installed.
 
 ### Install Dependencies
 Run in project root:

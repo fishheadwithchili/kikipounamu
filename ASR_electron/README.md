@@ -6,7 +6,11 @@ This is the desktop client for the ASR project, built with Electron + React + Ty
 
 Before starting the client, please ensure that **ASR_server** (Python) and **ASR_go_backend** (Go) are running normally.
 
-### 1. Install Dependencies
+### 1. Prerequisites
+
+*   **Node.js**: 24.11.1
+
+### 2. Install Dependencies
 
 ```bash
 npm install

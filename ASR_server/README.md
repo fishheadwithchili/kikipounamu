@@ -217,12 +217,12 @@ tail -f src/storage/logs/asr_worker.log
 
 ## 🛠️ Tech Stack
 
-- **Web Framework**: FastAPI 0.115+
-- **ASGI Server**: Uvicorn 0.32+
+- **Web Framework**: FastAPI 0.115.0
+- **ASGI Server**: Uvicorn 0.32.0
 - **Task Queue**: Redis Streams (Consumer Groups)
-- **Message Store**: Redis 5.0+
+- **Message Store**: Redis 6.0.16
 - **ASR Engine**: FunASR (ModelScope)
-- **Deep Learning**: PyTorch 2.0+
+- **Deep Learning**: PyTorch 2.7.0
 
 ## 📄 License
 

@@ -214,12 +214,12 @@ tail -f src/storage/logs/asr_worker.log
 
 ## 🛠️ 技术栈
 
-- **Web 框架**: FastAPI 0.115+
-- **ASGI 服务器**: Uvicorn 0.32+
+- **Web 框架**: FastAPI 0.115.0
+- **ASGI 服务器**: Uvicorn 0.32.0
 - **任务队列**: Redis Streams (Consumer Groups)
-- **消息存储**: Redis 5.0+
+- **消息存储**: Redis 6.0.16
 - **ASR 引擎**: FunASR (ModelScope)
-- **深度学习**: PyTorch 2.0+
+- **深度学习**: PyTorch 2.7.0
 
 ## 📄 许可证
 

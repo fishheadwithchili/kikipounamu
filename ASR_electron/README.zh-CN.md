@@ -6,7 +6,11 @@
 
 在启动客户端之前，请确保 **ASR_server** (Python) 和 **ASR_go_backend** (Go) 都已经正常运行。
 
-### 1. 安装依赖
+### 1. 环境准备
+
+*   **Node.js**: 24.11.1
+
+### 2. 安装依赖
 
 ```bash
 npm install

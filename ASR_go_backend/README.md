@@ -36,10 +36,10 @@ This project adopts the **Async Producer-Consumer Model**, achieving complete de
 
 ## 🛠️ Tech Stack
 
-*   **Language**: Go 1.21+
+*   **Language**: Go 1.24.5
 *   **Web Framework**: Gin
 *   **WebSocket**: Gorilla WebSocket
-*   **Database**: PostgreSQL 14+ (pgx driver)
+*   **Database**: PostgreSQL 14.20 (pgx driver)
 *   **Configuration**: Environment Variables
 
 ## 🚀 Deployment & Startup
@@ -47,8 +47,8 @@ This project adopts the **Async Producer-Consumer Model**, achieving complete de
 ### 1. Prerequisites
 
 Ensure the server has installed:
-*   **Go** (>= 1.21)
-*   **PostgreSQL** (>= 14)
+*   **Go** (1.24.5)
+*   **PostgreSQL** (14.20)
 *   **FFmpeg** (Included in PATH)
 
 ### 2. Database Configuration

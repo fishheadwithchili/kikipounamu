@@ -43,13 +43,13 @@
 
 1.  **Git**: [下载](https://git-scm.com/download/win)
 
-2.  **Python 3.10+**: [下载](https://www.python.org/downloads/windows/) (安装时务必勾选 "Add Python to PATH")
-3.  **Go 1.21+**: [下载](https://go.dev/dl/)
-4.  **Node.js 18+ (LTS)**: [下载](https://nodejs.org/en)
-5.  **FFmpeg**: [下载](https://www.gyan.dev/ffmpeg/builds/) (解压并将 `bin` 文件夹添加到系统环境变量 Path 中)
+2.  **Python 3.10.12**: [下载](https://www.python.org/ftp/python/3.10.12/python-3.10.12-amd64.exe) (安装时务必勾选 "Add Python to PATH")
+3.  **Go 1.24.5**: [下载](https://go.dev/dl/go1.24.5.windows-amd64.msi)
+4.  **Node.js 24.11.1**: [下载](https://nodejs.org/dist/v24.11.1/node-v24.11.1-x64.msi)
+5.  **FFmpeg 4.4.2**: [下载](https://www.gyan.dev/ffmpeg/builds/packages/ffmpeg-4.4.2-full_build.7z) (解压并将 `bin` 文件夹添加到系统环境变量 Path 中)
 6.  **数据库**:
-    *   **Redis**: 推荐使用 WSL2 安装，或下载 [Redis for Windows](https://github.com/tporadowski/redis/releases)。
-    *   **PostgreSQL**: [下载安装包](https://www.postgresql.org/download/windows/) (默认用户 `postgres`，密码设为 `123456`)。
+    *   **Redis 6.0.16**: 推荐使用 WSL2 安装 (Windows 原生版仅支持到 5.0)。
+    *   **PostgreSQL 14.20**: [下载安装包](https://get.enterprisedb.com/postgresql/postgresql-14.20-1-windows-x64.exe) (默认用户 `postgres`，密码设为 `123456`)。
 
 ---
 

@@ -43,13 +43,13 @@ Before starting, ensure you have the following installed:
 
 1.  **Git**: [Download](https://git-scm.com/download/win)
 
-2.  **Python 3.10+**: [Download](https://www.python.org/downloads/windows/) (Make sure to check "Add Python to PATH" during installation)
-3.  **Go 1.21+**: [Download](https://go.dev/dl/)
-4.  **Node.js 18+ (LTS)**: [Download](https://nodejs.org/en)
-5.  **FFmpeg**: [Download](https://www.gyan.dev/ffmpeg/builds/) (Extract and add the `bin` folder to your System Environment Variables Path)
+2.  **Python 3.10.12**: [Download](https://www.python.org/ftp/python/3.10.12/python-3.10.12-amd64.exe) (Make sure to check "Add Python to PATH" during installation)
+3.  **Go 1.24.5**: [Download](https://go.dev/dl/go1.24.5.windows-amd64.msi)
+4.  **Node.js 24.11.1**: [Download](https://nodejs.org/dist/v24.11.1/node-v24.11.1-x64.msi)
+5.  **FFmpeg 4.4.2**: [Download](https://www.gyan.dev/ffmpeg/builds/packages/ffmpeg-4.4.2-full_build.7z) (Extract and add the `bin` folder to your System Environment Variables Path)
 6.  **Databases**:
-    *   **Redis**: Recommended to use WSL2, or download [Redis for Windows](https://github.com/tporadowski/redis/releases).
-    *   **PostgreSQL**: [Download Installer](https://www.postgresql.org/download/windows/) (Default user `postgres`, set password to `123456`).
+    *   **Redis 6.0.16**: Recommended to use WSL2 (Windows native only supports up to 5.0).
+    *   **PostgreSQL 14.20**: [Download Installer](https://get.enterprisedb.com/postgresql/postgresql-14.20-1-windows-x64.exe) (Default user `postgres`, set password to `123456`).
 
 ---
 

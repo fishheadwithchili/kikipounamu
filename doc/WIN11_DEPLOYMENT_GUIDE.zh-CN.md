@@ -47,7 +47,7 @@
     *   **注意**: 必须下载 **3.10.11** 版本 (这是最后一个有 Windows 安装包的版本)。
     *   **选择文件**: 在页面底部 Files 列表中，下载 **"Windows installer (64-bit)"**。
     *   **安装时**: 务必勾选底部的 **"Add Python 3.10 to PATH"**。
-3.  **Go 1.21+**: [下载](https://go.dev/dl/)
+3.  **Go 1.24.5**: [下载 MSI 安装包](https://go.dev/dl/go1.24.5.windows-amd64.msi) (请下载 1.24.5 版本)
 4.  **Node.js 18+ (LTS)**: [下载](https://nodejs.org/en)
 5.  **FFmpeg**: [下载](https://www.gyan.dev/ffmpeg/builds/) (解压并将 `bin` 文件夹添加到系统环境变量 Path 中)
 6.  **数据库**:

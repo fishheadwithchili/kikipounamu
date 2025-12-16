@@ -47,7 +47,7 @@ Before starting, ensure you have the following installed:
     *   **Note**: You MUST use version **3.10.11** (the last version with a Windows installer).
     *   **File Selection**: Scroll to the "Files" section and download **"Windows installer (64-bit)"**.
     *   **Installation**: IMPORTANT! Check the box **"Add Python 3.10 to PATH"** at the bottom of the installer.
-3.  **Go 1.21+**: [Download](https://go.dev/dl/)
+3.  **Go 1.24.5**: [Download MSI Installer](https://go.dev/dl/go1.24.5.windows-amd64.msi) (Please download version 1.24.5)
 4.  **Node.js 18+ (LTS)**: [Download](https://nodejs.org/en)
 5.  **FFmpeg**: [Download](https://www.gyan.dev/ffmpeg/builds/) (Extract and add the `bin` folder to your System Environment Variables Path)
 6.  **Databases**:

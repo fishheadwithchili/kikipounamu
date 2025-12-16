@@ -12,13 +12,13 @@ import (
 	"time"
 )
 
-// ASRClient 调用现有的 ASR_server (Python FastAPI) 客户端
+// ASRClient is a client for existing ASR_server (Python FastAPI)
 type ASRClient struct {
 	baseURL    string
 	httpClient *http.Client
 }
 
-// SubmitResponse 提交任务响应
+// SubmitResponse is the response for task submission
 type SubmitResponse struct {
 	TaskID        string `json:"task_id"`
 	Status        string `json:"status"`
@@ -26,7 +26,7 @@ type SubmitResponse struct {
 	EstimatedWait int    `json:"estimated_wait"`
 }
 
-// TaskResult 任务结果
+// TaskResult is the task result
 type TaskResult struct {
 	TaskID         string  `json:"task_id"`
 	Status         string  `json:"status"`
@@ -36,7 +36,7 @@ type TaskResult struct {
 	Error          string  `json:"error,omitempty"`
 }
 
-// NewASRClient 创建 ASR 客户端
+// NewASRClient creates ASR client
 func NewASRClient(baseURL string) *ASRClient {
 	return &ASRClient{
 		baseURL: baseURL,
@@ -46,74 +46,74 @@ func NewASRClient(baseURL string) *ASRClient {
 	}
 }
 
-// SubmitAudio 提交音频到 ASR_server
+// SubmitAudio submits audio to ASR_server
 func (c *ASRClient) SubmitAudio(audioData []byte, filename string) (*SubmitResponse, error) {
-	// 创建 multipart form
+	// Create multipart form
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
 	part, err := writer.CreateFormFile("audio", filename)
 	if err != nil {
-		return nil, fmt.Errorf("创建 form file 失败: %w", err)
+		return nil, fmt.Errorf("failed to create form file: %w", err)
 	}
 
 	if _, err := part.Write(audioData); err != nil {
-		return nil, fmt.Errorf("写入音频数据失败: %w", err)
+		return nil, fmt.Errorf("failed to write audio data: %w", err)
 	}
 
 	if err := writer.Close(); err != nil {
-		return nil, fmt.Errorf("关闭 writer 失败: %w", err)
+		return nil, fmt.Errorf("failed to close writer: %w", err)
 	}
 
 	url := fmt.Sprintf("%s/api/v1/asr/submit", c.baseURL)
 	req, err := http.NewRequest("POST", url, body)
 	if err != nil {
-		return nil, fmt.Errorf("创建请求失败: %w", err)
+		return nil, fmt.Errorf("failed to create request: %w", err)
 	}
 	req.Header.Set("Content-Type", writer.FormDataContentType())
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("请求失败: %w", err)
+		return nil, fmt.Errorf("request failed: %w", err)
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		bodyBytes, _ := io.ReadAll(resp.Body)
-		return nil, fmt.Errorf("提交失败: %s", string(bodyBytes))
+		return nil, fmt.Errorf("submit failed: %s", string(bodyBytes))
 	}
 
 	var result SubmitResponse
 	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
-		return nil, fmt.Errorf("解析响应失败: %w", err)
+		return nil, fmt.Errorf("response decode failed: %w", err)
 	}
 
 	return &result, nil
 }
 
-// GetResult 获取任务结果
+// GetResult gets task result
 func (c *ASRClient) GetResult(taskID string) (*TaskResult, error) {
 	url := fmt.Sprintf("%s/api/v1/asr/result/%s", c.baseURL, taskID)
 
 	resp, err := c.httpClient.Get(url)
 	if err != nil {
-		return nil, fmt.Errorf("请求失败: %w", err)
+		return nil, fmt.Errorf("request failed: %w", err)
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode == http.StatusNotFound {
-		return nil, fmt.Errorf("任务不存在: %s", taskID)
+		return nil, fmt.Errorf("task not found: %s", taskID)
 	}
 
 	var result TaskResult
 	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
-		return nil, fmt.Errorf("解析响应失败: %w", err)
+		return nil, fmt.Errorf("response decode failed: %w", err)
 	}
 
 	return &result, nil
 }
 
-// WaitForResult 等待任务完成并返回结果
+// WaitForResult waits for task completion
 func (c *ASRClient) WaitForResult(taskID string, timeout time.Duration) (*TaskResult, error) {
 	deadline := time.Now().Add(timeout)
 
@@ -127,40 +127,40 @@ func (c *ASRClient) WaitForResult(taskID string, timeout time.Duration) (*TaskRe
 		case "done":
 			return result, nil
 		case "failed":
-			return nil, fmt.Errorf("识别失败: %s", result.Error)
+			return nil, fmt.Errorf("recognition failed: %s", result.Error)
 		default:
-			// queued 或 processing，继续等待
+			// queued or processing, continue waiting
 			time.Sleep(500 * time.Millisecond)
 		}
 	}
 
-	return nil, fmt.Errorf("等待超时")
+	return nil, fmt.Errorf("wait timeout")
 }
 
-// Recognize 识别音频（提交并等待结果）
+// Recognize recognizes audio (submit and wait)
 func (c *ASRClient) Recognize(audioData []byte) (string, float64, error) {
 	var wavData []byte
 
-	// 检测音频格式
+	// Detect audio format
 	if isWebM(audioData) {
-		// WebM 格式，使用 FFmpeg 转换
+		// WebM format, convert using FFmpeg
 		converted, err := convertWebMToWAV(audioData)
 		if err != nil {
-			return "", 0, fmt.Errorf("WebM 转换失败: %w", err)
+			return "", 0, fmt.Errorf("WebM convert failed: %w", err)
 		}
 		wavData = converted
 	} else {
-		// 假设是原始 PCM，添加 WAV 头
+		// Assume raw PCM, add WAV header
 		wavData = addWAVHeader(audioData)
 	}
 
-	// 提交任务
+	// Submit task
 	submitResp, err := c.SubmitAudio(wavData, "chunk.wav")
 	if err != nil {
 		return "", 0, err
 	}
 
-	// 等待结果
+	// Wait for result
 	result, err := c.WaitForResult(submitResp.TaskID, 300*time.Second)
 	if err != nil {
 		return "", 0, err
@@ -169,7 +169,7 @@ func (c *ASRClient) Recognize(audioData []byte) (string, float64, error) {
 	return result.Text, result.Duration, nil
 }
 
-// IsReady 检查服务是否就绪
+// IsReady checks if service is ready
 func (c *ASRClient) IsReady() bool {
 	url := fmt.Sprintf("%s/api/v1/health", c.baseURL)
 	resp, err := c.httpClient.Get(url)
@@ -180,7 +180,7 @@ func (c *ASRClient) IsReady() bool {
 	return resp.StatusCode == http.StatusOK
 }
 
-// addWAVHeader 为 raw PCM 添加 WAV 头 (16kHz, 16bit, mono)
+// addWAVHeader adds WAV header for raw PCM
 func addWAVHeader(pcm []byte) []byte {
 	header := make([]byte, 44)
 	dataSize := len(pcm)
@@ -220,46 +220,46 @@ func putUint16(b []byte, v uint16) {
 	b[1] = byte(v >> 8)
 }
 
-// isWebM 检测是否为 WebM 格式
+// isWebM checks if data is WebM
 func isWebM(data []byte) bool {
 	if len(data) < 4 {
 		return false
 	}
-	// WebM 文件以 0x1A45DFA3 (EBML header) 开头
+	// WebM file starts with 0x1A45DFA3 (EBML header)
 	return data[0] == 0x1A && data[1] == 0x45 && data[2] == 0xDF && data[3] == 0xA3
 }
 
-// convertWebMToWAV 使用 FFmpeg 将 WebM 转换为 WAV
+// convertWebMToWAV converts WebM to WAV using FFmpeg
 func convertWebMToWAV(webmData []byte) ([]byte, error) {
-	// 创建临时文件存储 WebM 数据
+	// Create temp file for WebM
 	tmpWebM, err := os.CreateTemp("", "audio_*.webm")
 	if err != nil {
-		return nil, fmt.Errorf("创建临时 WebM 文件失败: %w", err)
+		return nil, fmt.Errorf("failed to create temp WebM file: %w", err)
 	}
 	defer os.Remove(tmpWebM.Name())
 
 	if _, err := tmpWebM.Write(webmData); err != nil {
 		tmpWebM.Close()
-		return nil, fmt.Errorf("写入 WebM 数据失败: %w", err)
+		return nil, fmt.Errorf("failed to write WebM data: %w", err)
 	}
 	tmpWebM.Close()
 
-	// 创建临时 WAV 文件
+	// Create temp WAV file
 	tmpWAV, err := os.CreateTemp("", "audio_*.wav")
 	if err != nil {
-		return nil, fmt.Errorf("创建临时 WAV 文件失败: %w", err)
+		return nil, fmt.Errorf("failed to create temp WAV file: %w", err)
 	}
 	tmpWAVName := tmpWAV.Name()
 	tmpWAV.Close()
 	defer os.Remove(tmpWAVName)
 
-	// 使用 FFmpeg 转换：16kHz, mono, 16-bit PCM
+	// Use FFmpeg: 16kHz, mono, 16-bit PCM
 	cmd := exec.Command("ffmpeg",
 		"-i", tmpWebM.Name(),
-		"-ar", "16000", // 采样率 16kHz
-		"-ac", "1", // 单声道
+		"-ar", "16000", // Sample rate 16kHz
+		"-ac", "1", // Mono
 		"-sample_fmt", "s16", // 16-bit
-		"-y", // 覆盖输出文件
+		"-y", // Overwrite output file
 		tmpWAVName,
 	)
 
@@ -267,13 +267,13 @@ func convertWebMToWAV(webmData []byte) ([]byte, error) {
 	cmd.Stderr = &stderr
 
 	if err := cmd.Run(); err != nil {
-		return nil, fmt.Errorf("FFmpeg 转换失败: %w, stderr: %s", err, stderr.String())
+		return nil, fmt.Errorf("FFmpeg failed: %w, stderr: %s", err, stderr.String())
 	}
 
-	// 读取转换后的 WAV 文件
+	// Read converted WAV file
 	wavData, err := os.ReadFile(tmpWAVName)
 	if err != nil {
-		return nil, fmt.Errorf("读取 WAV 文件失败: %w", err)
+		return nil, fmt.Errorf("failed to read WAV file: %w", err)
 	}
 
 	return wavData, nil

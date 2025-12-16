@@ -16,7 +16,7 @@ import (
 )
 
 const (
-	// MaxConnections 最大 WebSocket 连接数
+	// MaxConnections Limit
 	MaxConnections = 1000
 )
 
@@ -29,52 +29,52 @@ var (
 		WriteBufferSize: 1024,
 	}
 
-	// 连接计数器
+	// Connection Counter
 	connectionCount int64
 	connectionMu    sync.Mutex
 )
 
-// GetConnectionCount 获取当前连接数
+// GetConnectionCount returns current active connections
 func GetConnectionCount() int64 {
 	return atomic.LoadInt64(&connectionCount)
 }
 
-// WebSocketHandler 处理 WebSocket 连接
+// WebSocketHandler handles WebSocket connections
 func WebSocketHandler(asrService *service.ASRService, sessionService *service.SessionService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// P0 Fix: Connection Rejection - Check system health
 		if !asrService.IsSystemHealthy() {
-			logger.Warn("⚠️ 系统不健康 (Worker不足)，拒绝新连接")
+			logger.Warn("⚠️ System unhealthy (Insufficient workers), rejecting connection")
 			c.JSON(http.StatusServiceUnavailable, gin.H{
-				"error": "系统繁忙 (Worker不足)，请稍后再试",
+				"error": "System busy (Insufficient workers), please try again later",
 			})
 			return
 		}
 
-		// 检查连接数限制
+		// Check connection limit
 		currentCount := atomic.LoadInt64(&connectionCount)
 		if currentCount >= MaxConnections {
-			logger.Warn("⚠️ 连接数已达上限，拒绝新连接",
+			logger.Warn("⚠️ Connection limit reached, rejecting new connection",
 				zap.Int64("current", currentCount),
 				zap.Int("max", MaxConnections))
 			c.JSON(http.StatusServiceUnavailable, gin.H{
-				"error": "连接数已达上限，请稍后再试",
+				"error": "Connection limit reached, please try again later",
 			})
 			return
 		}
 
 		conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 		if err != nil {
-			logger.Error("WebSocket 升级失败", zap.Error(err))
+			logger.Error("WebSocket upgrade failed", zap.Error(err))
 			return
 		}
 
-		// 增加连接计数
+		// Increment connection count
 		atomic.AddInt64(&connectionCount, 1)
-		logger.Info("✅ 新的 WebSocket 连接",
+		logger.Info("✅ New WebSocket Connection",
 			zap.Int64("active_connections", atomic.LoadInt64(&connectionCount)))
 
-		// 订阅清理函数 (session end时调用)
+		// Subscribe cleanup function (called on session end)
 		var stopSubscription func()
 
 		defer func() {
@@ -83,11 +83,11 @@ func WebSocketHandler(asrService *service.ASRService, sessionService *service.Se
 			}
 			conn.Close()
 			atomic.AddInt64(&connectionCount, -1)
-			logger.Info("❌ WebSocket 连接已断开",
+			logger.Info("❌ WebSocket Disconnected",
 				zap.Int64("active_connections", atomic.LoadInt64(&connectionCount)))
 		}()
 
-		// 使用互斥锁保护写入操作
+		// Mutex for write safety
 		var writeMu sync.Mutex
 		sendJSONSafe := func(v interface{}) {
 			writeMu.Lock()
@@ -100,7 +100,7 @@ func WebSocketHandler(asrService *service.ASRService, sessionService *service.Se
 			_, message, err := conn.ReadMessage()
 			if err != nil {
 				if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
-					logger.Warn("WebSocket 异常关闭", zap.Error(err))
+					logger.Warn("WebSocket unexpected close", zap.Error(err))
 				}
 				break
 			}
@@ -109,14 +109,14 @@ func WebSocketHandler(asrService *service.ASRService, sessionService *service.Se
 			if err := json.Unmarshal(message, &msg); err != nil {
 				sendJSONSafe(model.ServerMessage{
 					Type:    "error",
-					Message: "无效的消息格式",
+					Message: "Invalid message format",
 				})
 				continue
 			}
 
 			switch msg.Action {
 			case "start":
-				// 在这里启动订阅，并保存 cleanup 函数
+				// Start subscription here and save cleanup function
 				stopSub := handleStart(sendJSONSafe, msg, asrService, sessionService)
 				stopSubscription = stopSub
 			case "chunk":
@@ -126,45 +126,45 @@ func WebSocketHandler(asrService *service.ASRService, sessionService *service.Se
 			default:
 				sendJSONSafe(model.ServerMessage{
 					Type:    "error",
-					Message: "未知的 action: " + msg.Action,
+					Message: "Unknown action: " + msg.Action,
 				})
 			}
 		}
 	}
 }
 
-// handleStart 初始化会话并启动结果订阅协程
+// handleStart initializes session and starts result subscription
 func handleStart(sendJSON func(interface{}), msg model.ChunkMessage, asrService *service.ASRService, sessionService *service.SessionService) func() {
 	session := sessionService.CreateSession(msg.SessionID, msg.UserID)
-	logger.Info("会话开始",
+	logger.Info("Session Started",
 		zap.String("session_id", session.ID),
 		zap.String("user_id", msg.UserID))
 
-	// 1. 订阅 Redis 结果 (Async)
+	// 1. Subscribe Redis results (Async)
 	resultCh, cancel, err := asrService.SubscribeResults(session.ID)
 	if err != nil {
-		logger.Error("订阅结果失败", zap.Error(err))
+		logger.Error("Subscription failed", zap.Error(err))
 		sendJSON(model.ServerMessage{
 			Type:    "error",
-			Message: "服务内部错误: 无法订阅结果",
+			Message: "Internal Error: Failed to subscribe results",
 		})
 		return nil
 	}
 
-	// 2. 启动协程处理 Redis 返回的结果
+	// 2. Start goroutine to handle Redis results
 	go func() {
 		for res := range resultCh {
 			if res.Error != nil {
-				logger.Error("Worker 返回错误", zap.String("session_id", session.ID), zap.Error(res.Error))
-				// 更新 session 状态 (可选)
+				logger.Error("Worker returned error", zap.String("session_id", session.ID), zap.Error(res.Error))
+				// Update session status (optional)
 				sessionService.SetChunkResult(session.ID, res.ChunkIndex, "", res.Error)
 				continue
 			}
 
-			// 更新 SessionService 状态
+			// Update SessionService status
 			sessionService.SetChunkResult(session.ID, res.ChunkIndex, res.Text, nil)
 
-			// 实时推送给前端
+			// Push to frontend in real-time
 			sendJSON(model.ServerMessage{
 				Type:       "chunk_result",
 				SessionID:  session.ID,
@@ -174,7 +174,7 @@ func handleStart(sendJSON func(interface{}), msg model.ChunkMessage, asrService 
 		}
 	}()
 
-	// 3. 发送 ack
+	// 3. Send Ack
 	response := model.ServerMessage{
 		Type:      "ack",
 		SessionID: session.ID,
@@ -190,36 +190,36 @@ func handleChunk(sendJSON func(interface{}), msg model.ChunkMessage, asrService 
 	if session == nil {
 		sendJSON(model.ServerMessage{
 			Type:    "error",
-			Message: "会话不存在: " + msg.SessionID,
+			Message: "Session not found: " + msg.SessionID,
 		})
 		return
 	}
 
-	// 解码 base64 音频
+	// Decode base64 audio
 	audioData, err := base64.StdEncoding.DecodeString(msg.AudioData)
 	if err != nil {
-		logger.Error("⚠️ 音频解码失败",
+		logger.Error("⚠️ Audio decode failed",
 			zap.String("session_id", msg.SessionID),
 			zap.Error(err))
 		return
 	}
 
-	// 更新 chunk 计数并保存音频
+	// Update chunk count and save audio
 	sessionService.AddChunk(msg.SessionID, msg.ChunkIndex, audioData)
 
-	// 推送到 Redis (Async)
-	// 不再等待结果，结果由上面的 goroutine 处理
+	// Push to Redis (Async)
+	// Do not wait for result, caught by goroutine above
 	err = asrService.PushChunkToRedis(msg.SessionID, msg.ChunkIndex, msg.AudioData)
 	if err != nil {
-		logger.Error("任务推送失败", zap.Error(err))
+		logger.Error("Task push failed", zap.Error(err))
 		sendJSON(model.ServerMessage{
 			Type:    "error",
-			Message: "系统繁忙",
+			Message: "System busy",
 		})
 		return
 	}
 
-	// 立即确认收到
+	// Ack immediately
 	ack := model.ServerMessage{
 		Type:       "ack",
 		ChunkIndex: msg.ChunkIndex,
@@ -233,23 +233,23 @@ func handleFinish(sendJSON func(interface{}), msg model.ChunkMessage, asrService
 	if session == nil {
 		sendJSON(model.ServerMessage{
 			Type:    "error",
-			Message: "会话不存在: " + msg.SessionID,
+			Message: "Session not found: " + msg.SessionID,
 		})
 		return
 	}
 
-	logger.Debug("🔍 开始等待合并结果",
+	logger.Debug("🔍 Waiting for merge result",
 		zap.String("session_id", msg.SessionID),
 		zap.Int("chunk_count", session.ChunkCount))
 
-	// 等待所有 chunks 处理完成
+	// Wait for all chunks
 	finalText, duration := sessionService.WaitAndMerge(msg.SessionID)
 
-	logger.Debug("🔍 合并完成",
+	logger.Debug("🔍 Merge complete",
 		zap.String("session_id", msg.SessionID),
 		zap.Int("text_length", len(finalText)))
 
-	// 发送最终结果
+	// Send final result
 	response := model.ServerMessage{
 		Type:       "final_result",
 		SessionID:  msg.SessionID,
@@ -260,13 +260,13 @@ func handleFinish(sendJSON func(interface{}), msg model.ChunkMessage, asrService
 
 	sendJSON(response)
 
-	logger.Info("✅ 会话完成",
+	logger.Info("✅ Session Completed",
 		zap.String("session_id", msg.SessionID),
 		zap.Int("text_length", len(finalText)),
 		zap.Int("chunk_count", session.ChunkCount))
 }
 
-// 保留原有的辅助函数用于其他地方
+// Helper functions
 func sendJSON(conn *websocket.Conn, v interface{}) {
 	data, _ := json.Marshal(v)
 	conn.WriteMessage(websocket.TextMessage, data)

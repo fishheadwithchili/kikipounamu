@@ -1,21 +1,21 @@
 #!/bin/bash
 
-# 获取脚本所在目录的上一级目录，即项目根目录
+# Get the script's parent directory (project root)
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 
-# 切换到项目根目录
+# Switch to project root
 cd "$PROJECT_ROOT"
 
 echo "🚀 Starting ASR Go Backend..."
 
-# 1. 检查 Go 是否安装
+# 1. Check if Go is installed
 if ! command -v go &> /dev/null; then
     echo "❌ Error: Go is not installed. Please install Go 1.21+."
     exit 1
 fi
 
-# 2. 检查 ffmpeg (Go Backend 需要它来处理音频格式转换)
+# 2. Check ffmpeg (Required by Go Backend for audio processing)
 if ! command -v ffmpeg &> /dev/null; then
     echo "⚠️  ffmpeg not found."
     if [[ "$OSTYPE" == "linux-gnu"* ]]; then
@@ -33,7 +33,7 @@ if ! command -v ffmpeg &> /dev/null; then
     fi
 fi
 
-# 2. 检查并安装依赖
+# 2. Check and install dependencies
 echo "📦 Checking dependencies..."
 go mod tidy
 if [ $? -ne 0 ]; then
@@ -41,9 +41,9 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-# 3. 编译
+# 3. Build
 echo "🔨 Building server..."
-# 确保输出目录存在
+# Ensure output directory exists
 mkdir -p bin
 go build -o bin/server cmd/server/main.go
 if [ $? -ne 0 ]; then
@@ -51,6 +51,6 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-# 4. 运行
+# 4. Run
 echo "✅ Build successful. Starting server..."
 ./bin/server

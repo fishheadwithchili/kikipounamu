@@ -3,13 +3,12 @@ package handler
 import (
 	"net/http"
 
-
 	"github.com/fishheadwithchili/asr-go-backend/internal/config"
 	"github.com/fishheadwithchili/asr-go-backend/internal/service"
 	"github.com/gin-gonic/gin"
 )
 
-// HealthCheck 健康检查
+// HealthCheck handler
 func HealthCheck(asrService *service.ASRService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		status := asrService.GetHealthStatus()
@@ -17,7 +16,7 @@ func HealthCheck(asrService *service.ASRService) gin.HandlerFunc {
 	}
 }
 
-// GetHistory 获取历史记录
+// GetHistory handler
 func GetHistory(sessionService *service.SessionService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		limit := 20
@@ -29,14 +28,14 @@ func GetHistory(sessionService *service.SessionService) gin.HandlerFunc {
 	}
 }
 
-// GetSession 获取会话详情
+// GetSession handler
 func GetSession(sessionService *service.SessionService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		sessionID := c.Param("id")
 		session := sessionService.GetSession(sessionID)
 		if session == nil {
 			c.JSON(http.StatusNotFound, gin.H{
-				"error": "会话不存在",
+				"error": "Session not found",
 			})
 			return
 		}
@@ -44,47 +43,47 @@ func GetSession(sessionService *service.SessionService) gin.HandlerFunc {
 	}
 }
 
-// DeleteSession 删除会话
+// DeleteSession handler
 func DeleteSession(sessionService *service.SessionService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		sessionID := c.Param("id")
 		err := sessionService.DeleteSession(sessionID)
 		if err != nil {
 			c.JSON(http.StatusNotFound, gin.H{
-				"error": "会话不存在",
+				"error": "Session not found",
 			})
 			return
 		}
 		c.JSON(http.StatusOK, gin.H{
-			"message": "删除成功",
+			"message": "Delete successful",
 		})
 	}
 }
 
-// GetQueueStatus 获取队列状态 (Proxy to Python)
+// GetQueueStatus Proxy to Python
 func GetQueueStatus(cfg *config.Config) gin.HandlerFunc {
-    return func(c *gin.Context) {
-        targetURL := cfg.FunASRAddr
-        if len(targetURL) < 4 || targetURL[:4] != "http" {
-            targetURL = "http://" + targetURL
-        }
-        targetURL = targetURL + "/api/v1/asr/queue/status"
+	return func(c *gin.Context) {
+		targetURL := cfg.FunASRAddr
+		if len(targetURL) < 4 || targetURL[:4] != "http" {
+			targetURL = "http://" + targetURL
+		}
+		targetURL = targetURL + "/api/v1/asr/queue/status"
 
-        resp, err := http.Get(targetURL)
-        if err != nil {
-            c.JSON(http.StatusBadGateway, gin.H{"error": "Failed to connect to ASR service: " + err.Error()})
-            return
-        }
-        defer resp.Body.Close()
-        
-        c.DataFromReader(http.StatusOK, resp.ContentLength, "application/json", resp.Body, nil)
-    }
+		resp, err := http.Get(targetURL)
+		if err != nil {
+			c.JSON(http.StatusBadGateway, gin.H{"error": "Failed to connect to ASR service: " + err.Error()})
+			return
+		}
+		defer resp.Body.Close()
+
+		c.DataFromReader(http.StatusOK, resp.ContentLength, "application/json", resp.Body, nil)
+	}
 }
 
-// GetStats 获取统计信息 (Proxy to Python)
+// GetStats Proxy to Python
 func GetStats(cfg *config.Config) gin.HandlerFunc {
-    return func(c *gin.Context) {
-        		targetURL := cfg.FunASRAddr
+	return func(c *gin.Context) {
+		targetURL := cfg.FunASRAddr
 		if len(targetURL) < 4 || targetURL[:4] != "http" {
 			targetURL = "http://" + targetURL
 		}
@@ -101,7 +100,7 @@ func GetStats(cfg *config.Config) gin.HandlerFunc {
 			return
 		}
 		defer resp.Body.Close()
-		
+
 		c.DataFromReader(http.StatusOK, resp.ContentLength, "application/json", resp.Body, nil)
 	}
 }

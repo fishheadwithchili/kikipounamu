@@ -12,11 +12,11 @@ import (
 
 var pool *pgxpool.Pool
 
-// Init 初始化数据库连接池
+// Init initializes database pool
 func Init(cfg *config.Config) error {
-	// 确保数据库存在
+	// Ensure DB exists
 	if err := ensureDatabaseExists(cfg); err != nil {
-		return fmt.Errorf("确保数据库存在失败: %w", err)
+		return fmt.Errorf("failed to ensure database exists: %w", err)
 	}
 
 	connStr := fmt.Sprintf(
@@ -27,30 +27,30 @@ func Init(cfg *config.Config) error {
 	var err error
 	pool, err = pgxpool.New(context.Background(), connStr)
 	if err != nil {
-		return fmt.Errorf("无法连接数据库: %w", err)
+		return fmt.Errorf("failed to connect to database: %w", err)
 	}
 
-	// 测试连接
+	// Test connection
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	if err := pool.Ping(ctx); err != nil {
-		return fmt.Errorf("数据库连接测试失败: %w", err)
+		return fmt.Errorf("database ping failed: %w", err)
 	}
 
-	logger.Info(fmt.Sprintf("✅ 数据库连接成功: %s@%s:%d/%s", cfg.DBUser, cfg.DBHost, cfg.DBPort, cfg.DBName))
+	logger.Info(fmt.Sprintf("✅ Database connected: %s@%s:%d/%s", cfg.DBUser, cfg.DBHost, cfg.DBPort, cfg.DBName))
 
-	// 创建表
+	// Create tables
 	if err := createTables(); err != nil {
-		return fmt.Errorf("创建表失败: %w", err)
+		return fmt.Errorf("failed to create tables: %w", err)
 	}
 
 	return nil
 }
 
-// ensureDatabaseExists 确保目标数据库存在，如果不存在且允许自动创建则创建它
+// ensureDatabaseExists ensures target DB exists
 func ensureDatabaseExists(cfg *config.Config) error {
-	// 连接到 postgres 系统数据库
+	// Connect to postgres system db
 	sysConnStr := fmt.Sprintf(
 		"postgres://%s:%s@%s:%d/postgres?sslmode=disable",
 		cfg.DBUser, cfg.DBPassword, cfg.DBHost, cfg.DBPort,
@@ -59,43 +59,43 @@ func ensureDatabaseExists(cfg *config.Config) error {
 	ctx := context.Background()
 	sysPool, err := pgxpool.New(ctx, sysConnStr)
 	if err != nil {
-		return fmt.Errorf("无法连接到系统数据库: %w", err)
+		return fmt.Errorf("failed to connect to system db: %w", err)
 	}
 	defer sysPool.Close()
 
-	// 检查目标数据库是否存在
+	// Check if target DB exists
 	var exists bool
 	err = sysPool.QueryRow(ctx, "SELECT EXISTS(SELECT 1 FROM pg_database WHERE datname = $1)", cfg.DBName).Scan(&exists)
 	if err != nil {
-		return fmt.Errorf("检查数据库是否存在失败: %w", err)
+		return fmt.Errorf("failed to check db existence: %w", err)
 	}
 
 	if exists {
-		logger.Info(fmt.Sprintf("✅ 数据库 '%s' 已存在", cfg.DBName))
+		logger.Info(fmt.Sprintf("✅ Database '%s' already exists", cfg.DBName))
 		return nil
 	}
 
-	// 数据库不存在
+	// Database not exists
 	if !cfg.AutoCreateDB {
-		return fmt.Errorf("数据库 '%s' 不存在，且 AUTO_CREATE_DB 已禁用", cfg.DBName)
+		return fmt.Errorf("database '%s' does not exist against AUTO_CREATE_DB=false", cfg.DBName)
 	}
 
-	// 自动创建数据库
-	logger.Info(fmt.Sprintf("🔧 数据库 '%s' 不存在，正在自动创建...", cfg.DBName))
+	// Auto create DB
+	logger.Info(fmt.Sprintf("🔧 Database '%s' not found, creating...", cfg.DBName))
 	createSQL := fmt.Sprintf("CREATE DATABASE %s OWNER %s", cfg.DBName, cfg.DBUser)
 	if _, err := sysPool.Exec(ctx, createSQL); err != nil {
-		return fmt.Errorf("创建数据库失败: %w", err)
+		return fmt.Errorf("failed to create database: %w", err)
 	}
 
-	logger.Info(fmt.Sprintf("✅ 数据库 '%s' 创建成功", cfg.DBName))
+	logger.Info(fmt.Sprintf("✅ Database '%s' created successfully", cfg.DBName))
 	return nil
 }
 
-// createTables 创建必要的数据库表
+// createTables creates necessary tables
 func createTables() error {
 	ctx := context.Background()
 
-	// 创建会话表
+	// Create sessions table
 	_, err := pool.Exec(ctx, `
 		CREATE TABLE IF NOT EXISTS asr_sessions (
 			id VARCHAR(64) PRIMARY KEY,
@@ -117,32 +117,32 @@ func createTables() error {
 		return err
 	}
 
-	// 尝试修改列类型以支持非UUID (忽略错误，因为如果已经是 VARCHAR 则不需要)
+	// Try to modify column type (ignore error if already VARCHAR)
 	pool.Exec(ctx, "ALTER TABLE asr_chunks DROP CONSTRAINT IF EXISTS asr_chunks_session_id_fkey")
 	pool.Exec(ctx, "ALTER TABLE asr_sessions ALTER COLUMN id TYPE VARCHAR(64) USING id::VARCHAR(64)")
 	pool.Exec(ctx, "ALTER TABLE asr_chunks ALTER COLUMN session_id TYPE VARCHAR(64) USING session_id::VARCHAR(64)")
-	// 重新添加外键 (如果需要) - 简化起见，这里可以暂不强制外键或者重新添加
+	// Re-add foreign key (optional) - skipped for simplicity
 	// pool.Exec(ctx, "ALTER TABLE asr_chunks ADD CONSTRAINT asr_chunks_session_id_fkey FOREIGN KEY (session_id) REFERENCES asr_sessions(id) ON DELETE CASCADE")
 
-	logger.Info("✅ 数据库表已就绪")
+	logger.Info("✅ Database tables ready")
 	return nil
 }
 
-// GetPool 获取数据库连接池
+// GetPool returns DB pool
 func GetPool() *pgxpool.Pool {
 	return pool
 }
 
-// Close 关闭数据库连接
+// Close closes DB connection
 func Close() {
 	if pool != nil {
 		pool.Close()
 	}
 }
 
-// --- 会话相关操作 ---
+// --- Session Operations ---
 
-// CreateSession 创建新会话
+// CreateSession creates a new session
 func CreateSession(ctx context.Context, sessionID, userID string) error {
 	_, err := pool.Exec(ctx, `
 		INSERT INTO asr_sessions (id, user_id, status) VALUES ($1, $2, 'recording')
@@ -151,7 +151,7 @@ func CreateSession(ctx context.Context, sessionID, userID string) error {
 	return err
 }
 
-// UpdateSessionResult 更新会话结果
+// UpdateSessionResult updates session result
 func UpdateSessionResult(ctx context.Context, sessionID, finalText string, chunkCount int, duration float64, audioPath string) error {
 	_, err := pool.Exec(ctx, `
 		UPDATE asr_sessions 
@@ -161,7 +161,7 @@ func UpdateSessionResult(ctx context.Context, sessionID, finalText string, chunk
 	return err
 }
 
-// GetHistory 获取历史记录
+// GetHistory gets history records
 func GetHistory(ctx context.Context, limit int) ([]map[string]interface{}, error) {
 	rows, err := pool.Query(ctx, `
 		SELECT id, user_id, status, final_text, chunk_count, total_duration, audio_path, created_at, completed_at
@@ -218,7 +218,7 @@ func GetHistory(ctx context.Context, limit int) ([]map[string]interface{}, error
 	return results, nil
 }
 
-// DeleteSession 删除会话
+// DeleteSession deletes a session
 func DeleteSession(ctx context.Context, sessionID string) error {
 	result, err := pool.Exec(ctx, `DELETE FROM asr_sessions WHERE id = $1`, sessionID)
 	if err != nil {
@@ -230,7 +230,7 @@ func DeleteSession(ctx context.Context, sessionID string) error {
 	return nil
 }
 
-// GetSession 获取会话详情
+// GetSession gets session details
 func GetSession(ctx context.Context, sessionID string) (map[string]interface{}, error) {
 	var id, status string
 	var userID, finalText, audioPath *string

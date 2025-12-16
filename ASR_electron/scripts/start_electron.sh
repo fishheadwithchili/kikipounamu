@@ -1,27 +1,27 @@
 #!/bin/bash
 
-# 获取脚本所在目录的上一级目录，即项目根目录
+# Get the script's parent directory (project root)
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 
-# 切换到项目根目录
+# Switch to project root
 cd "$PROJECT_ROOT"
 
 echo "🚀 Starting ASR Electron App..."
 
-# 1. 检查 Node.js 是否安装
+# 1. Check if Node.js is installed
 if ! command -v node &> /dev/null; then
     echo "❌ Error: Node.js is not installed. Please install Node.js (v18+ recommended)."
     exit 1
 fi
 
-# 2. 检查并安装依赖
+# 2. Check and install dependencies
 echo "📦 Checking dependencies..."
 if [ ! -d "node_modules" ]; then
     echo "   node_modules not found. Installing dependencies..."
     npm install
 else
-    # 简单的检查，如果 package.json 比 node_modules 新，可能需要更新
+    # Simple check: if package.json is newer than node_modules, update might be needed
     if [ "package.json" -nt "node_modules" ]; then
         echo "   package.json is newer than node_modules. Updating dependencies..."
         npm install
@@ -35,7 +35,7 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-# 4. 检查并安装 Linux 系统依赖 (仅限 Linux)
+# 4. Check and install Linux system dependencies (Linux only)
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
     echo "🐧 Detected Linux. Checking system dependencies..."
     
@@ -65,6 +65,6 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
     fi
 fi
 
-# 5. 启动应用
+# 5. Start Application
 echo "⚛️ Starting Electron..."
 npm run dev

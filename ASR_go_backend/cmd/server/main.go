@@ -18,10 +18,10 @@ import (
 )
 
 func main() {
-	// 加载配置
+	// Load Config
 	cfg := config.Load()
 
-	// 初始化 Logger
+	// Init Logger
 	// Default to development if not set, but respect config
 	env := "production"
 	if os.Getenv("GO_ENV") == "development" {
@@ -30,30 +30,30 @@ func main() {
 	logger.Init(env, cfg.LogLevel)
 	defer logger.Sync()
 
-	// 检查 ffmpeg
+	// Check ffmpeg
 	if _, err := exec.LookPath("ffmpeg"); err != nil {
-		logger.Fatal("❌ 未找到 ffmpeg。请先安装 ffmpeg 并确保它在系统 PATH 中。\nWindows: https://www.gyan.dev/ffmpeg/builds/\nLinux: sudo apt install ffmpeg / sudo pacman -S ffmpeg\nMacOS: brew install ffmpeg", zap.Error(err))
+		logger.Fatal("❌ ffmpeg not found. Please install ffmpeg and ensure it is in system PATH.\nWindows: https://www.gyan.dev/ffmpeg/builds/\nLinux: sudo apt install ffmpeg / sudo pacman -S ffmpeg\nMacOS: brew install ffmpeg", zap.Error(err))
 	}
 
-	// 初始化数据库
+	// Init Database
 	if err := db.Init(cfg); err != nil {
-		logger.Warn("⚠️ 数据库连接失败 (历史记录功能不可用)", zap.Error(err))
+		logger.Warn("⚠️ Database connection failed (History feature disabled)", zap.Error(err))
 	} else {
 		defer db.Close()
 	}
 
-	// 初始化 Redis
+	// Init Redis
 	if err := db.InitRedis(cfg); err != nil {
-		logger.Fatal("🔴 Redis 连接失败", zap.Error(err))
+		logger.Fatal("🔴 Redis connection failed", zap.Error(err))
 	} else {
 		defer db.CloseRedis()
 	}
 
-	// 初始化服务
+	// Init Service
 	asrService := service.NewASRService(cfg)
 	sessionService := service.NewSessionService(cfg)
 
-	// 创建路由
+	// Create Router
 	router := gin.Default()
 
 	// Limit concurrent connections
@@ -83,7 +83,7 @@ func main() {
 		c.Next()
 	})
 
-	// CORS 中间件
+	// CORS Middleware
 	router.Use(func(c *gin.Context) {
 		c.Header("Access-Control-Allow-Origin", "*")
 		c.Header("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS")
@@ -111,28 +111,28 @@ func main() {
 	// WebSocket
 	router.GET("/ws/asr", handler.WebSocketHandler(asrService, sessionService))
 
-	// 优雅关闭
+	// Graceful Shutdown
 	go func() {
 		sigChan := make(chan os.Signal, 1)
 		signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
 		<-sigChan
-		logger.Info("正在关闭服务...")
+		logger.Info("Shutting down service...")
 		asrService.Shutdown()
 		db.Close()
 		os.Exit(0)
 	}()
 
-	// 启动服务器
+	// Start Server
 	addr := "0.0.0.0:" + cfg.Port
-	logger.Info("🚀 ASR Go Backend 启动", zap.String("addr", addr))
+	logger.Info("🚀 ASR Go Backend Started", zap.String("addr", addr))
 	logger.Info("📡 WebSocket Addr", zap.String("url", "ws://localhost"+addr+"/ws/asr"))
 	logger.Info("🔗 ASR_server", zap.String("url", "http://"+cfg.FunASRAddr))
-	logger.Info("🗄️  数据库",
+	logger.Info("🗄️  Database",
 		zap.String("host", cfg.DBHost),
 		zap.Int("port", cfg.DBPort),
 		zap.String("db", cfg.DBName))
 
 	if err := http.ListenAndServe(addr, router); err != nil {
-		logger.Fatal("服务器启动失败", zap.Error(err))
+		logger.Fatal("Server start failed", zap.Error(err))
 	}
 }

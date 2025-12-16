@@ -17,7 +17,7 @@ type Config struct {
 	MaxConnections int
 	LogLevel       string
 
-	// PostgreSQL 配置
+	// PostgreSQL Config
 	DBHost       string
 	DBPort       int
 	DBUser       string

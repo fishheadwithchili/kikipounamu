@@ -16,14 +16,13 @@ import (
 	"go.uber.org/zap"
 )
 
-// ASRService ASR 处理服务
-// ASRService ASR 处理服务
+// ASRService handles ASR processing
 type ASRService struct {
 	cfg           *config.Config
 	activeWorkers int64
 }
 
-// NewASRService 创建 ASR 服务
+// NewASRService creates ASR service
 func NewASRService(cfg *config.Config) *ASRService {
 	s := &ASRService{
 		cfg: cfg,
@@ -72,9 +71,9 @@ func (s *ASRService) IsSystemHealthy() bool {
 	return atomic.LoadInt64(&s.activeWorkers) >= int64(s.cfg.MinWorkers)
 }
 
-// PushChunkToRedis 仅负责将任务推送到 Redis Streams (Fire and Forget)
+// PushChunkToRedis pushes task to Redis Streams (Fire and Forget)
 func (s *ASRService) PushChunkToRedis(sessionID string, chunkIndex int, audioDataBase64 string) error {
-	// 1. 解码 base64 音频 (验证格式)
+	// 1. Decode base64 audio (Verify format)
 	_, err := base64.StdEncoding.DecodeString(audioDataBase64)
 	if err != nil {
 		return fmt.Errorf("base64 decode failed: %w", err)
@@ -92,7 +91,7 @@ func (s *ASRService) PushChunkToRedis(sessionID string, chunkIndex int, audioDat
 		return fmt.Errorf("system overloaded: queue depth %d", depth)
 	}
 
-	// 2. 使用 Redis Streams XADD 代替 RPUSH
+	// 2. Use Redis Streams XADD instead of RPUSH
 	_, err = streams.PublishStreamChunk(ctx, sessionID, chunkIndex, audioDataBase64)
 	if err != nil {
 		return fmt.Errorf("stream publish failed: %w", err)
@@ -101,7 +100,7 @@ func (s *ASRService) PushChunkToRedis(sessionID string, chunkIndex int, audioDat
 	return nil
 }
 
-// SubscribeResults 订阅结果频道并返回一个 channel
+// SubscribeResults subscribes to result channel
 func (s *ASRService) SubscribeResults(sessionID string) (<-chan *model.ChunkResult, func(), error) {
 	redisCli := db.GetRedis()
 	ctx := context.Background()
@@ -110,7 +109,7 @@ func (s *ASRService) SubscribeResults(sessionID string) (<-chan *model.ChunkResu
 	resultChannel := fmt.Sprintf("asr_result_%s", sessionID)
 	pubsub := redisCli.Subscribe(ctx, resultChannel)
 
-	// 验证订阅连接 (可选)
+	// Verify subscription (optional)
 	// _, err := pubsub.Receive(ctx)
 	// if err != nil {
 	// 	pubsub.Close()
@@ -120,13 +119,13 @@ func (s *ASRService) SubscribeResults(sessionID string) (<-chan *model.ChunkResu
 	ch := pubsub.Channel()
 	outCh := make(chan *model.ChunkResult, 100) // Buffer a bit
 
-	// 取消函数
+	// Cancel function
 	cancel := func() {
 		pubsub.Close()
 		// close(outCh) // Do not close here to avoid panic on send
 	}
 
-	// 启动后台协程读取 Redis 消息并转换
+	// Start background goroutine to read Redis messages
 	go func() {
 		defer close(outCh) // Close when input channel closed
 
@@ -197,7 +196,7 @@ func (s *ASRService) SubscribeResults(sessionID string) (<-chan *model.ChunkResu
 	return outCh, cancel, nil
 }
 
-// GetHealthStatus 获取健康状态
+// GetHealthStatus returns health status
 func (s *ASRService) GetHealthStatus() *model.HealthStatus {
 	redisCli := db.GetRedis()
 	redisReady := redisCli != nil && redisCli.Ping(context.Background()).Err() == nil
@@ -210,7 +209,7 @@ func (s *ASRService) GetHealthStatus() *model.HealthStatus {
 	}
 }
 
-// Shutdown 关闭服务
+// Shutdown service
 func (s *ASRService) Shutdown() {
-	logger.Info("ASR 服务已关闭 (Redis Mode)")
+	logger.Info("ASR Service stopped (Redis Mode)")
 }

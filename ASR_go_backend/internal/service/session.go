@@ -19,13 +19,13 @@ import (
 )
 
 const (
-	// SessionTimeout 会话超时时间
+	// SessionTimeout
 	SessionTimeout = 10 * time.Minute
-	// CleanupInterval 清理检查间隔
+	// CleanupInterval
 	CleanupInterval = 1 * time.Minute
 )
 
-// SessionService 会话管理服务
+// SessionService manages sessions
 type SessionService struct {
 	cfg       *config.Config
 	sessions  sync.Map // map[string]*sessionState
@@ -37,11 +37,11 @@ type sessionState struct {
 	session    *model.Session
 	mu         sync.Mutex
 	done       chan struct{}
-	pending    int       // 待处理的 chunk 数量
-	lastActive time.Time // 最后活动时间
+	pending    int       // Pending chunks count
+	lastActive time.Time // Last active time
 }
 
-// NewSessionService 创建会话服务
+// NewSessionService creates session service
 func NewSessionService(cfg *config.Config) *SessionService {
 	svc := &SessionService{
 		cfg:      cfg,
@@ -49,14 +49,14 @@ func NewSessionService(cfg *config.Config) *SessionService {
 	}
 
 	// 启动后台清理协程
-	// 启动后台清理协程
+	// Start background cleanup goroutine
 	go svc.cleanupLoop()
-	logger.Info("✅ 会话服务已启动，后台清理协程运行中")
+	logger.Info("✅ Session Service Started, background cleanup running")
 
 	return svc
 }
 
-// cleanupLoop 后台清理过期会话
+// cleanupLoop cleans up expired sessions in background
 func (s *SessionService) cleanupLoop() {
 	ticker := time.NewTicker(CleanupInterval)
 	defer ticker.Stop()
@@ -67,13 +67,13 @@ func (s *SessionService) cleanupLoop() {
 			s.cleanupExpiredSessions()
 		case <-s.stopChan:
 		case <-s.stopChan:
-			logger.Info("会话清理协程已停止")
+			logger.Info("Session cleanup stopped")
 			return
 		}
 	}
 }
 
-// cleanupExpiredSessions 清理过期会话
+// cleanupExpiredSessions cleans up expired sessions
 func (s *SessionService) cleanupExpiredSessions() {
 	now := time.Now()
 	expiredCount := 0
@@ -87,9 +87,9 @@ func (s *SessionService) cleanupExpiredSessions() {
 		status := state.session.Status
 		state.mu.Unlock()
 
-		// 检查是否超时（非完成状态且超时）
+		// Check for timeout
 		if status != "done" && now.Sub(lastActive) > SessionTimeout {
-			logger.Warn("⚠️ 清理超时会话",
+			logger.Warn("⚠️ Cleaning up timed-out session",
 				zap.String("session_id", sessionID),
 				zap.Time("last_active", lastActive))
 			s.sessions.Delete(sessionID)
@@ -100,16 +100,16 @@ func (s *SessionService) cleanupExpiredSessions() {
 	})
 
 	if expiredCount > 0 {
-		logger.Info("🧹 已清理超时会话", zap.Int("count", expiredCount))
+		logger.Info("🧹 Cleaned up expired sessions", zap.Int("count", expiredCount))
 	}
 }
 
-// Shutdown 关闭服务
+// Shutdown service
 func (s *SessionService) Shutdown() {
 	close(s.stopChan)
 }
 
-// CreateSession 创建新会话
+// CreateSession creates a new session
 func (s *SessionService) CreateSession(sessionID, userID string) *model.Session {
 	if sessionID == "" {
 		sessionID = uuid.New().String()
@@ -128,16 +128,16 @@ func (s *SessionService) CreateSession(sessionID, userID string) *model.Session 
 		CreatedAt:  time.Now(),
 	}
 
-	// 确保 storage/temp 存在
+	// Ensure storage/temp exists
 	if err := os.MkdirAll("storage/temp", 0755); err != nil {
-		logger.Error("⚠️ 创建临时目录失败", zap.Error(err))
+		logger.Error("⚠️ Failed to create temp directory", zap.Error(err))
 	}
 
-	// 创建临时音频文件
+	// Create temp audio file
 	tempPath := fmt.Sprintf("storage/temp/%s.pcm", sessionID)
 	f, err := os.Create(tempPath)
 	if err != nil {
-		logger.Error("⚠️ 创建临时音频文件失败", zap.Error(err))
+		logger.Error("⚠️ Failed to create temp audio file", zap.Error(err))
 	} else {
 		session.TempAudioPath = tempPath
 		session.AudioFile = f
@@ -153,16 +153,16 @@ func (s *SessionService) CreateSession(sessionID, userID string) *model.Session 
 	s.sessions.Store(sessionID, state)
 
 	// 同时存入数据库
-	// 同时存入数据库
+	// Save context to DB
 	ctx := context.Background()
 	if err := db.CreateSession(ctx, sessionID, userID); err != nil {
-		logger.Error("⚠️ 数据库创建会话失败", zap.Error(err))
+		logger.Error("⚠️ DB create session failed", zap.Error(err))
 	}
 
 	return session
 }
 
-// GetSession 获取会话
+// GetSession returns session by ID
 func (s *SessionService) GetSession(sessionID string) *model.Session {
 	if state, ok := s.sessions.Load(sessionID); ok {
 		return state.(*sessionState).session
@@ -170,7 +170,7 @@ func (s *SessionService) GetSession(sessionID string) *model.Session {
 	return nil
 }
 
-// AddChunk 添加 chunk 并追加音频数据
+// AddChunk adds a chunk and appends audio data
 func (s *SessionService) AddChunk(sessionID string, chunkIndex int, audioData []byte) {
 	if stateI, ok := s.sessions.Load(sessionID); ok {
 		state := stateI.(*sessionState)
@@ -180,12 +180,12 @@ func (s *SessionService) AddChunk(sessionID string, chunkIndex int, audioData []
 		state.session.ChunkCount++
 		state.pending++
 		state.session.Completed[chunkIndex] = false
-		state.lastActive = time.Now() // 更新活动时间
+		state.lastActive = time.Now() // Update active time
 
-		// 追加音频数据到临时文件
+		// Append data to temp file
 		if state.session.AudioFile != nil {
 			if _, err := state.session.AudioFile.Write(audioData); err != nil {
-				logger.Error("⚠️ 写入临时音频文件失败",
+				logger.Error("⚠️ Failed to write to temp audio file",
 					zap.String("session_id", sessionID),
 					zap.Error(err))
 			}
@@ -193,7 +193,7 @@ func (s *SessionService) AddChunk(sessionID string, chunkIndex int, audioData []
 	}
 }
 
-// SetChunkResult 设置 chunk 结果
+// SetChunkResult sets chunk result
 func (s *SessionService) SetChunkResult(sessionID string, chunkIndex int, text string, err error) {
 	if stateI, ok := s.sessions.Load(sessionID); ok {
 		state := stateI.(*sessionState)
@@ -203,9 +203,9 @@ func (s *SessionService) SetChunkResult(sessionID string, chunkIndex int, text s
 		state.session.Results[chunkIndex] = text
 		state.session.Completed[chunkIndex] = true
 		state.pending--
-		state.lastActive = time.Now() // 更新活动时间
+		state.lastActive = time.Now() // Update active time
 
-		// 调试日志：记录 Chunk 结果
+		// Debug Log
 		logger.Debug("Chunk result received",
 			zap.String("session_id", sessionID),
 			zap.Int("chunk_index", chunkIndex),
@@ -213,26 +213,26 @@ func (s *SessionService) SetChunkResult(sessionID string, chunkIndex int, text s
 			zap.Error(err),
 		)
 
-		// 注意：已移除 db.SaveChunkResult 调用，因为不再需要持久化 Chunk 级结果
+		// Note: db.SaveChunkResult call removed as chunk-level persistence is no longer needed
 
-		// 如果所有 chunks 都处理完成，通知等待者
+		// If all chunks are processed, notify waiter
 		if state.pending <= 0 && state.session.Status == "finishing" {
 			close(state.done)
 		}
 	}
 }
 
-// WaitAndMerge 等待所有 chunks 完成并合并结果
+// WaitAndMerge waits for all chunks and merges results
 func (s *SessionService) WaitAndMerge(sessionID string) (string, float64) {
 	stateI, ok := s.sessions.Load(sessionID)
 	if !ok {
-		logger.Warn("⚠️ 会话不存在", zap.String("session_id", sessionID))
+		logger.Warn("⚠️ Session not found", zap.String("session_id", sessionID))
 		return "", 0
 	}
 
 	state := stateI.(*sessionState)
 
-	// 标记为正在结束
+	// Mark as finishing
 	state.mu.Lock()
 	state.session.Status = "finishing"
 	pending := state.pending
@@ -247,26 +247,26 @@ func (s *SessionService) WaitAndMerge(sessionID string) (string, float64) {
 		zap.Int("chunk_count", chunkCount),
 		zap.Int("result_count", resultCount))
 
-	// 如果还有待处理的 chunks，等待
+	// If pending chunks exist, wait
 	if pending > 0 {
-		logger.Debug("⏳ 等待分块处理...", zap.Int("pending", pending))
+		logger.Debug("⏳ Waiting for chunks...", zap.Int("pending", pending))
 		select {
 		case <-state.done:
-			logger.Debug("✅ 所有分块处理完成")
-		case <-time.After(60 * time.Second): // 超时 60 秒
-			logger.Warn("⚠️ 等待超时 (60秒)", zap.String("session_id", sessionID))
+			logger.Debug("✅ All chunks processed")
+		case <-time.After(60 * time.Second): // Timeout 60s
+			logger.Warn("⚠️ Wait Timeout (60s)", zap.String("session_id", sessionID))
 		}
 	} else {
-		logger.Debug("✅ 无需等待，所有分块已完成")
+		logger.Debug("✅ No wait needed")
 	}
 
-	// 按顺序合并结果
+	// Merge results
 	state.mu.Lock()
 	defer state.mu.Unlock()
 
-	logger.Debug("🔍 开始合并", zap.Any("results_map_keys", getMapKeys(state.session.Results)))
+	logger.Debug("🔍 Start Merge", zap.Any("results_map_keys", getMapKeys(state.session.Results)))
 
-	// 获取所有 chunk index 并排序
+	// Get all chunk indices and sort
 	indices := make([]int, 0, len(state.session.Results))
 	for idx := range state.session.Results {
 		indices = append(indices, idx)
@@ -275,45 +275,45 @@ func (s *SessionService) WaitAndMerge(sessionID string) (string, float64) {
 
 	sort.Ints(indices)
 
-	// logger.Debug("🔍 排序后的索引", zap.Ints("indices", indices)) // 可选
+	// logger.Debug("🔍 Sorted indices", zap.Ints("indices", indices)) // Optional
 
-	// 合并文本
+	// Merge text
 	var finalText string
 	for _, idx := range indices {
 		chunkText := state.session.Results[idx]
-		// logger.Debug("🔍 合并 chunk", zap.Int("index", idx), zap.String("text", chunkText))
+		// logger.Debug("🔍 Merge chunk", zap.Int("index", idx), zap.String("text", chunkText))
 		finalText += chunkText
 	}
 
-	logger.Info("🔍 合并完成",
+	logger.Info("🔍 Merge Complete",
 		zap.String("session_id", sessionID),
 		zap.Int("text_length", len(finalText)),
 		zap.String("final_text_preview", truncate(finalText, 50)))
 
 	// 关闭临时文件并处理音频
-	// 关闭临时文件并处理音频
+	// Close temp file and process audio
 	finalAudioPath := ""
 	if state.session.AudioFile != nil {
 		state.session.AudioFile.Close()
-		state.session.AudioFile = nil // 避免重复关闭
+		state.session.AudioFile = nil // Avoid double close
 
-		// 用户目录: storage/recordings/<user_id>/
+		// User Dir: storage/recordings/<user_id>/
 		userDir := filepath.Join("storage", "recordings", state.session.UserID)
 		if err := os.MkdirAll(userDir, 0755); err != nil {
-			logger.Error("⚠️ 创建用户存储目录失败", zap.Error(err))
+			logger.Error("⚠️ Failed to create user recording dir", zap.Error(err))
 		}
 
-		// 转换 PCM 到 WAV (使用 ffmpeg 或者 简单的 WAV 头封装)
-		// 这里简化演示，直接封装 WAV 头
+		// Convert PCM to WAV
+		// Simplified: Add WAV header
 		finalAudioPath = filepath.Join(userDir, fmt.Sprintf("%s.wav", sessionID))
 		if err := convertPCMToWav(state.session.TempAudioPath, finalAudioPath); err != nil {
-			logger.Error("⚠️ 音频转换失败", zap.Error(err))
-			finalAudioPath = "" // 转换失败不记录路径
+			logger.Error("⚠️ Audio conversion failed", zap.Error(err))
+			finalAudioPath = "" // Do not record if failed
 		} else {
-			// 删除临时 PCM 文件
+			// Remove temp PCM file
 			os.Remove(state.session.TempAudioPath)
 
-			// 执行保留策略
+			// Enforce retention policy
 			s.enforceRetentionPolicy(state.session.UserID)
 		}
 	}
@@ -325,10 +325,10 @@ func (s *SessionService) WaitAndMerge(sessionID string) (string, float64) {
 	state.session.CompletedAt = &now
 	state.session.Duration = now.Sub(state.session.CreatedAt).Seconds()
 
-	// 更新数据库
+	// Update DB
 	ctx := context.Background()
 	if err := db.UpdateSessionResult(ctx, sessionID, finalText, state.session.ChunkCount, state.session.Duration, finalAudioPath); err != nil {
-		logger.Error("⚠️ 数据库更新会话结果失败", zap.Error(err))
+		logger.Error("⚠️ DB update session result failed", zap.Error(err))
 	}
 
 	return finalText, state.session.Duration
@@ -350,20 +350,20 @@ func truncate(s string, maxLen int) string {
 	return string(runes[:maxLen]) + "..."
 }
 
-// enforceRetentionPolicy 执行音频文件保留策略
+// enforceRetentionPolicy enforces audio file retention limits
 func (s *SessionService) enforceRetentionPolicy(userID string) {
 	if s.cfg.MaxAudioFilesPerUser <= 0 {
-		return // 不限制
+		return // No limit
 	}
 
 	userDir := filepath.Join("storage", "recordings", userID)
 	entries, err := os.ReadDir(userDir)
 	if err != nil {
-		// logger.Warn("⚠️ 读取用户目录失败 (可能是新用户)", zap.String("user_id", userID), zap.Error(err))
+		// logger.Warn("⚠️ Failed to read user dir", zap.String("user_id", userID), zap.Error(err))
 		return
 	}
 
-	// 过滤出 .wav 文件并通过 Info 获取修改时间
+	// Filter .wav files and get mod time
 	type fileInfo struct {
 		Name    string
 		ModTime time.Time
@@ -382,35 +382,35 @@ func (s *SessionService) enforceRetentionPolicy(userID string) {
 		}
 	}
 
-	// 如果文件数量未超过限制，直接返回
+	// If count under limit, return
 	if len(files) <= s.cfg.MaxAudioFilesPerUser {
 		return
 	}
 
-	// 按修改时间倒序排序 (最新的在前)
+	// Sort by mod time descending
 	sort.Slice(files, func(i, j int) bool {
 		return files[i].ModTime.After(files[j].ModTime)
 	})
 
-	// 删除多余的文件 (从 MaxAudioFilesPerUser 开始)
+	// Delete extra files (starting from MaxAudioFilesPerUser)
 	for i := s.cfg.MaxAudioFilesPerUser; i < len(files); i++ {
 		path := filepath.Join(userDir, files[i].Name)
 		if err := os.Remove(path); err != nil {
-			logger.Warn("⚠️ 删除过期音频失败", zap.String("path", path), zap.Error(err))
+			logger.Warn("⚠️ Failed to delete expired audio", zap.String("path", path), zap.Error(err))
 		} else {
-			logger.Info("🧹 已删除过期音频", zap.String("path", path))
+			logger.Info("🧹 Deleted expired audio", zap.String("path", path))
 		}
 	}
 }
 
-// convertPCMToWav 将 raw PCM 封装为 WAV (16kHz, 1 channel, 16bit)
+// convertPCMToWav encapsulates raw PCM to WAV
 func convertPCMToWav(pcmPath, wavPath string) error {
 	pcmData, err := os.ReadFile(pcmPath)
 	if err != nil {
 		return err
 	}
 
-	// 构造 WAV 头
+	// Construct WAV header
 	header := make([]byte, 44)
 	dataSize := len(pcmData)
 	totalSize := dataSize + 36
@@ -434,7 +434,7 @@ func convertPCMToWav(pcmPath, wavPath string) error {
 	copy(header[36:40], []byte("data"))
 	putUint32(header[40:44], uint32(dataSize))
 
-	// 写入 WAV 文件
+	// Write WAV file
 	return os.WriteFile(wavPath, append(header, pcmData...), 0644)
 }
 
@@ -450,12 +450,12 @@ func putUint16(b []byte, v uint16) {
 	b[1] = byte(v >> 8)
 }
 
-// GetHistory 获取历史记录
+// GetHistory gets history records
 func (s *SessionService) GetHistory(limit int) []model.HistoryRecord {
 	ctx := context.Background()
 	dbRecords, err := db.GetHistory(ctx, limit)
 	if err != nil {
-		logger.Error("⚠️ 获取历史记录失败", zap.Error(err))
+		logger.Error("⚠️ Failed to get history", zap.Error(err))
 		return []model.HistoryRecord{}
 	}
 
@@ -485,12 +485,12 @@ func (s *SessionService) GetHistory(limit int) []model.HistoryRecord {
 	return records
 }
 
-// DeleteSession 删除会话
+// DeleteSession deletes a session
 func (s *SessionService) DeleteSession(sessionID string) error {
-	// 从内存删除
+	// Delete from memory
 	s.sessions.Delete(sessionID)
 
-	// 从数据库删除
+	// Delete from DB
 	ctx := context.Background()
 	if err := db.DeleteSession(ctx, sessionID); err != nil {
 		return errors.New("session not found")
@@ -499,7 +499,7 @@ func (s *SessionService) DeleteSession(sessionID string) error {
 	return nil
 }
 
-// GetActiveSessionCount 获取活跃会话数量
+// GetActiveSessionCount returns active session count
 func (s *SessionService) GetActiveSessionCount() int {
 	count := 0
 	s.sessions.Range(func(key, value interface{}) bool {

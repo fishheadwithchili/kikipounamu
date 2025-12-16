@@ -32,7 +32,7 @@
 
 ## 📚 文档
 
-*   **部署指南**: [简体中文](doc/FULL_SYSTEM_STARTUP_GUIDE.zh-CN.md)
+*   **Linux 部署指南**: [简体中文](doc/LINUX_DEPLOYMENT_GUIDE.zh-CN.md)
 *   **技术白皮书**: [架构与设计](doc/architecture_technical.zh-CN.md)
 
 ---
@@ -90,7 +90,7 @@
 
 ## 🚀 快速开始
 
-请参阅 [部署指南](doc/FULL_SYSTEM_STARTUP_GUIDE.zh-CN.md) 获取详细步骤。
+请参阅 [Linux 部署指南](doc/LINUX_DEPLOYMENT_GUIDE.zh-CN.md) 获取详细步骤。
 
 > **Windows 用户**: 请直接查看 [Windows 11 部署指南](doc/WIN11_DEPLOYMENT_GUIDE.zh-CN.md) 以获得最佳体验（包含一键启动脚本）。
 

@@ -32,7 +32,7 @@ The system consists of **3 Core Services** and **2 Infrastructure Dependencies**
 
 ## 📚 Documentation
 
-*   **Deployment Guide**: [English](doc/FULL_SYSTEM_STARTUP_GUIDE.en.md)
+*   **Linux Deployment Guide**: [English](doc/LINUX_DEPLOYMENT_GUIDE.en.md)
 *   **Technical Whitepaper**: [Architecture & Design](doc/architecture_technical.en.md)
 
 ---
@@ -90,7 +90,7 @@ This project is developed and tested in the following specific environment.
 
 ## 🚀 Quick Start
 
-Please refer to the [Deployment Guide](doc/FULL_SYSTEM_STARTUP_GUIDE.en.md) for detailed instructions.
+Please refer to the [Linux Deployment Guide](doc/LINUX_DEPLOYMENT_GUIDE.en.md) for detailed instructions.
 
 > **Windows Users**: Please refer to the [Windows 11 Deployment Guide](doc/WIN11_DEPLOYMENT_GUIDE.en.md) for optimized PowerShell scripts.
 

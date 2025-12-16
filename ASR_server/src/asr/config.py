@@ -13,6 +13,7 @@ class ASRConfig(BaseSettings):
     vad_model: str = "fsmn-vad"
     punc_model: str = "ct-punc"
     model_path: Optional[str] = None
+    model_hub: str = "auto"  # "auto", "hf" (HuggingFace), or "ms" (ModelScope)
     
     # Processing Configuration
     use_gpu: bool = True

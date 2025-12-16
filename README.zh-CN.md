@@ -94,6 +94,7 @@
 
 ```bash
 # 1. 启动基础服务 (Redis & PostgreSQL)
+# 注意：Windows 环境下，请先运行 `redis-cli ping`。如果返回 PONG 则跳过启动命令。
 redis-server &
 sudo service postgresql start
 

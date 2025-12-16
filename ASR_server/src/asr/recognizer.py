@@ -1,6 +1,7 @@
 """Speech Recognition Module"""
 import gc
 import os
+import socket
 from typing import Optional
 
 import torch
@@ -20,6 +21,37 @@ class SpeechRecognizer:
             cls._instance._initialized = False
         return cls._instance
     
+    def _detect_network_region(self) -> str:
+        """
+        Detect network region by checking access to Google DNS (8.8.8.8).
+        
+        Uses direct socket connection which is more reliable than HTTP:
+        - Bypasses DNS resolution issues (DNS pollution in China)
+        - Faster response time
+        - Google DNS is 100% blocked in China mainland
+        
+        Returns:
+            "hf" if can access Google (overseas), "ms" otherwise (China mainland)
+        """
+        print("🔍 正在检测网络环境...")
+        try:
+            # Connect to Google's public DNS server on port 53
+            # This is blocked in China but fast elsewhere
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.settimeout(5)  # 5 second timeout
+            result = sock.connect_ex(('8.8.8.8', 53))
+            sock.close()
+            
+            if result == 0:
+                print("🌍 检测到海外网络环境，将使用 HuggingFace 下载源（速度更快）")
+                return "hf"
+            else:
+                print("🇨🇳 检测到国内网络环境，将使用 ModelScope 下载源")
+                return "ms"
+        except Exception:
+            print("🇨🇳 检测到国内网络环境，将使用 ModelScope 下载源")
+            return "ms"
+    
     def __init__(self):
         """Initialize the recognizer (only once)"""
         if self._initialized:
@@ -28,12 +60,23 @@ class SpeechRecognizer:
         print("🔄 正在加载 ASR 模型资源，请稍候...")
         device = "cuda" if config.use_gpu else "cpu"
         
+        # Determine download source (hub)
+        if config.model_hub == "auto":
+            hub = self._detect_network_region()
+        else:
+            hub = config.model_hub
+            if hub == "hf":
+                print("📦 使用配置指定的 HuggingFace 下载源")
+            elif hub == "ms":
+                print("📦 使用配置指定的 ModelScope 下载源")
+        
         # Initialize FunASR Pipeline
         model_kwargs = {
             "model": config.model_name,
             "vad_model": config.vad_model,
             "punc_model": config.punc_model,
             "device": device,
+            "hub": hub,  # Set download source
             "disable_update": True,
         }
         

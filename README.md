@@ -94,6 +94,7 @@ Please refer to the [Deployment Guide](doc/FULL_SYSTEM_STARTUP_GUIDE.en.md) for 
 
 ```bash
 # 1. Start Infrastructure (Redis & PostgreSQL)
+# Note: On Windows, check if it's already running as a service with `redis-cli ping`.
 redis-server &
 sudo service postgresql start
 

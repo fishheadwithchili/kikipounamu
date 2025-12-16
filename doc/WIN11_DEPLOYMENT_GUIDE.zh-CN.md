@@ -66,18 +66,32 @@
 如果你习惯使用 Windows 原生的 PowerShell，请按照以下步骤操作。
 
 > **提示**: 如果遇到权限错误，请尝试以**管理员身份**运行 PowerShell。
+> **重要**: 首次运行脚本前，必须允许 PowerShell 执行本地脚本。请运行：
+> `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser`
 
 ### 1. 启动基础依赖 (Infrastructure)
 
 确保 Redis 和 PostgreSQL 正在运行。
 
 ```powershell
-# 启动 Redis (假设已安装为 Windows 服务，通常会自动启动)
-# 如果手动启动：
+# 1. 检查 Redis 状态
+# Windows MSI 安装版通常会自动作为服务运行。
+# 先运行检查命令：
+redis-cli ping
+# 如果返回 "PONG"，说明服务已在运行，请跳过 redis-server 启动命令。
+
+# 如果返回无法连接，则手动启动：
 redis-server
 ```
 
-*PostgreSQL 通常作为 Windows 服务自动运行。你可以在任务管理器中确认。*
+# 2. 检查 PostgreSQL 状態
+# 通常 PostgreSQL 会自动运行。
+# 检查命令：
+Get-Service postgresql-x64-14
+
+# 如果 Status 不是 "Running"，请以管理员身份运行：
+Start-Service postgresql-x64-14
+
 
 ### 2. 启动 Python 服务 (Worker & API)
 
@@ -87,30 +101,17 @@ redis-server
 
 ```powershell
 cd ASR_server
+# 首次运行需要允许脚本执行(只需运行一次)：
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 
-# 1. 安装 uv 包管理器 (如果未安装)
-pip install uv
-
-# 2. 同步依赖
-uv sync
-
-# 3. 激活虚拟环境
-.\.venv\Scripts\Activate.ps1
-
-# 4. 启动 Worker
-python src/worker/unified_worker.py --name worker-1 --stream asr_tasks --group asr_workers
+.\scripts\start_unified_worker.ps1
 ```
 
 **窗口 B: 启动 API 服务 (接收请求)**
 
 ```powershell
 cd ASR_server
-
-# 1. 激活虚拟环境
-.\.venv\Scripts\Activate.ps1
-
-# 2. 启动 API
-uvicorn src.api.main:app --host 0.0.0.0 --port 8000
+.\scripts\start_api_server.ps1
 ```
 
 ### 3. 启动 Go 后端
@@ -119,12 +120,7 @@ uvicorn src.api.main:app --host 0.0.0.0 --port 8000
 
 ```powershell
 cd ASR_go_backend
-
-# 1. 整理依赖
-go mod tidy
-
-# 2. 运行服务
-go run cmd/server/main.go
+.\scripts\start_backend.ps1
 ```
 
 ### 4. 启动 Electron 客户端
@@ -133,12 +129,7 @@ go run cmd/server/main.go
 
 ```powershell
 cd ASR_electron
-
-# 1. 安装依赖
-npm install
-
-# 2. 启动开发模式
-npm run dev
+.\scripts\start_electron.ps1
 ```
 
 ---
@@ -150,7 +141,12 @@ npm run dev
 ### 1. 启动基础依赖
 
 ```bash
-# 后台启动 Redis
+# 1. 检查 Redis 状态
+# 如果已安装为 Windows 服务，可能已经运行中。
+redis-cli ping
+# 如果返回 PONG，则跳过启动命令。
+
+# 后台启动 Redis (如果未运行)
 redis-server &
 ```
 
@@ -161,23 +157,15 @@ redis-server &
 ```bash
 cd ASR_server
 
-# 安装 uv 并同步
-pip install uv
-uv sync
-
-# 激活环境 (注意路径格式)
-source .venv/Scripts/activate
-
-# 启动 Worker
-python src/worker/unified_worker.py --name worker-1 --stream asr_tasks --group asr_workers
+# 脚本会自动检查 uv 并激活环境
+./scripts/start_unified_worker.sh
 ```
 
 **窗口 B: API Server**
 
 ```bash
 cd ASR_server
-source .venv/Scripts/activate
-uvicorn src.api.main:app --host 0.0.0.0 --port 8000
+./scripts/start_api_server.sh
 ```
 
 ### 3. 启动 Go 后端

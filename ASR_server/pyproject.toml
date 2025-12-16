@@ -15,6 +15,7 @@ dependencies = [
     
     "funasr",
     "modelscope",
+    "huggingface_hub",  # 海外网络需要从 HuggingFace 下载模型
     
     # Web Framework & Task Queue
     "fastapi>=0.115.0",

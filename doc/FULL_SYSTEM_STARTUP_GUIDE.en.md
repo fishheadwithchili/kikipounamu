@@ -78,6 +78,8 @@ Ensure the following software is installed before starting:
 
 ```bash
 # Start Redis
+# Note: On Windows, check if it's already running as a service with `redis-cli ping`.
+# If it returns PONG, skip this step.
 redis-server &
 
 # Start PostgreSQL (Ensure service is running)

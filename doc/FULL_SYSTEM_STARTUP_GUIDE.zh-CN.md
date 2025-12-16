@@ -116,12 +116,18 @@ echo "ALTER USER postgres WITH PASSWORD '123456';" | sudo -u postgres psql
 3.  **启动 Worker**:
     ```bash
     cd ASR_server
+    # Linux/Mac
     ./scripts/start_unified_worker.sh
+    # Windows
+    .\scripts\start_unified_worker.ps1
     ```
 
 4.  **启动 API 服务**:
     ```bash
+    # Linux/Mac
     ./scripts/start_api_server.sh
+    # Windows
+    .\scripts\start_api_server.ps1
     # API 服务将在 http://0.0.0.0:8000 启动
     ```
 
@@ -135,7 +141,10 @@ echo "ALTER USER postgres WITH PASSWORD '123456';" | sudo -u postgres psql
 
 ```bash
 cd ASR_go_backend
+# Linux/Mac
 ./scripts/start_backend.sh
+# Windows
+.\scripts\start_backend.ps1
 ```
 
 
@@ -151,8 +160,12 @@ cd ASR_go_backend
 直接运行启动脚本即可：
 
 ```bash
+```bash
 cd ASR_electron
+# Linux/Mac
 ./scripts/start_electron.sh
+# Windows
+.\scripts\start_electron.ps1
 ```
 
 ---

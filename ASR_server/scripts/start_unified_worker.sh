@@ -12,8 +12,29 @@ if [ -f .env ]; then
     export $(cat .env | grep -v '^#' | xargs)
 fi
 
-# Configuration with defaults
-WORKER_COUNT="${WORKER_COUNT:-2}"
+# Detect GPU availability
+echo "🔍 Detecting GPU..."
+HAS_GPU=false
+if command -v python3 &> /dev/null; then
+    GPU_CHECK=$(python3 -c "import torch; print(torch.cuda.is_available())" 2>/dev/null || echo "False")
+    if [ "$GPU_CHECK" = "True" ]; then
+        HAS_GPU=true
+        echo "✅ GPU detected (CUDA available)"
+    else
+        echo "⚠️  No GPU detected, running in CPU mode"
+    fi
+else
+    echo "⚠️  Could not detect GPU, assuming CPU mode"
+fi
+
+# Configuration with defaults (GPU=2 workers, CPU=1 worker)
+if [ -z "$WORKER_COUNT" ]; then
+    if [ "$HAS_GPU" = true ]; then
+        WORKER_COUNT=2
+    else
+        WORKER_COUNT=1
+    fi
+fi
 STREAM_NAME="${STREAM_NAME:-asr_tasks}"
 GROUP_NAME="${CONSUMER_GROUP:-asr_workers}"
 PYTHON="${PYTHON:-python3}"

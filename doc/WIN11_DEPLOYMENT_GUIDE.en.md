@@ -42,12 +42,12 @@ The system consists of **3 Core Services** and **2 Infrastructure Dependencies**
 Before starting, ensure you have the following installed:
 
 1.  **Git**: [Download](https://git-scm.com/download/win)
-2.  **VS Code**: [Download](https://code.visualstudio.com/)
-3.  **Python 3.10+**: [Download](https://www.python.org/downloads/windows/) (Make sure to check "Add Python to PATH" during installation)
-4.  **Go 1.21+**: [Download](https://go.dev/dl/)
-5.  **Node.js 18+ (LTS)**: [Download](https://nodejs.org/en)
-6.  **FFmpeg**: [Download](https://www.gyan.dev/ffmpeg/builds/) (Extract and add the `bin` folder to your System Environment Variables Path)
-7.  **Databases**:
+
+2.  **Python 3.10+**: [Download](https://www.python.org/downloads/windows/) (Make sure to check "Add Python to PATH" during installation)
+3.  **Go 1.21+**: [Download](https://go.dev/dl/)
+4.  **Node.js 18+ (LTS)**: [Download](https://nodejs.org/en)
+5.  **FFmpeg**: [Download](https://www.gyan.dev/ffmpeg/builds/) (Extract and add the `bin` folder to your System Environment Variables Path)
+6.  **Databases**:
     *   **Redis**: Recommended to use WSL2, or download [Redis for Windows](https://github.com/tporadowski/redis/releases).
     *   **PostgreSQL**: [Download Installer](https://www.postgresql.org/download/windows/) (Default user `postgres`, set password to `123456`).
 

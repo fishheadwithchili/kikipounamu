@@ -42,12 +42,12 @@
 开始之前，请确保安装了以下软件：
 
 1.  **Git**: [下载](https://git-scm.com/download/win)
-2.  **VS Code**: [下载](https://code.visualstudio.com/)
-3.  **Python 3.10+**: [下载](https://www.python.org/downloads/windows/) (安装时务必勾选 "Add Python to PATH")
-4.  **Go 1.21+**: [下载](https://go.dev/dl/)
-5.  **Node.js 18+ (LTS)**: [下载](https://nodejs.org/en)
-6.  **FFmpeg**: [下载](https://www.gyan.dev/ffmpeg/builds/) (解压并将 `bin` 文件夹添加到系统环境变量 Path 中)
-7.  **数据库**:
+
+2.  **Python 3.10+**: [下载](https://www.python.org/downloads/windows/) (安装时务必勾选 "Add Python to PATH")
+3.  **Go 1.21+**: [下载](https://go.dev/dl/)
+4.  **Node.js 18+ (LTS)**: [下载](https://nodejs.org/en)
+5.  **FFmpeg**: [下载](https://www.gyan.dev/ffmpeg/builds/) (解压并将 `bin` 文件夹添加到系统环境变量 Path 中)
+6.  **数据库**:
     *   **Redis**: 推荐使用 WSL2 安装，或下载 [Redis for Windows](https://github.com/tporadowski/redis/releases)。
     *   **PostgreSQL**: [下载安装包](https://www.postgresql.org/download/windows/) (默认用户 `postgres`，密码设为 `123456`)。
 

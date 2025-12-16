@@ -84,6 +84,8 @@ You can configure the service via environment variables:
 
 ### 5. Start Service
 
+> **Windows Users**: Please use the `scripts/start_backend.ps1` script described in the [Windows 11 Deployment Guide](../doc/WIN11_DEPLOYMENT_GUIDE.en.md).
+
 ```bash
 # 1. Start PostgreSQL
 sudo service postgresql start

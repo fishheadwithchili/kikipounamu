@@ -82,6 +82,8 @@ go mod tidy
 
 ### 5. 启动服务
 
+> **Windows 用户**: 请使用 [Windows 11 部署指南](../doc/WIN11_DEPLOYMENT_GUIDE.zh-CN.md) 中的 `scripts/start_backend.ps1` 脚本。
+
 ```bash
 # 1. 启动 PostgreSQL 数据库
 sudo service postgresql start

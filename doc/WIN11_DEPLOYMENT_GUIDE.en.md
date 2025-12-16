@@ -43,7 +43,7 @@ Before starting, ensure you have the following installed:
 
 1.  **Git**: [Download](https://git-scm.com/download/win)
 
-2.  **Python 3.10.11**: [Download](https://www.python.org/ftp/python/3.10.11/python-3.10.11-amd64.exe) (Make sure to check "Add Python to PATH" during installation)
+22.  **Python 3.10.12**: [Download](https://www.python.org/ftp/python/3.10.12/python-3.10.12-amd64.exe) (Make sure to check "Add Python to PATH" during installation)
 3.  **Go 1.24.5**: [Download](https://go.dev/dl/go1.24.5.windows-amd64.msi)
 4.  **Node.js 24.11.1**: [Download](https://nodejs.org/dist/v24.11.1/node-v24.11.1-x64.msi)
 5.  **FFmpeg (Latest)**: 
@@ -87,30 +87,17 @@ We need two separate PowerShell windows (or tabs).
 
 ```powershell
 cd ASR_server
+# Allow scripts to run (Only needed once):
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 
-# 1. Install uv package manager (if not installed)
-pip install uv
-
-# 2. Sync dependencies
-uv sync
-
-# 3. Activate virtual environment
-.\.venv\Scripts\Activate.ps1
-
-# 4. Start Worker
-python src/worker/unified_worker.py --name worker-1 --stream asr_tasks --group asr_workers
+.\scripts\start_unified_worker.ps1
 ```
 
 **Window B: Start API Server (Receive Requests)**
 
 ```powershell
 cd ASR_server
-
-# 1. Activate virtual environment
-.\.venv\Scripts\Activate.ps1
-
-# 2. Start API
-uvicorn src.api.main:app --host 0.0.0.0 --port 8000
+.\scripts\start_api_server.ps1
 ```
 
 ### 3. Start Go Backend
@@ -119,12 +106,7 @@ Open a new PowerShell window.
 
 ```powershell
 cd ASR_go_backend
-
-# 1. Tidy dependencies
-go mod tidy
-
-# 2. Run service
-go run cmd/server/main.go
+.\scripts\start_backend.ps1
 ```
 
 ### 4. Start Electron Client
@@ -133,12 +115,7 @@ Open a new PowerShell window.
 
 ```powershell
 cd ASR_electron
-
-# 1. Install dependencies
-npm install
-
-# 2. Start dev mode
-npm run dev
+.\scripts\start_electron.ps1
 ```
 
 ---

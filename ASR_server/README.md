@@ -96,6 +96,8 @@ uv sync
 
 ### 2. Start Services (3 Terminals)
 
+> **Windows Users**: Please use the PowerShell scripts mentioned in the [Windows 11 Deployment Guide](../doc/WIN11_DEPLOYMENT_GUIDE.en.md).
+
 ```bash
 # Terminal 1: Start Redis
 redis-server

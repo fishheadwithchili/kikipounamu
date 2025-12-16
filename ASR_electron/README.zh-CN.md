@@ -6,6 +6,8 @@
 
 在启动客户端之前，请确保 **ASR_server** (Python) 和 **ASR_go_backend** (Go) 都已经正常运行。
 
+> **Windows 用户**: 可以使用 `scripts/start_electron.ps1` 自动安装依赖并启动。详见 [Windows 11 部署指南](../doc/WIN11_DEPLOYMENT_GUIDE.zh-CN.md)。
+
 ### 1. 环境准备
 
 *   **Node.js**: 24.11.1

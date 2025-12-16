@@ -7,6 +7,10 @@
 
 ---
 
+> **Windows Users**: Please refer to the [Windows 11 Deployment Guide](WIN11_DEPLOYMENT_GUIDE.zh-CN.md) for a more optimized, script-based deployment experience using PowerShell.
+
+---
+
 ## 什么是 "3+2" 架构？
 
 本系统由 **3 个核心服务** 和 **2 个基础依赖** 组成，统称为 "3+2" 架构。
@@ -71,7 +75,7 @@ model = AutoModel(
 
 *   **Redis**: 用于 Python 后端的任务队列。
 *   **PostgreSQL**: 用于 Go 后端的历史记录存储。
-*   **Python 3.10.11**: 运行 ASR_server。
+*   **Python 3.10.12**: 运行 ASR_server。
 *   **Go 1.24.5**: 运行 ASR_go_backend。
 *   **Node.js & pnpm**: 运行前端。
 

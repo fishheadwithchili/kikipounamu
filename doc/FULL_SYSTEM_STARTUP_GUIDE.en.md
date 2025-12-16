@@ -6,6 +6,10 @@ This guide provides instructions for deploying the full ASR system on a target m
 
 ---
 
+> **Windows Users**: Please refer to the [Windows 11 Deployment Guide](WIN11_DEPLOYMENT_GUIDE.en.md) for a more optimized, script-based deployment experience using PowerShell.
+
+---
+
 ## What is the "3+2" Architecture?
 
 The system consists of **3 Core Services** and **2 Infrastructure Dependencies**, collectively referred to as the "3+2" architecture.
@@ -70,7 +74,7 @@ Ensure the following software is installed before starting:
 
 *   **Redis**: For the Python backend task queue.
 *   **PostgreSQL**: For the Go backend history storage.
-*   **Python 3.10.11**: To run ASR_server.
+*   **Python 3.10.12**: To run ASR_server.
 *   **Go 1.24.5**: To run ASR_go_backend.
 *   **Node.js & pnpm**: To run the frontend.
 

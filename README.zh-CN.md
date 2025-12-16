@@ -58,9 +58,9 @@
 本项目在以下特定环境中开发并测试通过：
 
 *   **操作系统**: Windows 10/11 (Native) 或 WSL2 (Ubuntu 22.04)
-*   **Python**: 3.10.11 (Windows下官方支持的最后稳定版，严格要求)
+*   **Python**: 3.10.12 (Windows下官方支持的最后稳定版，严格要求)
 *   **Go**: 1.24.5
-*   **Redis**: 6.0.16
+*   **Redis**: 5.0.14.1 (Windows Native) / 6.0.16 (Linux)
 *   **PostgreSQL**: 14.20
 *   **前端**: React 18.2.0, Electron 30.0.1
 
@@ -91,6 +91,8 @@
 ## 🚀 快速开始
 
 请参阅 [部署指南](doc/FULL_SYSTEM_STARTUP_GUIDE.zh-CN.md) 获取详细步骤。
+
+> **Windows 用户**: 请直接查看 [Windows 11 部署指南](doc/WIN11_DEPLOYMENT_GUIDE.zh-CN.md) 以获得最佳体验（包含一键启动脚本）。
 
 ```bash
 # 1. 启动基础服务 (Redis & PostgreSQL)

@@ -93,6 +93,8 @@ uv sync
 
 ### 2. 启动服务 (3 个终端)
 
+> **Windows 用户**: 请使用 [Windows 11 部署指南](../doc/WIN11_DEPLOYMENT_GUIDE.zh-CN.md) 中推荐的一键启动脚本。
+
 ```bash
 # 终端 1: 启动 Redis
 redis-server

@@ -58,9 +58,9 @@ The system consists of **3 Core Services** and **2 Infrastructure Dependencies**
 This project is developed and tested in the following specific environment.
 
 *   **OS**: Windows 10/11 (Native) or WSL2 (Ubuntu 22.04)
-*   **Python**: 3.10.11 (Strict requirement for Windows compatibility)
+*   **Python**: 3.10.12 (Strict requirement for Windows compatibility)
 *   **Go**: 1.24.5
-*   **Redis**: 6.0.16
+*   **Redis**: 5.0.14.1 (Windows Native) / 6.0.16 (Linux)
 *   **PostgreSQL**: 14.20
 *   **Frontend**: React 18.2.0, Electron 30.0.1
 
@@ -91,6 +91,8 @@ This project is developed and tested in the following specific environment.
 ## 🚀 Quick Start
 
 Please refer to the [Deployment Guide](doc/FULL_SYSTEM_STARTUP_GUIDE.en.md) for detailed instructions.
+
+> **Windows Users**: Please refer to the [Windows 11 Deployment Guide](doc/WIN11_DEPLOYMENT_GUIDE.en.md) for optimized PowerShell scripts.
 
 ```bash
 # 1. Start Infrastructure (Redis & PostgreSQL)

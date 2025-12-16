@@ -6,6 +6,8 @@ This is the desktop client for the ASR project, built with Electron + React + Ty
 
 Before starting the client, please ensure that **ASR_server** (Python) and **ASR_go_backend** (Go) are running normally.
 
+> **Windows Users**: You can use `scripts/start_electron.ps1` to auto-install and start. See [Windows 11 Deployment Guide](../doc/WIN11_DEPLOYMENT_GUIDE.en.md).
+
 ### 1. Prerequisites
 
 *   **Node.js**: 24.11.1

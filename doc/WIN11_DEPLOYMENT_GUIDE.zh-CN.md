@@ -46,7 +46,12 @@
 2.  **Python 3.10.12**: [下载](https://www.python.org/ftp/python/3.10.12/python-3.10.12-amd64.exe) (安装时务必勾选 "Add Python to PATH")
 3.  **Go 1.24.5**: [下载](https://go.dev/dl/go1.24.5.windows-amd64.msi)
 4.  **Node.js 24.11.1**: [下载](https://nodejs.org/dist/v24.11.1/node-v24.11.1-x64.msi)
-5.  **FFmpeg (最新版)**: [下载](https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-full.7z) (解压并将 `bin` 文件夹添加到系统环境变量 Path 中)
+5.  **FFmpeg (最新版)**: 
+    *   [下载 7z 压缩包](https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-full.7z)
+    *   解压到推荐位置：`C:\ffmpeg` (或任意你喜欢的目录)
+    *   将 `bin` 目录的完整路径添加到系统环境变量 Path，例如：`C:\ffmpeg\bin`
+    *   配置 PATH 方法：`Windows 设置` → `系统` → `高级系统设置` → `环境变量` → 在 `系统变量` 中找到 `Path` → `编辑` → `新建` → 粘贴 bin 路径 → `确定`
+    *   验证安装：打开新的终端窗口，运行 `ffmpeg -version`
 6.  **数据库**:
     *   **Redis 6.0.16**: 推荐使用 WSL2 安装 (Windows 原生版仅支持到 5.0)。
     *   **PostgreSQL 14.20**: [下载安装包](https://get.enterprisedb.com/postgresql/postgresql-14.20-1-windows-x64.exe) (默认用户 `postgres`，密码设为 `123456`)。

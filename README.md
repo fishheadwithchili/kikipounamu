@@ -6,6 +6,8 @@
 
 > Enterprise-grade distributed microservices ASR system. Features dynamic scaling and high-concurrency resilience. Built on Event-Driven Architecture with Go, Redis Streams & Python.
 
+> **ASR (Automatic Speech Recognition)** refers to the technology that converts spoken language into text. In short, this project is designed for speech-to-text conversion.
+
 > **Language**: [English](README.md) | [简体中文](README.zh-CN.md)
 
 ---

@@ -6,6 +6,8 @@
 
 > 企业级分布式微服务 ASR 系统。具有动态热扩容和高并发抗压能力。基于 Go、Redis Streams 和 Python 的事件驱动架构构建。
 
+> **ASR (Automatic Speech Recognition)** 即自动语音识别技术。简单来说，本项目就是用来做语音识别转文本的。
+
 > **语言**: [English](README.md) | [简体中文](README.zh-CN.md)
 
 ---

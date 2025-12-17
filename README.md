@@ -15,6 +15,25 @@
 > *   **Platform Status**: Supports **Windows Native** and **WSL2**. Native Windows deployment is recommended for best compatibility.
 > *   **Media**: Commercial demo video coming soon.
 
+## ⚠️ Important Deployment Notice
+
+**One-Click Launcher is discontinued. Please follow the manual deployment guide.**
+
+I want to be transparent: I have spent far more time and effort than anticipated trying to create a "user-friendly" deployment solution.
+
+Current Status: I have created and verified a **Windows 11 Manual Deployment Guide**. I have navigated all the potential pitfalls myself. If you follow the steps strictly, deployment should succeed.
+
+**Before you begin, please understand:**
+
+1.  **System Complexity**: This is not a simple monolithic application. It is a distributed system consisting of roughly **10 modules**, with 5 core components (refer to the "3+2" architecture below).
+2.  **Enterprise Focus**: This project is fundamentally an Enterprise (To-B) infrastructure component, not a consumer-grade (To-C) "plug-and-play" application.
+3.  **No One-Click Launcher**: I attempted to build a one-click launcher, but the maintenance burden (version locking, broken download links, clean uninstallation) proved too high. **Therefore, I am no longer providing a one-click launcher.**
+
+**Conclusion**:
+If you are unable to follow the manual deployment guide, this project may not be suitable for your needs.
+
+Please consult the **[Windows 11 Deployment Guide](doc/WIN11_DEPLOYMENT_GUIDE.en.md)** or **[Linux Deployment Guide](doc/LINUX_DEPLOYMENT_GUIDE.en.md)** in the `doc` folder. Most issues you encounter will likely be due to environment mismatches.
+
 ## What is the "3+2" Architecture?
 
 The system consists of **3 Core Services** and **2 Infrastructure Dependencies**, collectively referred to as the "3+2" architecture.
@@ -70,7 +89,7 @@ This project is developed and tested in the following specific environment.
 | :--- | :--- | :--- |
 | **High Concurrency** | ✅ **Passed** | Tested stable at **500 concurrent connections**. |
 | **RTX 5060 Acceleration** | ✅ **Verified** | Ultra-low latency (<50ms). |
-| **Cross-Platform** | ⚠️ **Untested** | Native Windows, Linux, and macOS environments have **not** been fully tested. |
+| **Cross-Platform** | ✅ **Verified** | Native Windows and Linux environments have been verified. |
 | **Distributed Scaling** | ⚠️ **Untested** | Distributed hot-scaling has **not** been tested. |
 
 
@@ -90,32 +109,13 @@ This project is developed and tested in the following specific environment.
 
 ## 🚀 Quick Start
 
-Please refer to the [Linux Deployment Guide](doc/LINUX_DEPLOYMENT_GUIDE.en.md) for detailed instructions.
+**Please refer directly to the detailed deployment guides:**
 
-> **Windows Users**: Please refer to the [Windows 11 Deployment Guide](doc/WIN11_DEPLOYMENT_GUIDE.en.md) for optimized PowerShell scripts.
+*   **Windows**: [Windows 11 Deployment Guide](doc/WIN11_DEPLOYMENT_GUIDE.en.md)
+*   **Linux**: [Linux Deployment Guide](doc/LINUX_DEPLOYMENT_GUIDE.en.md)
 
-```bash
-# 1. Start Infrastructure (Redis & PostgreSQL)
-# Note: On Windows, check if it's already running as a service with `redis-cli ping`.
-redis-server &
-sudo service postgresql start
+*(Due to system complexity and dependencies, we no longer provide a simplified command-line tutorial here. Please follow the guides above for environment setup and deployment.)*
 
-# 2. Start Python Server
-cd ASR_server
-./scripts/start_unified_worker.sh
-./scripts/start_api_server.sh
-cd ..
-
-# 3. Start Go Backend
-cd ASR_go_backend
-./scripts/start_backend.sh
-cd ..
-
-# 4. Start Electron App
-cd ASR_electron
-./scripts/start_electron.sh
-cd ..
-```
 
 ---
 

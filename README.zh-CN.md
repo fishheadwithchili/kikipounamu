@@ -15,6 +15,25 @@
 > *   **平台状态**: 本项目支持 **Windows Native (原生)** 与 **WSL2**。推荐使用 Windows 原生部署以获得最佳兼容性。
 > *   **视频演示**: 商业大片制作中，敬请期待。
 
+## ⚠️ 关于部署的重要说明 (Important Deployment Notice)
+
+**一键启动器已停止维护，请使用手动部署指南。**
+
+我想坦诚地说明一点：在这个项目的“用户友好型部署方案”上，我投入了远超预期的时间和精力。
+
+目前的进展是：我编写并测试通过了一份 **Win11 手动部署指南**。所有的坑我都踩过了，只要严格按照步骤操作，部署应该没有问题。
+
+**但在你开始之前，请务必理解以下几点：**
+
+1.  **系统复杂度**: 本项目并非简单的单体应用。它实际上是由 **10 个左右的模块** 组成的分布式系统，其中 5 个是核心模块，3 个由我亲自开发（即下文提到的 "3+2" 架构）。
+2.  **To-B 定位**: 本项目本质上是面向企业 (To B) 的基础设施，而非面向普通消费者 (To C) 的"傻瓜式"软件。
+3.  **放弃一键启动**: 我曾尝试开发一键启动器，但在版本锁定、依赖下载失效、卸载残留清理等问题上耗费了巨大精力，且难以长期维护。**因此，我决定不再提供一键启动器。**
+
+**结论**：
+如果连手动安装指南都无法搞定，那么这个项目可能并不适合你。
+
+请查阅 `doc` 文件夹中的 **[Windows 11 部署指南](doc/WIN11_DEPLOYMENT_GUIDE.zh-CN.md)** 或 **[Linux 部署指南](doc/LINUX_DEPLOYMENT_GUIDE.zh-CN.md)**。只要环境配置正确（这是最容易出错的地方），你大概率可以成功部署。
+
 ## 什么是 "3+2" 架构？
 
 本系统由 **3 个核心服务** 和 **2 个基础依赖** 组成，统称为 "3+2" 架构。
@@ -70,7 +89,7 @@
 | :--- | :--- | :--- |
 | **高并发** | ✅ **通过** | 500并发压力测试通过，符合预期。 |
 | **RTX 5060 加速** | ✅ **已验证** | 超低延迟 (<50ms)。 |
-| **跨平台** | ⚠️ **未测试** | 原生 Win/Linux/Mac 环境暂未充分测试。 |
+| **跨平台** | ✅ **已验证** | 原生 Windows 与 Linux 环境已通过测试。 |
 | **分布式热扩容** | ⚠️ **未测试** | 分布式热扩容暂未测试。 |
 
 
@@ -90,32 +109,13 @@
 
 ## 🚀 快速开始
 
-请参阅 [Linux 部署指南](doc/LINUX_DEPLOYMENT_GUIDE.zh-CN.md) 获取详细步骤。
+**请直接查阅详细部署指南：**
 
-> **Windows 用户**: 请直接查看 [Windows 11 部署指南](doc/WIN11_DEPLOYMENT_GUIDE.zh-CN.md) 以获得最佳体验（包含一键启动脚本）。
+*   **Windows**: [Windows 11 部署指南](doc/WIN11_DEPLOYMENT_GUIDE.zh-CN.md)
+*   **Linux**: [Linux 部署指南](doc/LINUX_DEPLOYMENT_GUIDE.zh-CN.md)
 
-```bash
-# 1. 启动基础服务 (Redis & PostgreSQL)
-# 注意：Windows 环境下，请先运行 `redis-cli ping`。如果返回 PONG 则跳过启动命令。
-redis-server &
-sudo service postgresql start
+*(由于系统环境依赖较多，不再提供简易的命令行启动教程，请务必按照上述指南进行环境配置与部署)*
 
-# 2. 启动 Python 服务
-cd ASR_server
-./scripts/start_unified_worker.sh
-./scripts/start_api_server.sh
-cd ..
-
-# 3. 启动 Go 后端
-cd ASR_go_backend
-./scripts/start_backend.sh
-cd ..
-
-# 4. 启动 Electron 应用
-cd ASR_electron
-./scripts/start_electron.sh
-cd ..
-```
 
 ---
 

@@ -11,6 +11,8 @@
 
 Project kikipounamu is a high-performance, high-concurrency **Enterprise-grade Distributed Microservices ASR System** built on **Event-Driven Architecture (EDA)**. This project aims to address the pain points of traditional monolithic ASR systems regarding concurrent processing, resource isolation, and scalability. By introducing a **Go language high-performance gateway** and **Redis Streams message bus**, the system successfully decouples compute-intensive (ASR inference) tasks from IO-intensive (network connection) tasks.
 
+> **ASR (Automatic Speech Recognition)** refers to the technology that converts spoken language into text. In short, this project is designed for speech-to-text conversion.
+
 In recent **500-concurrency load tests**, the system demonstrated strong resilience: even under extreme stress with insufficient compute resources (Workers), the gateway layer maintained **100% availability** without crashing or memory leaks, validating the robustness of the architectural design.
 
 ---

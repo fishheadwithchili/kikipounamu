@@ -2,7 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+
 ## [Unreleased]
+
+## [1.2.0] - 2025-12-17
+
+### Added
+- **Automation**: Introduced `.ps1` startup scripts for all core components (ASR Server, Worker, Backend, Electron) to replace manual startup.
+- **Dependency Management**: Scripts now automatically install `uv` and sync dependencies.
+- **Reliability**: Startup scripts now handle port conflicts (auto-kill) and load environment variables from `.env`.
+- **Hardware Detection**: Added automatic FFmpeg checks and GPU detection (switching between CPU/GPU modes) in worker scripts.
 
 ## [1.1.0] - 2025-12-15
 

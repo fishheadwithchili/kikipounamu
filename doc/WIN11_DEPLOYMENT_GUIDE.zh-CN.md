@@ -75,13 +75,15 @@
 
 ```powershell
 # 1. 检查 Redis 状态
-# Windows MSI 安装版通常会自动作为服务运行。
-# 先运行检查命令：
+# 推荐: 使用 Windows 服务运行(看不到黑窗口，更稳定)
+# 检查是否已运行:
 redis-cli ping
-# 如果返回 "PONG"，说明服务已在运行，请跳过 redis-server 启动命令。
+# 如果返回 "PONG"，说明服务正常，直接跳过。
 
-# 如果返回无法连接，则手动启动：
-redis-server
+# 如果连接失败，请以管理员身份运行以下命令启动服务(永久自启):
+Start-Service Redis; Set-Service Redis -StartupType Automatic
+
+# 注意: 不要直接运行 'redis-server'，那会占用当前窗口。
 ```
 
 # 2. 检查 PostgreSQL 状態
@@ -90,7 +92,7 @@ redis-server
 Get-Service postgresql-x64-14
 
 # 如果 Status 不是 "Running"，请以管理员身份运行：
-Start-Service postgresql-x64-14
+Start-Service postgresql-x64-14; Set-Service postgresql-x64-14 -StartupType Automatic
 
 
 ### 2. 启动 Python 服务 (Worker & API)
@@ -142,11 +144,11 @@ cd ASR_electron
 
 ```bash
 # 1. 检查 Redis 状态
-# 如果已安装为 Windows 服务，可能已经运行中。
 redis-cli ping
-# 如果返回 PONG，则跳过启动命令。
+# 如果返回 PONG，则跳过。
 
-# 后台启动 Redis (如果未运行)
+# 如果未运行，推荐使用 Windows 服务管理(见上方 PowerShell 方案)，
+# 或者在 Git Bash 后台运行:
 redis-server &
 ```
 

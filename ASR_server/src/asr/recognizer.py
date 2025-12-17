@@ -33,7 +33,7 @@ class SpeechRecognizer:
         Returns:
             "hf" if can access Google (overseas), "ms" otherwise (China mainland)
         """
-        print("🔍 正在检测网络环境...")
+        print("🔍 Detecting network environment...")
         try:
             # Connect to Google's public DNS server on port 53
             # This is blocked in China but fast elsewhere
@@ -43,13 +43,13 @@ class SpeechRecognizer:
             sock.close()
             
             if result == 0:
-                print("🌍 检测到海外网络环境，将使用 HuggingFace 下载源（速度更快）")
+                print("🌍 Overseas network detected. Using HuggingFace (faster for overseas).")
                 return "hf"
             else:
-                print("🇨🇳 检测到国内网络环境，将使用 ModelScope 下载源")
+                print("🇨🇳 Mainland China network detected. Using ModelScope.")
                 return "ms"
         except Exception:
-            print("🇨🇳 检测到国内网络环境，将使用 ModelScope 下载源")
+            print("🇨🇳 Mainland China network detected. Using ModelScope.")
             return "ms"
     
     def __init__(self):
@@ -57,7 +57,7 @@ class SpeechRecognizer:
         if self._initialized:
             return
             
-        print("🔄 正在加载 ASR 模型资源，请稍候...")
+        print("🔄 Loading ASR model resources, please wait...")
         device = "cuda" if config.use_gpu else "cpu"
         
         # Determine download source (hub)
@@ -66,18 +66,27 @@ class SpeechRecognizer:
         else:
             hub = config.model_hub
             if hub == "hf":
-                print("📦 使用配置指定的 HuggingFace 下载源")
+                print("📦 Using configured HuggingFace source")
             elif hub == "ms":
-                print("📦 使用配置指定的 ModelScope 下载源")
+                print("📦 Using configured ModelScope source")
         
         # Initialize FunASR Pipeline
+        model_name = config.model_name
+        vad_model = config.vad_model
+        punc_model = config.punc_model
+
+        # Ensure sub-models also use the correct hub
+        sub_model_kwargs = {"hub": hub, "device": device} if hub == "hf" else {"device": device}
+
         model_kwargs = {
-            "model": config.model_name,
-            "vad_model": config.vad_model,
-            "punc_model": config.punc_model,
+            "model": model_name,
+            "vad_model": vad_model,
+            "punc_model": punc_model,
             "device": device,
             "hub": hub,  # Set download source
             "disable_update": True,
+            "vad_kwargs": sub_model_kwargs,
+            "punc_kwargs": sub_model_kwargs,
         }
         
         # Add model_path if specified
@@ -90,22 +99,22 @@ class SpeechRecognizer:
         self.hotwords = self._load_hotwords(config.hotwords_path)
         
         self._initialized = True
-        print("✅ ASR 模型加载完毕，服务就绪。")
+        print("✅ ASR model loaded. Service ready.")
     
     def _load_hotwords(self, filepath: str) -> str:
         """Load hotwords from file"""
         if not os.path.exists(filepath):
-            print(f"⚠️  热词文件不存在: {filepath}")
+            print(f"⚠️  Hotwords file not found: {filepath}")
             return ""
         
         try:
             with open(filepath, "r", encoding="utf-8") as f:
                 lines = [line.strip() for line in f.readlines() if line.strip()]
                 hotwords = " ".join(lines)
-                print(f"✅ 已加载 {len(lines)} 个热词")
+                print(f"✅ Loaded {len(lines)} hotwords")
                 return hotwords
         except Exception as e:
-            print(f"⚠️  加载热词失败: {e}")
+            print(f"⚠️  Failed to load hotwords: {e}")
             return ""
     
     def cleanup(self):
@@ -129,13 +138,13 @@ class SpeechRecognizer:
         if not os.path.exists(audio_path):
             return {
                 "status": "failed",
-                "error": f"文件不存在: {audio_path}",
+                "error": f"File not found: {audio_path}",
                 "text": "",
                 "duration": 0.0
             }
         
         try:
-            print(f"🎤 正在识别: {os.path.basename(audio_path)}")
+            print(f"🎤 Recognizing: {os.path.basename(audio_path)}")
             
             # Perform recognition
             res = self.model.generate(
@@ -174,13 +183,13 @@ class SpeechRecognizer:
                 self.cleanup()
                 return {
                     "status": "failed",
-                    "error": "识别结果为空",
+                    "error": "Empty recognition result",
                     "text": "",
                     "duration": 0.0
                 }
                 
         except Exception as e:
-            print(f"❌ 识别失败: {e}")
+            print(f"❌ Recognition failed: {e}")
             self.cleanup()  # Cleanup on error too
             return {
                 "status": "failed",

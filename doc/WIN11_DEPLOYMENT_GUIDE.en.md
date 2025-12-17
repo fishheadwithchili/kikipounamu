@@ -72,9 +72,16 @@ If you are comfortable with the native Windows PowerShell, follow these steps.
 Ensure Redis and PostgreSQL are running.
 
 ```powershell
-# Start Redis (Assuming installed as Windows Service, usually starts auto)
-# If manual start needed:
-redis-server
+# 1. Check Redis Status
+# Recommended: Run as Windows Service (No black window)
+# Check if running:
+redis-cli ping
+# If it returns "PONG", you are good to go.
+
+# If connection failed, run this as Administrator to start the service (Auto-start enabled):
+Start-Service Redis; Set-Service Redis -StartupType Automatic
+
+# Note: Do NOT run 'redis-server' manually in foreground.
 ```
 
 *PostgreSQL usually runs automatically as a Windows Service. You can verify this in Task Manager.*
@@ -127,7 +134,12 @@ If you prefer a Unix-like command line experience, you can use Git Bash.
 ### 1. Start Infrastructure
 
 ```bash
-# Start Redis in background
+# 1. Check Redis Status
+redis-cli ping
+# If "PONG", skip.
+
+# If not running, use the Windows Service method (see PowerShell section),
+# or run in background:
 redis-server &
 ```
 

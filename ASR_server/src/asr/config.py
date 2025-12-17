@@ -5,6 +5,13 @@ from typing import Optional
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
+# Fix for Windows: Disable symlinks for HuggingFace downloads to avoid [WinError 1314]
+# This must be set BEFORE importing any HF libraries or running downloads
+os.environ["HF_HUB_DISABLE_SYMLINKS_WARNING"] = "1"
+os.environ["HF_HUB_ENABLE_HF_TRANSFER"] = "0"
+# Critical fix for "A required privilege is not held by the client"
+os.environ["HF_HUB_DISABLE_SYMLINKS"] = "1" 
+
 class ASRConfig(BaseSettings):
     """ASR Service Configuration"""
     

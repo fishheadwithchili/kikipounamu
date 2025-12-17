@@ -38,11 +38,23 @@ namespace KikiPounamu
                 Application.SetCompatibleTextRenderingDefault(false);
 
                 // Ensure we have the robust root path determination logic
-                string rootPath = AppDomain.CurrentDomain.BaseDirectory;
-                // If in launcher dir, go up
-                if (Path.GetFileName(rootPath.TrimEnd(Path.DirectorySeparatorChar)).Equals("launcher", StringComparison.OrdinalIgnoreCase))
+                string baseDir = AppDomain.CurrentDomain.BaseDirectory;
+                string rootPath = baseDir;
+
+                // Check if we are in the root (where ASR_server exists)
+                if (!Directory.Exists(Path.Combine(rootPath, "ASR_server")))
                 {
-                    rootPath = Path.GetDirectoryName(rootPath);
+                    // If not, check if we are in a subdirectory (like 'launcher') and parent has it
+                    string parent = Directory.GetParent(rootPath).FullName;
+                    if (Directory.Exists(Path.Combine(parent, "ASR_server")))
+                    {
+                        rootPath = parent;
+                    }
+                    else
+                    {
+                        // Fallback/Error state - but let's try keep going or maybe user moved things weirdly
+                        // For debugging, we default to baseDir if all else fails, but this is likely the fix.
+                    }
                 }
 
                 // Check for initial setup requirement

@@ -1,4 +1,4 @@
-# 企业级分布式微服务 ASR 系统 (Project kikipounamu) 技术架构白皮书
+# 企业级分布式微服务流式分段批处理 ASR 系统 (Project kikipounamu) 技术架构白皮书
 # Enterprise-grade Distributed Microservices ASR System (Project kikipounamu) Technical Architecture Whitepaper
 
 > **版本**: 2.2
@@ -10,7 +10,7 @@
 
 ## 1. 摘要 (Executive Summary)
 
-Project kikipounamu 是一个基于 **Event-Driven Architecture (EDA)** 构建的高性能、高并发**企业级分布式微服务**语音识别系统。本项目旨在解决传统单体 ASR 系统在并发处理、资源隔离和扩展性方面的痛点。通过引入 **Go 语言高性能网关** 与 **Redis Streams 消息总线**，系统成功实现了计算密集型（ASR 推理）与 IO 密集型（网络连接）任务的彻底解耦。
+Project kikipounamu 是一个基于 **Event-Driven Architecture (EDA)** 构建的高性能、高并发**企业级分布式微服务流式分段批处理**语音识别系统。本项目旨在解决传统单体 ASR 系统在并发处理、资源隔离和扩展性方面的痛点。通过引入 **Go 语言高性能网关** 与 **Redis Streams 消息总线**，系统成功实现了计算密集型（ASR 推理）与 IO 密集型（网络连接）任务的彻底解耦。
 
 > **ASR (Automatic Speech Recognition)** 即自动语音识别技术。简单来说，本项目就是用来做语音识别转文本的。
 
@@ -57,10 +57,10 @@ Project kikipounamu 是一个基于 **Event-Driven Architecture (EDA)** 构建�
 | 通道 | 技术选型 | 核心优势 | 适用场景 |
 |------|---------|---------|---------|
 | **去程 (任务分发)** | **Redis Streams** | **持久化 & 零丢失**: 即使 Worker 崩溃，任务也会保留在 Stream 中等待重试 (`XAUTOCLAIM`)。 | 关键业务数据，要求 At-Least-Once 交付。 |
-| **回程 (结果通知)** | **Redis Pub/Sub** | **极低延迟**: 亚毫秒级即时推送，无持久化开销，适合 "Fire-and-Forget"。 | 实时 UI 更新，允许在客户端断连时丢弃。 |
+| **回程 (结果通知)** | **Redis Pub/Sub** | **极低延迟**: 亚毫秒级即时推送，无持久化开销，适合 "Fire-and-Forget"。 | 更新 UI 显示，允许在客户端断连时丢弃。 |
 
 **设计评价**:
-*   **职责分离 (Separation of Concerns)**: Streams 负责可靠性，Pub/Sub 负责实时性，两者各司其职。
+*   **职责分离 (Separation of Concerns)**: Streams 负责可靠性，Pub/Sub 负责低延迟响应，两者各司其职。
 *   **性能最大化**: 避免了用 Streams 处理大量临时结果带来的存储开销，同时保证了核心任务的安全性。
 
 ---
@@ -82,7 +82,7 @@ Project kikipounamu 是一个基于 **Event-Driven Architecture (EDA)** 构建�
 
 ### 4.3 智能反压保护 (Backpressure)
 *   **现状**: 当队列积压超过阈值（如 5000 个待处理分片）时，系统面临内存溢出风险。
-*   **规划**: Go 网关将实时监控 Redis 队列长度 (`LLEN/XLEN`)，一旦过载立即返回 `HTTP 503 Service Unavailable`，实施 **Graceful Degradation**（优雅降级），优先保障现有任务的完成。
+*   **规划**: Go 网关将持续监控 Redis 队列长度 (`LLEN/XLEN`)，一旦过载立即返回 `HTTP 503 Service Unavailable`，实施 **Graceful Degradation**（优雅降级），优先保障现有任务的完成。
 
 ---
 
@@ -94,15 +94,15 @@ Project kikipounamu 是一个基于 **Event-Driven Architecture (EDA)** 构建�
 | 指标 | 结果 | 说明 |
 |------|------|------|
 | **并发连接数** | 500 | 成功建立连接，网关未崩溃 |
-| **小规模成功率** | 100% | 10 并发下，RTF < 1.0 (实时) |
+| **小规模成功率** | 100% | 10 并发下，RTF < 1.0 (处理速度快) |
 | **极限压测成功率** | 22.6% | 500 并发下，受限于 Worker 算力 |
 | **网关 CPU 占用** | < 10% | Go 语言优势明显 |
 | **Redis 吞吐量** | > 50k ops/s | 稳定处理 |
 
 ### 5.2 瓶颈分析 (Bottleneck Analysis)
 测试显示，在 500 并发下，系统出现了大量的 **Timeout**。这并非代码 Bug，而是典型的 **容量规划 (Capacity Planning)** 问题。
-*   **数学模型**: 单个 Worker 的处理能力是有限的。假设单流 RTF=0.1，处理 1 秒音频需 0.1 秒。面对 500 个并发流，第 500 个包的排队时间理论值为 `500 * 0.1 = 50秒`，接近 60 秒的超时阈值。
-*   **结论**: 系统架构本身没有瓶颈，瓶颈在于 **计算节点的数量**。
+*   **数学模型**: 单个 Worker 的处理能力是有限的。假设单流 RTF=0.1，处理 1 秒音频需 0.1 秒。面对 500 个并发流，第 500 个包的排队时间理论值为 `500 * 0.1 = 50秒`，接近 60 秒的超时阈值。由于本项目采用**分段批处理**模式，这种排队效应在极端并发下是必然存在的。
+*   **结论**: 系统架构本身没有瓶颈，瓶颈在于 **计算节点的数量**。本项目定位为“流式分段批处理”而非“极致毫秒级同步转录”，这种权衡（Trade-off）保住了系统在高压下的吞吐量。
 
 ---
 
@@ -152,13 +152,13 @@ Project kikipounamu 是一个基于 **Event-Driven Architecture (EDA)** 构建�
 3.  **僵尸连接测试 (Slow Loris)**: 维持 1000 个空闲连接，验证了 Go 协程对空闲资源的低消耗特性。
 4.  **混沌测试 (Chaos Engineering)**: 在高负载下随机 Kill 掉 Python Worker，验证了系统的容错与自动恢复能力。
 
-### 7.3 可视化监控看板 (Real-time Dashboard)
-系统内置了实时监控仪表盘 (`/dashboard`)，为运维人员提供关键指标的可视化展示：
+### 7.3 动态监控看板 (Dashboard)
+系统内置了动态监控仪表盘 (`/dashboard`)，为运维人员提供关键指标的动态展示：
 
-*   **Queue Depth (队列深度)**: 实时显示 Redis 中待处理的任务数，用于判断系统是否过载。
+*   **Queue Depth (队列深度)**: 动态显示 Redis 中待处理的任务数，用于判断系统是否过载。
 *   **Worker Status (工兵状态)**: 监控活跃 Worker 数量及忙碌状态。
-*   **Throughput (吞吐量)**: 实时 RTF (Real Time Factor) 统计。
-*   **Resource Usage (资源占用)**: CPU、内存及 GPU 显存的实时曲线。
+*   **Throughput (吞吐量)**: 动态 RTF (Real Time Factor) 统计。
+*   **Resource Usage (资源占用)**: CPU、内存及 GPU 显存的动态曲线。
 
 ---
 

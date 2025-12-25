@@ -194,11 +194,11 @@ Used to verify stability and performance under high load.
 ./scripts/run_load_test.sh 10 60
 ```
 
-### 4. Real-time Visualization Dashboard
-Access system built-in dashboard during load test to view real-time data:
+### 4. Visualization Dashboard
+Access system built-in dashboard during load test to view data:
 - **URL**: [http://localhost:8000/dashboard](http://localhost:8000/dashboard)
 - **Metrics**:
-    - 📈 **Resources**: CPU Usage, Memory Usage real-time curves
+    - 📈 **Resources**: CPU Usage, Memory Usage dynamic curves
     - 📉 **Queue**: Queue Depth, Active Workers
     - ⏱️ **Performance**: Latency, Throughput
 

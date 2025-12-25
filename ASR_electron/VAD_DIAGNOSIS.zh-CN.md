@@ -178,7 +178,7 @@ console.log(`[DEBUG] speechProb=${speechProb.toFixed(3)}, ` +
    http://localhost:8888/test_vad.html
    ```
    
-2. **观察 VAD 实时概率** - 测试页面会显示实时的语音概率
+2. **观察 VAD 动态概率** - 测试页面会显示动态的语音概率
 
 3. **检查是否能检测到语音** - 大声说话,看概率是否能超过 0.2
 

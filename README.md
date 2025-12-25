@@ -4,7 +4,7 @@
 
 <h1 align="center">KikiPounamu (ASR System)</h1>
 
-> Enterprise-grade distributed microservices ASR system. Features dynamic scaling and high-concurrency resilience. Built on Event-Driven Architecture with Go, Redis Streams & Python.
+> Enterprise-grade distributed microservices **Streaming Segmented Batch** ASR system. Features dynamic scaling and high-concurrency resilience. Built on Event-Driven Architecture with Go, Redis Streams & Python.
 
 > **ASR (Automatic Speech Recognition)** refers to the technology that converts spoken language into text. In short, this project is designed for speech-to-text conversion.
 

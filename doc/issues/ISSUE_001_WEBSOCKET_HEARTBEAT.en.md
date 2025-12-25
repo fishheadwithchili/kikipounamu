@@ -7,7 +7,7 @@
 ## 1. Problem Description
 
 ### Context
-The current ASR system uses WebSocket for real-time audio streaming. The Go backend (`internal/handler/websocket.go`) handles connections using a standard read loop.
+The current ASR system uses WebSocket for audio stream chunk transmission. The Go backend (`internal/handler/websocket.go`) handles connections using a standard read loop.
 
 ### The Issue
 **The system lacks an application-level heartbeat (Ping/Pong) mechanism.**

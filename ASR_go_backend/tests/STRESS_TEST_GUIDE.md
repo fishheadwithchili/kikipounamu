@@ -24,7 +24,7 @@ Each line = one test result with memory delta, RTF, status
 ```
 tests/results/system_resources_<timestamp>.csv
 ```
-Real-time CPU and memory data sampled every 1 second:
+Dynamic CPU and memory data sampled every 1 second:
 ```csv
 timestamp,elapsed_seconds,process_name,pid,cpu_percent,memory_rss_mb,memory_percent
 2025-12-09T23:30:15,0.0,python,12345,15.2,625.3,2.1
@@ -77,7 +77,7 @@ python3 tests/memory_leak_stress_test.py
 
 ## 📊 Understanding Results
 
-### Real-Time Logging (Crash-Safe)
+### Dynamic Logging (Crash-Safe)
 
 All results are written **immediately** to:
 ```
@@ -108,7 +108,7 @@ tests/results/memory_leak_stress_test_<timestamp>.md
 | Metric | Meaning | Good | Bad |
 |:-------|:--------|:-----|:----|
 | **Memory Delta** | RSS change after task | < 200 MB | > 500 MB |
-| **RTF** | Processing speed | < 1.0 (faster than real-time) | > 1.0 |
+| **RTF** | Processing speed | < 1.0 (faster than speech stream) | > 1.0 |
 | **Status** | Task completion | success | failed/timeout |
 | **Max Concurrency** | Stable concurrent limit | Higher is better | - |
 

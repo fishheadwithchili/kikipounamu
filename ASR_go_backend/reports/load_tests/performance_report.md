@@ -8,7 +8,7 @@
 ## Performance Summary
 
 - **Tasks Processed:** 1
-- **Average RTF:** 0.164 ✅ (Faster than real-time!)
+- **Average RTF:** 0.164 ✅ (Faster than speech stream!)
 - **Peak Memory (max):** 480.1 MB
 - **Avg Memory Delta:** +3867.3 MB ⚠️  (Growing)
 
@@ -32,9 +32,9 @@ xychart-beta
 ```
 
 
-### Real-Time Factor (RTF)
+### Processing Speed Factor (RTF)
 > [!NOTE]
-> RTF < 1.0 means faster than real-time (acceleration working!)
+> RTF < 1.0 means processing is faster than playback.
 
 ```mermaid
 xychart-beta

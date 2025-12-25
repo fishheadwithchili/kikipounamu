@@ -7,7 +7,7 @@
 ## 性能摘要 (Performance Summary)
 
 - **处理任务数:** 1
-- **平均 RTF:** 0.164 ✅ (比实时快! Faster than real-time!)
+- **平均 RTF:** 0.164 ✅ (处理速度极快!)
 - **内存峰值 (max):** 480.1 MB
 - **平均内存增量 (Avg Memory Delta):** +3867.3 MB ⚠️  (增长中 Growing)
 
@@ -31,9 +31,9 @@ xychart-beta
 ```
 
 
-### 实时率 (Real-Time Factor - RTF)
+### 处理速度率 (Real-Time Factor - RTF)
 > [!NOTE]
-> RTF < 1.0 意味着比实时快 (加速生效! acceleration working!)
+> RTF < 1.0 意味着处理速度超过语音流速 (加速生效!)
 
 ```mermaid
 xychart-beta
@@ -54,7 +54,7 @@ xychart-beta
 T1: ███████████████████░ 480.1 MB
 ```
 
-#### 实时率 (Real-Time Factor - RTF)
+#### 处理速度率 (RTF)
 ```
 T1: █░░░░░░░░░░░░░░░░░░░ 0.164
 ```

@@ -14,7 +14,7 @@
 #### Test 1: Short Audio (4.5 MB, ~4 min)
 - **Task ID:** 94a98d8c
 - **Process Time:** 84.4s
-- **RTF:** 0.574 ✅ (Faster than real-time)
+- **RTF:** 0.574 ✅ (Faster than speech stream)
 - **Worker Memory Change:**
   - Before: 13.2 MB
   - After: 12.5 MB  
@@ -91,13 +91,13 @@
 ### 2. Acceleration Mechanism ✅ **Successful**
 
 **Evidence:**
-- **RTF < 1.0** All tests faster than real-time
+- **RTF < 1.0** All tests faster than speech stream speed
 - Long Audio RTF = 0.172 (12 min audio only took 2 min)
 - **CPU Peak 408%** Indicates multi-core concurrency effective
 
 **Frontend VAD + Backend Concurrency:**
 - FunASR VAD Slicing + Batch Processing
-- Achieved 6x real-time speed (1/0.172 ≈ 5.8)
+- Achieved 6x processing speed (1/0.172 ≈ 5.8)
 
 ---
 

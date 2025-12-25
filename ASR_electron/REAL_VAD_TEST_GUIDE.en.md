@@ -30,7 +30,7 @@ This is the most direct way to test, using the real FunASR ONNX model.
 
 4. **Start Test**
    - Click "Start Test" button.
-   - Observe real-time logs and progress bar.
+   - Observe dynamic logs and progress bar.
    - View detected chunk count.
 
 5. **View Results**
@@ -104,7 +104,7 @@ This is the most direct way to test, using the real FunASR ONNX model.
 
 ### 3. Performance
 - Browser Test: 12-minute audio should finish within 30s.
-- Electron Test: Real-time detection with no latency.
+- Electron Test: Detection with minimal latency.
 - CPU usage should be reasonable (< 30%).
 
 ## Troubleshooting

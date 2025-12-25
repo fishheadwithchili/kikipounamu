@@ -7,7 +7,7 @@
  * - 使用阿里达摩院 FunASR FSMN-VAD 模型
  * - 80维 Fbank 特征 + 5帧 LFR
  * - CMVN 归一化
- * - 实时语音活动检测
+ * - 动态语音活动检测
  */
 import { useState, useRef, useCallback, useEffect } from 'react';
 // import { FunASRVAD } from '../services/funasrVAD'; // Removed VAD
@@ -248,7 +248,7 @@ export function useVADRecording(
 
             const source = audioContext.createMediaStreamSource(stream);
 
-            // 使用 ScriptProcessorNode 进行实时处理
+            // 使用 ScriptProcessorNode 进行动态处理
             const processor = audioContext.createScriptProcessor(BUFFER_SIZE, 1, 1);
             processorRef.current = processor;
 

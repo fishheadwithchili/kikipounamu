@@ -1,4 +1,4 @@
-# Enterprise-grade Distributed Microservices ASR System (Project kikipounamu) Technical Architecture Whitepaper
+# Enterprise-grade Distributed Microservices Streaming Segmented Batch ASR System (Project kikipounamu) Technical Architecture Whitepaper
 
 > **Version**: 2.2
 > **Classification**: Internal Public
@@ -9,7 +9,7 @@
 
 ## 1. Executive Summary
 
-Project kikipounamu is a high-performance, high-concurrency **Enterprise-grade Distributed Microservices ASR System** built on **Event-Driven Architecture (EDA)**. This project aims to address the pain points of traditional monolithic ASR systems regarding concurrent processing, resource isolation, and scalability. By introducing a **Go language high-performance gateway** and **Redis Streams message bus**, the system successfully decouples compute-intensive (ASR inference) tasks from IO-intensive (network connection) tasks.
+Project kikipounamu is a high-performance, high-concurrency **Enterprise-grade Distributed Microservices Streaming Segmented Batch ASR System** built on **Event-Driven Architecture (EDA)**. This project aims to address the pain points of traditional monolithic ASR systems regarding concurrent processing, resource isolation, and scalability. By introducing a **Go language high-performance gateway** and **Redis Streams message bus**, the system successfully decouples compute-intensive (ASR inference) tasks from IO-intensive (network connection) tasks.
 
 > **ASR (Automatic Speech Recognition)** refers to the technology that converts spoken language into text. In short, this project is designed for speech-to-text conversion.
 
@@ -56,10 +56,10 @@ The system innovatively uses a hybrid architecture of **Redis Streams (Task)** +
 | Channel | Technology | Core Advantage | Use Case |
 |---------|------------|----------------|----------|
 | **Outbound (Task Dispatch)** | **Redis Streams** | **Persistence & Zero Loss**: Tasks remain in Stream waiting for retry (`XAUTOCLAIM`) even if Workers crash. | Critical business data requiring At-Least-Once delivery. |
-| **Inbound (Result Notification)** | **Redis Pub/Sub** | **Ultra-low Latency**: Sub-millisecond instant push, no persistence overhead, suitable for "Fire-and-Forget". | Real-time UI updates, acceptable to drop if client disconnects. |
+| **Inbound (Result Notification)** | **Redis Pub/Sub** | **Ultra-low Latency**: Sub-millisecond instant push, no persistence overhead, suitable for "Fire-and-Forget". | UI displays update, acceptable to drop if client disconnects. |
 
 **Design Evaluation**:
-*   **Separation of Concerns**: Streams for reliability, Pub/Sub for real-time performance.
+*   **Separation of Concerns**: Streams for reliability, Pub/Sub for low-latency response.
 *   **Maximized Performance**: Avoids storage overhead of processing massive temporary results with Streams, while ensuring safety of core tasks.
 
 ---
@@ -81,7 +81,7 @@ In early versions, the Go backend used a "Synchronous Wait" pattern, causing Red
 
 ### 4.3 Intelligent Backpressure
 *   **Current Status**: When the queue backlog exceeds a threshold (e.g., 5000 pending chunks), the system faces OOM risks.
-*   **Plan**: The Go gateway will monitor Redis queue length (`LLEN/XLEN`) in real-time. Once overloaded, it will immediately return `HTTP 503 Service Unavailable`, implementing **Graceful Degradation** to prioritize completing existing tasks.
+*   **Plan**: The Go gateway will monitor Redis queue length (`LLEN/XLEN`) continuously. Once overloaded, it will immediately return `HTTP 503 Service Unavailable`, implementing **Graceful Degradation** to prioritize completing existing tasks.
 
 ---
 
@@ -93,15 +93,15 @@ Based on the `2025-12-11` large-scale load test report:
 | Metric | Result | Note |
 |--------|--------|------|
 | **Connections** | 500 | Successfully established, Gateway did not crash |
-| **Small-scale Success Rate** | 100% | At 10 concurrency, RTF < 1.0 (Real-time) |
+| **Small-scale Success Rate** | 100% | At 10 concurrency, RTF < 1.0 (High-speed processing) |
 | **Extreme Test Success Rate** | 22.6% | At 500 concurrency, limited by Worker compute power |
 | **Gateway CPU Usage** | < 10% | Go language advantage is significant |
 | **Redis Throughput** | > 50k ops/s | Stable processing |
 
 ### 5.2 Bottleneck Analysis
 Testing showed massive **Timeouts** at 500 concurrency. This is not a code bug but a typical **Capacity Planning** issue.
-*   **Mathematical Model**: Single Worker processing power is finite. Assuming single stream RTF=0.1, processing 1 second of audio takes 0.1s. With 500 concurrent streams, the wait time for the 500th packet is theoretically `500 * 0.1 = 50s`, approaching the 60s timeout threshold.
-*   **Conclusion**: There is no bottleneck in the system architecture; the bottleneck lies in the **quantity of computing nodes**.
+*   **Mathematical Model**: Single Worker processing power is finite. Assuming single stream RTF=0.1, processing 1 second of audio takes 0.1s. With 500 concurrent streams, the wait time for the 500th packet is theoretically `500 * 0.1 = 50s`, approaching the 60s timeout threshold. Since this project utilizes **Streaming Segmented Batch Processing**, this queuing effect is inherent under extreme concurrency.
+*   **Conclusion**: There is no bottleneck in the system architecture; the bottleneck lies in the **quantity of computing nodes**. This project is positioned as "Streaming Segmented Batch Processing" rather than "Instantaneous Synchronous Transcription," a trade-off that preserves system throughput under high pressure.
 
 ---
 
@@ -151,13 +151,13 @@ Developed dedicated load testing tools (`cmd/loadtester`) and executed Chaos Eng
 3.  **Slow Loris Test**: Maintained 1000 idle connections, validating Go coroutine efficiency.
 4.  **Chaos Engineering**: Randomly killed Python Workers under load, validating fault tolerance and auto-recovery.
 
-### 7.3 Real-time Dashboard
+### 7.3 Dashboard
 Built-in monitoring dashboard (`/dashboard`) provides key metrics:
 
-*   **Queue Depth**: Real-time Redis task count to judge system overload.
+*   **Queue Depth**: Dynamic Redis task count to judge system overload.
 *   **Worker Status**: Monitor active/busy Worker count.
-*   **Throughput**: Real-time RTF (Real Time Factor) stats.
-*   **Resource Usage**: CPU, Memory, and GPU VRAM real-time curves.
+*   **Throughput**: RTF (Real Time Factor) stats.
+*   **Resource Usage**: CPU, Memory, and GPU VRAM dynamic curves.
 
 ---
 

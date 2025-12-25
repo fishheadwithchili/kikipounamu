@@ -203,4 +203,4 @@ If you see something like `Processing on cuda:0` or increased video memory usage
 
 Compared to CPU mode:
 *   **CPU**: Latency ~200-500ms, recognition of long sentences may stutter.
-*   **RTX 5060**: Latency < 50ms, extremely real-time, basically display as you speak.
+*   **RTX 5060**: Latency < 50ms, extremely responsive, basically display as you speak.

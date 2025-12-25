@@ -122,8 +122,8 @@ print(parser.generate_mermaid_charts())
 **1. RTF (Real-Time Factor)**
 - **含义：** `processing_time / audio_duration`
 - **结论：**
-  - `RTF < 1.0` ✅ **加速有效** - 比实时快
-  - `RTF > 1.0` ⚠️  比实时慢
+  - `RTF < 1.0` ✅ **加速有效** - 比音频流快
+  - `RTF > 1.0` ⚠️  比音频流慢
 
 **2. Memory Delta**
 - **含义：** 任务前后内存变化

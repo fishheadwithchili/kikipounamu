@@ -25,8 +25,8 @@ According to the test report data:
 
 ### Real Time Factor (RTF) Analysis
 `RTF (Real Time Factor)` is defined as: `Processing Time / Audio Duration`.
-*   RTF < 1.0: Processing faster than speaking (Real-time).
-*   RTF > 1.0: Processing slower than speaking (Non-real-time).
+*   RTF < 1.0: Processing faster than speaking (High-speed).
+*   RTF > 1.0: Processing slower than speaking (Delayed).
 *   **Ideal Case**: FunASR model single stream RTF is usually between 0.05 - 0.2 (Very fast).
 
 **But when 1 Worker faces 500 concurrent requests:**
@@ -75,7 +75,7 @@ Start more Worker processes/containers.
 `Required Workers = (Total Concurrency * Single Stream RTF) / Target Utilization`
 
 Assume single stream RTF is 0.1 (Processing speed is 10x speech speed):
-*   **500 Concurrency**: Needs 500 * 0.1 = **50 Workers** to guarantee full real-time without queuing.
+*   **500 Concurrency**: Needs 500 * 0.1 = **50 Workers** to guarantee full speed without queuing.
 *   If slight queuing is allowed, at least **20-30 Workers** are needed.
 
 **Action Steps**:
@@ -105,7 +105,7 @@ Goal: Alleviate user waiting anxiety, avoid unexplained timeouts. Industry stand
     - [ ] If `pending > 5000` (Overload protection), directly refuse new connection (return HTTP 503) to protect existing user experience.
 
 ### 5.2 Long-term Optimization: Horizontal Scaling (Scale Out)
-Goal: Completely solve queuing issue, achieve 100% real-time rate.
+Goal: Completely solve queuing issue, achieve 100% success rate.
 
 - [ ] **Infrastructure**: Containerized Deployment
     - [ ] Write `docker-compose.yml` or K8s config.

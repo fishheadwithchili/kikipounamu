@@ -191,11 +191,11 @@ tests/
 ./scripts/run_load_test.sh 10 60
 ```
 
-### 4. 实时可视化仪表盘
-在运行负载测试时，访问系统内置的仪表盘查看实时数据：
+### 4. 动态可视化仪表盘
+在运行负载测试时，访问系统内置的仪表盘查看数据：
 - **地址**: [http://localhost:8000/dashboard](http://localhost:8000/dashboard)
 - **监控指标**:
-    - 📈 **资源**: CPU 使用率, 内存占用的实时曲线
+    - 📈 **资源**: CPU 使用率, 内存占用的动态曲线
     - 📉 **队列**: 待处理任务数 (Queue Depth), 活跃 Worker 数
     - ⏱️ **性能**: 请求延迟 (Latency), 吞吐量 (Throughput)
 

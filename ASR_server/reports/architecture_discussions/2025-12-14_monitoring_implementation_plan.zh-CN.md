@@ -48,7 +48,7 @@
 
 1.  **部署 Redis Exporter**: 监控 Redis 内存和连接数。
 2.  **部署 Prometheus + Grafana**: 使用 Docker Compose 快速拉起。
-3.  **接入业务指标**: 统计 RTF (实时率)、队列深度趋势。
+3.  **接入业务指标**: 统计 RTF (处理速度率)、队列深度趋势。
 
 ---
 

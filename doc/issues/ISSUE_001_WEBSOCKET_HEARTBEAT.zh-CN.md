@@ -7,7 +7,7 @@
 ## 1. 问题描述 (Problem Description)
 
 ### 背景
-当前的 ASR 系统使用 WebSocket 进行实时音频流传输。Go 后端 (`internal/handler/websocket.go`) 使用标准的读取循环来维持连接。
+当前的 ASR 系统使用 WebSocket 进行音频流分片传输。Go 后端 (`internal/handler/websocket.go`) 使用标准的读取循环来维持连接。
 
 ### 核心问题
 **系统严重缺失应用层的心跳 (Ping/Pong) 检测机制。**

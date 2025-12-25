@@ -5,12 +5,12 @@
 > [!NOTE]
 > This project is designed for high-performance ASR (Automatic Speech Recognition) scheduling.
 
-This is a high-performance ASR backend scheduling service developed in **Go**. It acts as a bridge between the frontend and the underlying Python ASR inference service, providing real-time WebSocket streaming, concurrent task scheduling, and data persistence.
+This is a high-performance ASR backend scheduling service developed in **Go**. It acts as a bridge between the frontend and the underlying Python ASR inference service, providing full-duplex WebSocket streaming, concurrent task scheduling, and data persistence.
 
 ## 🌟 Core Features
 
 *   **⚡ High Concurrency Architecture**: Based on the **Async Producer-Consumer Model**, the Go gateway handles connection maintenance, while Python Workers handle computation, decoupled via Redis.
-*   **📡 Real-time Communication**: **WebSocket**-based full-duplex communication supporting streaming audio upload and result pushing.
+*   **📡 Full-duplex Communication**: **WebSocket**-based full-duplex communication supporting streaming audio upload and result pushing.
 *   **🚀 Extreme Performance**: The Go backend single node easily supports **500+ concurrent** connections, supporting horizontal scaling of Workers to improve throughput.
 *   **🗄️ Data Persistence**: Integrated **PostgreSQL** to fully record session history, audio chunk details, and recognition results.
 *   **🛡️ Robust Design**:
@@ -28,7 +28,7 @@ This project adopts the **Async Producer-Consumer Model**, achieving complete de
     *   **Performance**: In load tests, CPU usage remains extremely stable when maintaining 500 concurrent connections on a single node.
 *   **Message Broker (Redis)**:
     *   **Role**: Infinite capacity Buffer and message bus.
-    *   **Mechanism**: Uses Pub/Sub to achieve real-time precise pushing of results to specific WebSocket sessions.
+    *   **Mechanism**: Uses Pub/Sub to achieve dynamic precise pushing of results to specific WebSocket sessions.
 *   **Worker (Python ASR)**:
     *   **Role**: Pure computing node (Stateless).
     *   **Mechanism**: Consumer Group processing from Redis Stream -> Inference -> Publish result.
@@ -124,7 +124,7 @@ Based on the 2025-12-11 large-scale **Load Test Report** (see `reports/`):
 
 ## 🔌 API Documentation
 
-### 1. WebSocket (Real-time Recognition)
+### 1. WebSocket (Streaming Recognition)
 
 *   **URL**: `ws://<server_ip>:8080/ws/asr`
 *   **Protocol**:

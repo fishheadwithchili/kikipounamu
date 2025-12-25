@@ -121,8 +121,8 @@ print(parser.generate_mermaid_charts())
 **1. RTF (Real-Time Factor)**
 - **Meaning:** `processing_time / audio_duration`
 - **Conclusion:**
-  - `RTF < 1.0` ✅ **Acceleration Effective** - Faster than real-time
-  - `RTF > 1.0` ⚠️  Slower than real-time
+  - `RTF < 1.0` ✅ **Acceleration Effective** - Faster than speech stream
+  - `RTF > 1.0` ⚠️  Slower than speech stream
 
 **2. Memory Delta**
 - **Meaning:** Memory change before and after task
@@ -146,7 +146,7 @@ print(parser.generate_mermaid_charts())
 ## Performance Summary
 
 - **Tasks Processed:** 1
-- **Average RTF:** 0.234 ✅ (Faster than real-time!)
+- **Average RTF:** 0.234 ✅ (Faster than speech stream!)
 - **Peak Memory (max):** 145.2 MB
 - **Avg Memory Delta:** +2.3 MB ✅ (Stable)
 

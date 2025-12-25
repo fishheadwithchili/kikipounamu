@@ -23,7 +23,7 @@ tests/results/memory_leak_stress_test_<timestamp>.jsonl
 ```
 tests/results/system_resources_<timestamp>.csv
 ```
-每秒采样的实时 CPU 和内存数据：
+每秒采样的动态 CPU 和内存数据：
 ```csv
 timestamp,elapsed_seconds,process_name,pid,cpu_percent,memory_rss_mb,memory_percent
 2025-12-09T23:30:15,0.0,python,12345,15.2,625.3,2.1
@@ -76,7 +76,7 @@ python3 tests/memory_leak_stress_test.py
 
 ## 📊 理解结果
 
-### 实时日志 (防崩溃)
+### 动态日志 (防崩溃)
 
 所有结果会 **立即** 写入：
 ```
@@ -107,7 +107,7 @@ tests/results/memory_leak_stress_test_<timestamp>.md
 | 指标 | 含义 | 好 | 坏 |
 |:-------|:--------|:-----|:----|
 | **Memory Delta** | 任务后 RSS 变化 | < 200 MB | > 500 MB |
-| **RTF** | 处理速度 | < 1.0 (快于实时) | > 1.0 |
+| **RTF** | 处理速度 | < 1.0 (快于音频流) | > 1.0 |
 | **Status** | 任务完成状态 | success | failed/timeout |
 | **Max Concurrency** | 稳定并发上限 | 越高越好 | - |
 

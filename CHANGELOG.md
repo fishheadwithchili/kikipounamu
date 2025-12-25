@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [1.3.0] - 2025-12-26
+
+### Fixed
+- **Critical Stability**: Resolved system-wide X11 freeze on Linux during text insertion. Replaced blocking `xdotool type` (typing) with instant clipboard pasting (`xdotool key ctrl+v`).
+- **UI Layout**: Fixed Settings panel overflow on small screens and eliminated height "jumping" between tabs.
+- **UI Styling**: Fixed microphone dropdown width inconsistency using strict box-sizing.
+
+### Changed
+- **UI Overhaul**: Replaced native Settings dropdown with a premium "Glassmorphic" `CustomSelect` component (blur effects, smooth animations).
+- **Layout**: Integrated `Auto-Split Duration` input directly into the "Time Limit" option row for a cleaner, more compact interface.
+- **Documentation**: Updated `LINUX_DEPLOYMENT_GUIDE` to explicitly clarify that the system supports *any* standard audio input (USB, Bluetooth, internal), alleviating setup concerns.
+
 ## [1.2.1] - 2025-12-25
 
 ### Fixed

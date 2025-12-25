@@ -49,7 +49,7 @@ export function useAppIpcListeners({
         const cleanupResult = window.ipcRenderer.on('asr-result', (_event, data: any) => {
             // Handle final result first - MUST decrement queue even if text is empty
             if (data.is_final) {
-                window.ipcRenderer.invoke('write-debug-log', `[App-Result] FINAL: "${(data.text || '').substring(0, 50)}..."`);
+
 
                 // Update Queue - Use chunk_count from backend if available
                 const processedCount = data.chunk_count || 1;
@@ -78,7 +78,7 @@ export function useAppIpcListeners({
                 }
             } else if (data.text) {
                 // INTERIM RESULT (only if there's text)
-                window.ipcRenderer.invoke('write-debug-log', `[App-Result] INTERIM: "${data.text.substring(0, 50)}..."`);
+
                 setInterimText(data.text);
             }
         });

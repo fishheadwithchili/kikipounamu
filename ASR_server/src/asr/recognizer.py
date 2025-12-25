@@ -9,6 +9,9 @@ from funasr import AutoModel
 from .config import config
 
 
+
+
+
 class SpeechRecognizer:
     """Speech Recognition using FunASR"""
     

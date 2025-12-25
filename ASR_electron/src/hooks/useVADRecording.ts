@@ -49,12 +49,14 @@ const logger = createLogger('VADRecording');
 
 export function useVADRecording(
     initialMode: VADMode = 'unlimited',
-    initialTimeLimitMs: number = 180000
+    initialTimeLimitMs: number = 180000,
+    audioDeviceId?: string
 ): VADRecordingResult & { setVadMode: (mode: VADMode) => void, setTimeLimit: (ms: number) => void } {
     // Current Mode State
     const [, _setVadMode] = useState<VADMode>(initialMode);
     const vadModeRef = useRef<VADMode>(initialMode);
     const timeLimitRef = useRef<number>(initialTimeLimitMs);
+    const audioDeviceIdRef = useRef<string | undefined>(audioDeviceId);
 
     const setVadMode = useCallback((mode: VADMode) => {
         const oldMode = vadModeRef.current;
@@ -98,7 +100,7 @@ export function useVADRecording(
     const lastLogTimeRef = useRef<number>(0);
 
     const logDebug = useCallback((message: string) => {
-        window.ipcRenderer.invoke('write-debug-log', message);
+        // window.ipcRenderer.invoke('write-debug-log', message);
     }, []);
 
     // 注册回调
@@ -112,6 +114,12 @@ export function useVADRecording(
         setIsVADReady(true); // Always ready as we don't need model
         return () => { };
     }, []);
+
+    // Sync audioDeviceIdRef when prop changes
+    useEffect(() => {
+        audioDeviceIdRef.current = audioDeviceId;
+        console.log(`🎤 [Audio Device Updated] audioDeviceIdRef.current is now: ${audioDeviceIdRef.current}`);
+    }, [audioDeviceId]);
 
     // 处理音频块
     const processAudioChunk = useCallback(async (inputBuffer: Float32Array) => {
@@ -216,14 +224,23 @@ export function useVADRecording(
             speechFramesRef.current = 0;
 
             // 获取麦克风
+            const audioConstraints: MediaTrackConstraints = {
+                sampleRate: SAMPLE_RATE,
+                channelCount: 1,
+                echoCancellation: true,
+                noiseSuppression: true,
+                autoGainControl: true,
+            };
+
+            // 如果指定了设备ID，添加到约束中 (使用 ref 确保获取最新值)
+            const currentDeviceId = audioDeviceIdRef.current;
+            if (currentDeviceId && currentDeviceId !== 'default') {
+                audioConstraints.deviceId = { exact: currentDeviceId };
+            }
+            console.log(`🎤 [startRecording] Using device: ${currentDeviceId || 'system default'}`);
+
             const stream = await navigator.mediaDevices.getUserMedia({
-                audio: {
-                    sampleRate: SAMPLE_RATE,
-                    channelCount: 1,
-                    echoCancellation: true,
-                    noiseSuppression: true,
-                    autoGainControl: true,
-                }
+                audio: audioConstraints
             });
             streamRef.current = stream;
             setStreamState(stream); // Trigger re-render to share stream with Waveform
@@ -279,6 +296,7 @@ export function useVADRecording(
         }
     }, [isVADReady, processAudioChunk]);
 
+    // 停止录音
     // 停止录音
     const stopRecording = useCallback(() => {
         if (durationTimerRef.current) {

@@ -28,12 +28,12 @@ Start-Sleep -Milliseconds 100
                 resolve();
             });
         } else if (platform === 'linux') {
-            // Linux: Use xdotool (original implementation)
-            // Escape single quotes for shell
-            const escapedText = text.replace(/'/g, "'\\''");
+            // Linux: Use clipboard + xdotool to simulate Ctrl+V (like Windows/macOS)
+            // NOTE: xdotool type is extremely slow and can freeze X11 for long text!
+            clipboard.writeText(text);
 
-            // Command to type text safely using xdotool
-            const command = `xdotool type --clearmodifiers --delay 0 '${escapedText}'`;
+            // Small delay to ensure clipboard is ready, then Ctrl+V
+            const command = `sleep 0.05 && xdotool key --clearmodifiers ctrl+v`;
 
             exec(command, (error) => {
                 if (error) {

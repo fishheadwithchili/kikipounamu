@@ -45,6 +45,10 @@ function App() {
   const [maxAudioHistory, setMaxAudioHistory] = useState(10);
   const [savePath, setSavePath] = useState('');
 
+  // Audio Device State
+  const [audioDevices, setAudioDevices] = useState<MediaDeviceInfo[]>([]);
+  const [selectedAudioDeviceId, setSelectedAudioDeviceId] = useState<string>('default');
+
   // Alert State
   const [alertState, setAlertState] = useState<{ type: AlertType, title?: string, description?: string } | null>(null);
 
@@ -56,7 +60,7 @@ function App() {
   const [showRecovery, setShowRecovery] = useState(false);
 
   // Use VAD Hook
-  const vad = useVADRecording(vadMode, timeLimit * 1000);
+  const vad = useVADRecording(vadMode, timeLimit * 1000, selectedAudioDeviceId);
 
   // --- Persistence Logic ---
   // Load state on mount
@@ -88,6 +92,43 @@ function App() {
   useEffect(() => {
     storageService.set('audioHistory', audioHistory);
   }, [audioHistory]);
+
+  // --- Audio Device Logic ---
+  useEffect(() => {
+    const fetchDevices = async () => {
+      try {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        // Filter audioinput and exclude the browser's 'default' device
+        // since we already provide our own "System Default" option
+        const inputs = devices.filter(d =>
+          d.kind === 'audioinput' && d.deviceId !== 'default'
+        );
+        setAudioDevices(inputs);
+      } catch (e) {
+        console.error('Failed to enumerate devices:', e);
+      }
+    };
+
+    fetchDevices();
+    navigator.mediaDevices.addEventListener('devicechange', fetchDevices);
+
+    // Load saved device selection
+    const loadSavedDevice = async () => {
+      const savedId = await storageService.get<string>('selectedAudioDeviceId');
+      if (savedId) setSelectedAudioDeviceId(savedId);
+    };
+    loadSavedDevice();
+
+    return () => {
+      navigator.mediaDevices.removeEventListener('devicechange', fetchDevices);
+    };
+  }, []);
+
+  // Save device selection
+  useEffect(() => {
+    storageService.set('selectedAudioDeviceId', selectedAudioDeviceId);
+  }, [selectedAudioDeviceId]);
+
   // -------------------------
 
   const handleModeChange = useCallback((mode: VADMode) => {
@@ -170,7 +211,7 @@ function App() {
     } catch (e) {
       console.error('Toggle recording failed:', e);
       window.ipcRenderer.invoke('log-message', 'error', `Toggle failed: ${e}`);
-      window.ipcRenderer.invoke('write-debug-log', `[App-Error] Toggle Failed: ${e}`);
+      console.error('Toggle Failed:', e);
       setAlertState({
         type: 'error',
         title: 'System Error',
@@ -180,15 +221,14 @@ function App() {
       setIsToggling(false);
 
     }
-  }, [vad, isToggling, vadMode, savePath, maxAudioHistory]);
+  }, [vad, isToggling, vadMode, savePath, maxAudioHistory, selectedAudioDeviceId]);
 
   // Handle Audio Chunks from VAD
   useEffect(() => {
     vad.onChunkReady((chunkIndex, audioData, _rawPCM) => {
       console.log(`Sending chunk #${chunkIndex}, size: ${audioData.byteLength}`);
 
-      // LOG FLOW
-      window.ipcRenderer.invoke('write-debug-log', `[App-Chunk] Received Chunk #${chunkIndex} from VAD. Size=${audioData.byteLength}. Sending to IPC...`);
+
 
       const base64 = arrayBufferToBase64(audioData);
       window.ipcRenderer.invoke('send-audio-chunk', base64);
@@ -489,6 +529,9 @@ function App() {
           setMaxAudioHistory={setMaxAudioHistory}
           savePath={savePath}
           setSavePath={setSavePath}
+          audioDevices={audioDevices}
+          selectedAudioDeviceId={selectedAudioDeviceId}
+          onAudioDeviceChange={setSelectedAudioDeviceId}
           onClose={() => setShowSettings(false)}
         />
       )}

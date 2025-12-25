@@ -9,28 +9,13 @@ import { createLogger } from './logger';
 const store = new Store();
 const logger = createLogger('IPC');
 
-const DEBUG_LOG_PATH = path.join(process.cwd(), 'debug_flow.log');
+
 
 export function setupIpc(asrClient: ASRClient) {
     logger.info('Setting up IPC handlers');
-    // Clear log on startup
-    try {
-        fs.writeFileSync(DEBUG_LOG_PATH, `[${new Date().toISOString()}] === NEW SESSION ===\n`);
-    } catch (e) {
-        console.error('Failed to init debug log:', e);
-    }
 
-    ipcMain.handle('write-debug-log', (_event, message: string) => {
-        try {
-            const timestamp = new Date().toISOString();
-            const logLine = `[${timestamp}] ${message}\n`;
-            fs.appendFileSync(DEBUG_LOG_PATH, logLine);
-            return true;
-        } catch (e) {
-            console.error('Failed to write debug log:', e);
-            return false;
-        }
-    });
+
+
 
     ipcMain.on('renderer-ready', (_event) => {
         logger.info('Renderer process ready');

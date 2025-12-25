@@ -5,6 +5,9 @@ Thumbs.db
 *.tmp
 tmp/
 temp/
+.fuse_hidden*
+*.wav
+temp/
 
 # IDE & Editors
 .idea/
@@ -40,6 +43,8 @@ lib/
 lib64/
 parts/
 sdist/
+sdist/
+src/storage/
 var/
 wheels/
 share/python-wheels/
@@ -67,6 +72,8 @@ pnpm-debug.log*
 .npm/
 .cache/
 ASR_electron/dist/
+ASR_electron/dist-electron/
+ASR_electron/release/
 ASR_electron/out/
 ASR_electron/build/
 ASR_electron/coverage/

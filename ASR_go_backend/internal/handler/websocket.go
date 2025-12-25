@@ -7,6 +7,8 @@ import (
 	"sync"
 	"sync/atomic"
 
+	"time"
+
 	"github.com/fishheadwithchili/asr-go-backend/internal/model"
 	"github.com/fishheadwithchili/asr-go-backend/internal/service"
 	"github.com/fishheadwithchili/asr-go-backend/pkg/logger"
@@ -18,6 +20,11 @@ import (
 const (
 	// MaxConnections Limit
 	MaxConnections = 1000
+
+	// WebSocket Heartbeat Settings
+	writeWait  = 10 * time.Second
+	pongWait   = 60 * time.Second
+	pingPeriod = (pongWait * 9) / 10
 )
 
 var (
@@ -92,9 +99,36 @@ func WebSocketHandler(asrService *service.ASRService, sessionService *service.Se
 		sendJSONSafe := func(v interface{}) {
 			writeMu.Lock()
 			defer writeMu.Unlock()
+			conn.SetWriteDeadline(time.Now().Add(writeWait))
 			data, _ := json.Marshal(v)
 			conn.WriteMessage(websocket.TextMessage, data)
 		}
+
+		// Setup Heartbeat (Ping/Pong)
+		conn.SetReadLimit(4096) // Optional: prevent massive messages
+		conn.SetReadDeadline(time.Now().Add(pongWait))
+		conn.SetPongHandler(func(string) error {
+			conn.SetReadDeadline(time.Now().Add(pongWait))
+			return nil
+		})
+
+		// Start Ticker for Pings
+		go func() {
+			ticker := time.NewTicker(pingPeriod)
+			defer ticker.Stop()
+			for {
+				select {
+				case <-ticker.C:
+					writeMu.Lock()
+					conn.SetWriteDeadline(time.Now().Add(writeWait))
+					if err := conn.WriteMessage(websocket.PingMessage, nil); err != nil {
+						writeMu.Unlock()
+						return
+					}
+					writeMu.Unlock()
+				}
+			}
+		}()
 
 		for {
 			_, message, err := conn.ReadMessage()

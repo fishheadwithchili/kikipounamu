@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [1.2.1] - 2025-12-25
+
+### Fixed
+- **Stability**: Implemented application-level WebSocket Heartbeat (Ping/Pong) in the Go backend to detect and clean up zombie connections, preventing pseudo-memory leaks.
+
 ## [1.2.0] - 2025-12-17
 
 ### Added

@@ -1,4 +1,4 @@
-PORT: "8080"
+PORT: "8081"
 FUNASR_ADDR: "localhost:8000"
 REDIS_ADDR: "localhost:6379"
 WORKER_POOL_SIZE: 10

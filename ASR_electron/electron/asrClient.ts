@@ -15,7 +15,7 @@ const logger = createLogger('ASRClient');
 export class ASRClient {
     private ws: WebSocket | null = null;
     private mainWindow: BrowserWindow;
-    private url: string = 'ws://localhost:8080/ws/asr';
+    private url: string = process.env.VITE_ASR_BACKEND_URL || 'ws://localhost:8081/ws/asr';
     private sessionId: string | null = null;
     private isRecording: boolean = false;
     private chunkIndex: number = 0;

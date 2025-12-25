@@ -46,8 +46,12 @@ func Load() *Config {
 	// Environment variables
 	viper.AutomaticEnv()
 
+	// Bind specific env vars to config keys
+	viper.BindEnv("PORT", "ASR_BACKEND_PORT") // Allow override via ASR_BACKEND_PORT
+	viper.BindEnv("FUNASR_ADDR")              // Can be set via FUNASR_ADDR env
+
 	// Defaults
-	viper.SetDefault("PORT", "8080")
+	viper.SetDefault("PORT", "8081")
 	viper.SetDefault("FUNASR_ADDR", "localhost:8000")
 	viper.SetDefault("REDIS_ADDR", "localhost:6379")
 	viper.SetDefault("WORKER_POOL_SIZE", 200)
@@ -67,6 +71,11 @@ func Load() *Config {
 		if _, ok := err.(viper.ConfigFileNotFoundError); !ok {
 			log.Printf("Error reading config file: %v", err)
 		}
+	}
+
+	// After reading config, check if ASR_API_PORT is set and update FUNASR_ADDR
+	if apiPort := os.Getenv("ASR_API_PORT"); apiPort != "" {
+		viper.Set("FUNASR_ADDR", "localhost:"+apiPort)
 	}
 
 	updateGlobalConfig()

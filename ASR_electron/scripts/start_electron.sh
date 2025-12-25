@@ -9,6 +9,45 @@ cd "$PROJECT_ROOT"
 
 echo "🚀 Starting ASR Electron App..."
 
+# ============================================================================
+# LOAD PORT CONFIGURATION
+# ============================================================================
+
+# Path to centralized .env (managed by start_api_server.sh)
+KIKIPOUNAMU_ROOT="$(cd .. && pwd)"
+CENTRAL_ENV="$KIKIPOUNAMU_ROOT/.env"
+LOCAL_ENV="$PROJECT_ROOT/.env"
+
+if [ -f "$CENTRAL_ENV" ]; then
+    echo "📋 Loading port configuration from $CENTRAL_ENV"
+    source "$CENTRAL_ENV"
+    
+    # Update local .env for Electron (Vite needs VITE_ prefix)
+    cat > "$LOCAL_ENV" << EOF
+VITE_USER_ID=user_123456
+VITE_ASR_BACKEND_URL=ws://localhost:${ASR_BACKEND_PORT:-8081}/ws/asr
+EOF
+    
+    echo "   Backend URL: ws://localhost:${ASR_BACKEND_PORT:-8081}/ws/asr"
+else
+    echo "⚠️  Port configuration not found. Using defaults."
+    echo "   Please run ASR_server/scripts/start_api_server.sh first."
+    
+    # Create default .env if it doesn't exist
+    if [ ! -f "$LOCAL_ENV" ]; then
+        cat > "$LOCAL_ENV" << EOF
+VITE_USER_ID=user_123456
+VITE_ASR_BACKEND_URL=ws://localhost:8081/ws/asr
+EOF
+    fi
+fi
+
+echo ""
+
+# ============================================================================
+# END PORT CONFIGURATION
+# ============================================================================
+
 # 1. Check if Node.js is installed
 if ! command -v node &> /dev/null; then
     echo "❌ Error: Node.js is not installed. Please install Node.js (v18+ recommended)."

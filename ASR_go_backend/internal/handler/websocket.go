@@ -9,6 +9,9 @@ import (
 
 	"time"
 
+	"os"
+	"runtime/debug"
+
 	"github.com/fishheadwithchili/asr-go-backend/internal/model"
 	"github.com/fishheadwithchili/asr-go-backend/internal/service"
 	"github.com/fishheadwithchili/asr-go-backend/pkg/logger"
@@ -49,6 +52,16 @@ func GetConnectionCount() int64 {
 // WebSocketHandler handles WebSocket connections
 func WebSocketHandler(asrService *service.ASRService, sessionService *service.SessionService) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		// Panic Recovery
+		defer func() {
+			if r := recover(); r != nil {
+				logger.Error("❌ WebSocket Handler Panic", zap.Any("panic", r))
+				stack := debug.Stack()
+				os.WriteFile("panic.log", stack, 0644)
+				c.AbortWithStatus(http.StatusInternalServerError)
+			}
+		}()
+
 		// P0 Fix: Connection Rejection - Check system health
 		if !asrService.IsSystemHealthy() {
 			logger.Warn("⚠️ System unhealthy (Insufficient workers), rejecting connection")
@@ -105,7 +118,7 @@ func WebSocketHandler(asrService *service.ASRService, sessionService *service.Se
 		}
 
 		// Setup Heartbeat (Ping/Pong)
-		conn.SetReadLimit(4096) // Optional: prevent massive messages
+		conn.SetReadLimit(500 * 1024 * 1024) // 500MB to support ~2h audio (Base64)
 		conn.SetReadDeadline(time.Now().Add(pongWait))
 		conn.SetPongHandler(func(string) error {
 			conn.SetReadDeadline(time.Now().Add(pongWait))
@@ -131,13 +144,17 @@ func WebSocketHandler(asrService *service.ASRService, sessionService *service.Se
 		}()
 
 		for {
+			logger.Debug("⏳ Waiting for ReadMessage")
 			_, message, err := conn.ReadMessage()
 			if err != nil {
+				// Log ALL errors to understand why it closed
+				logger.Warn("❌ WebSocket ReadMessage Error", zap.Error(err))
 				if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
 					logger.Warn("WebSocket unexpected close", zap.Error(err))
 				}
 				break
 			}
+			logger.Debug("📩 Received Message", zap.String("message", string(message)))
 
 			var msg model.ChunkMessage
 			if err := json.Unmarshal(message, &msg); err != nil {
@@ -148,6 +165,8 @@ func WebSocketHandler(asrService *service.ASRService, sessionService *service.Se
 				continue
 			}
 
+			logger.Debug("⚙️ Processing Action", zap.String("action", msg.Action))
+
 			switch msg.Action {
 			case "start":
 				// Start subscription here and save cleanup function
@@ -156,13 +175,16 @@ func WebSocketHandler(asrService *service.ASRService, sessionService *service.Se
 			case "chunk":
 				handleChunk(sendJSONSafe, msg, asrService, sessionService)
 			case "finish":
+				logger.Debug("🏁 Start handleFinish")
 				handleFinish(sendJSONSafe, msg, asrService, sessionService)
+				logger.Debug("🏁 End handleFinish")
 			default:
 				sendJSONSafe(model.ServerMessage{
 					Type:    "error",
 					Message: "Unknown action: " + msg.Action,
 				})
 			}
+			logger.Debug("✅ Action Processed")
 		}
 	}
 }

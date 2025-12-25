@@ -9,6 +9,35 @@ cd "$PROJECT_ROOT"
 
 echo "🚀 Starting ASR Go Backend..."
 
+# ============================================================================
+# LOAD PORT CONFIGURATION 
+# ============================================================================
+
+# Path to centralized .env (managed by start_api_server.sh)
+KIKIPOUNAMU_ROOT="$(cd .. && pwd)"
+ENV_FILE="$KIKIPOUNAMU_ROOT/.env"
+
+if [ -f "$ENV_FILE" ]; then
+    echo "📋 Loading port configuration from $ENV_FILE"
+    source "$ENV_FILE"
+    echo "   Backend Port: ${ASR_BACKEND_PORT:-8081}"
+    echo "   API Port:     ${ASR_API_PORT:-8000}"
+else
+    echo "⚠️  Port configuration not found. Using defaults."
+    echo "   Please run ASR_server/scripts/start_api_server.sh first."
+    ASR_BACKEND_PORT=8081
+    ASR_API_PORT=8000
+fi
+
+# Export for Go process
+export ASR_BACKEND_PORT ASR_API_PORT
+
+echo ""
+
+# ============================================================================
+# END PORT CONFIGURATION
+# ============================================================================
+
 # 1. Check if Go is installed
 if ! command -v go &> /dev/null; then
     echo "❌ Error: Go is not installed. Please install Go 1.21+."

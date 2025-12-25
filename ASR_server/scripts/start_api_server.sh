@@ -1,6 +1,7 @@
 #!/bin/bash
 # Start API Server
 # Handles virtual environment activation and dependency checks
+# Also responsible for initializing project-wide port configuration
 
 set -e
 
@@ -11,6 +12,161 @@ cd "$(dirname "$0")/.."
 echo "🚀 Starting ASR API Server"
 echo "=========================="
 echo "📂 Working Directory: $(pwd)"
+
+# ============================================================================
+# PORT MANAGEMENT (First component responsibility)
+# ============================================================================
+
+PROJECT_ROOT="$(cd .. && pwd)"
+ENV_FILE="$PROJECT_ROOT/.env"
+
+# Function: Check if a port is available
+is_port_free() {
+    local port=$1
+    ! lsof -i :$port > /dev/null 2>&1
+}
+
+# Function: Find next available port starting from a base port
+find_free_port() {
+    local base_port=$1
+    local port=$base_port
+    while ! is_port_free $port; do
+        port=$((port + 1))
+    done
+    echo $port
+}
+
+# Function: Initialize or validate .env file
+init_or_validate_env() {
+    echo "🔍 Checking port configuration..."
+    
+    # If .env doesn't exist, create it
+    if [ ! -f "$ENV_FILE" ]; then
+        echo "📝 Creating new port configuration at $ENV_FILE"
+        
+        # Find available ports
+        API_PORT=$(find_free_port 8000)
+        BACKEND_PORT=$(find_free_port 8081)
+        ELECTRON_PORT=$(find_free_port 5173)
+        # Use standard ports for external services (never reallocate)
+        POSTGRES_PORT=5432
+        REDIS_PORT=6379
+        
+        # Write to .env
+        cat > "$ENV_FILE" << EOF
+# ASR System Port Configuration
+# Auto-generated on $(date)
+# Ports are dynamically allocated to avoid conflicts
+
+# API Server (Python Uvicorn)
+ASR_API_PORT=$API_PORT
+
+# Go Backend (WebSocket Server)
+ASR_BACKEND_PORT=$BACKEND_PORT
+
+# Electron Dev Server (Vite)
+ASR_ELECTRON_PORT=$ELECTRON_PORT
+
+# Database Ports
+POSTGRES_PORT=$POSTGRES_PORT
+REDIS_PORT=$REDIS_PORT
+EOF
+        
+        echo "✅ Port configuration initialized:"
+        echo "   API Server:    $API_PORT"
+        echo "   Go Backend:    $BACKEND_PORT"
+        echo "   Electron:      $ELECTRON_PORT"
+        echo "   PostgreSQL:    $POSTGRES_PORT"
+        echo "   Redis:         $REDIS_PORT"
+        
+        # Load the newly created configuration to ensure variables like ASR_API_PORT are set
+        source "$ENV_FILE"
+
+    else
+        # .env exists, validate ports
+        source "$ENV_FILE"
+        
+        echo "📋 Validating existing port configuration..."
+        NEED_UPDATE=false
+        
+        # Check each port
+        if ! is_port_free ${ASR_API_PORT:-8000}; then
+            echo "⚠️  Port ${ASR_API_PORT:-8000} (API) is occupied, finding alternative..."
+            ASR_API_PORT=$(find_free_port 8000)
+            NEED_UPDATE=true
+        fi
+        
+        if ! is_port_free ${ASR_BACKEND_PORT:-8081}; then
+            echo "⚠️  Port ${ASR_BACKEND_PORT:-8081} (Backend) is occupied, finding alternative..."
+            ASR_BACKEND_PORT=$(find_free_port 8081)
+            NEED_UPDATE=true
+        fi
+        
+        if ! is_port_free ${ASR_ELECTRON_PORT:-5173}; then
+            echo "⚠️  Port ${ASR_ELECTRON_PORT:-5173} (Electron) is occupied, finding alternative..."
+            ASR_ELECTRON_PORT=$(find_free_port 5173)
+            NEED_UPDATE=true
+        fi
+        
+        # Check External Services (do not reallocate, just warn if not running)
+        if is_port_free ${POSTGRES_PORT:-5432}; then
+             echo "⚠️  WARNING: Port ${POSTGRES_PORT:-5432} (PostgreSQL) is free. Is the database server running?"
+        else
+             echo "✅ PostgreSQL port ${POSTGRES_PORT:-5432} appears to be active."
+        fi
+
+        if is_port_free ${REDIS_PORT:-6379}; then
+             echo "⚠️  WARNING: Port ${REDIS_PORT:-6379} (Redis) is free. Is the Redis server running?"
+        else
+             echo "✅ Redis port ${REDIS_PORT:-6379} appears to be active."
+        fi
+        
+        # Update .env if needed
+        if [ "$NEED_UPDATE" = true ]; then
+            echo "🔄 Updating port configuration..."
+            cat > "$ENV_FILE" << EOF
+# ASR System Port Configuration
+# Last updated: $(date)
+# Ports are dynamically allocated to avoid conflicts
+
+# API Server (Python Uvicorn)
+ASR_API_PORT=$ASR_API_PORT
+
+# Go Backend (WebSocket Server)
+ASR_BACKEND_PORT=$ASR_BACKEND_PORT
+
+# Electron Dev Server (Vite)
+ASR_ELECTRON_PORT=$ASR_ELECTRON_PORT
+
+# Database Ports
+POSTGRES_PORT=$POSTGRES_PORT
+REDIS_PORT=$REDIS_PORT
+EOF
+            echo "✅ Port configuration updated"
+        else
+            echo "✅ All ports are available, no changes needed"
+        fi
+        
+        echo "📍 Using ports:"
+        echo "   API Server:    $ASR_API_PORT"
+        echo "   Go Backend:    $ASR_BACKEND_PORT"
+        echo "   Electron:      $ASR_ELECTRON_PORT"
+        echo "   PostgreSQL:    $POSTGRES_PORT"
+        echo "   Redis:         $REDIS_PORT"
+    fi
+    
+    # Export for current script
+    export ASR_API_PORT ASR_BACKEND_PORT ASR_ELECTRON_PORT POSTGRES_PORT REDIS_PORT
+}
+
+# Initialize/validate ports
+init_or_validate_env
+
+echo ""
+
+# ============================================================================
+# END PORT MANAGEMENT
+# ============================================================================
 
 # Check for Chinese fonts
 check_and_install_fonts() {
@@ -66,19 +222,9 @@ fi
 echo ""
 echo "🚀 Launching Uvicorn..."
 echo "   Host: 0.0.0.0"
-echo "   Port: 8000"
+echo "   Port: $ASR_API_PORT"
 echo ""
 
-# Check for existing process on port 8000
-PORT=8000
-if lsof -i :$PORT > /dev/null; then
-    echo "⚠️  Port $PORT is already in use."
-    PID=$(lsof -t -i:$PORT)
-    echo "🔄 Killing existing process (PID: $PID)..."
-    kill -9 $PID
-    sleep 1
-    echo "✅ Port $PORT freed."
-fi
+# Start Uvicorn with dynamic port
+exec uvicorn src.api.main:app --host 0.0.0.0 --port $ASR_API_PORT
 
-# Start Uvicorn
-exec uvicorn src.api.main:app --host 0.0.0.0 --port 8000

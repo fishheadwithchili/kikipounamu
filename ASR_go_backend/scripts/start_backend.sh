@@ -38,29 +38,35 @@ echo ""
 # END PORT CONFIGURATION
 # ============================================================================
 
-# 1. Check if Go is installed
+# 1. Check if Go is installed (Start with PATH check)
 if ! command -v go &> /dev/null; then
-    echo "⚠️  Go not found. Attempting auto-installation (v1.24.5)..."
-    
-    # Download
-    echo "   Downloading Go 1.24.5..."
-    wget -q https://go.dev/dl/go1.24.5.linux-amd64.tar.gz
-    
-    # Install
-    echo "   Installing to /usr/local/go..."
-    sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf go1.24.5.linux-amd64.tar.gz
-    rm go1.24.5.linux-amd64.tar.gz
-    
-    # Configure PATH for current session
-    export PATH=$PATH:/usr/local/go/bin
-    
-    # Persist PATH to .bashrc
-    if ! grep -q "/usr/local/go/bin" "$HOME/.bashrc"; then
-        echo 'export PATH=$PATH:/usr/local/go/bin' >> "$HOME/.bashrc"
-        echo "✅ Added Go to PATH in ~/.bashrc"
+    # Fallback: Check if binary exists on disk but just missing from PATH
+    if [ -x "/usr/local/go/bin/go" ]; then
+        echo "⚠️  Go found in /usr/local/go but not in PATH. Fixing..."
+        export PATH=$PATH:/usr/local/go/bin
+    else
+        echo "⚠️  Go not found. Attempting auto-installation (v1.24.5)..."
+        
+        # Download
+        echo "   Downloading Go 1.24.5..."
+        wget -q https://go.dev/dl/go1.24.5.linux-amd64.tar.gz
+        
+        # Install
+        echo "   Installing to /usr/local/go..."
+        sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf go1.24.5.linux-amd64.tar.gz
+        rm go1.24.5.linux-amd64.tar.gz
+        
+        # Configure PATH for current session
+        export PATH=$PATH:/usr/local/go/bin
+        
+        # Persist PATH to .bashrc
+        if ! grep -q "/usr/local/go/bin" "$HOME/.bashrc"; then
+            echo 'export PATH=$PATH:/usr/local/go/bin' >> "$HOME/.bashrc"
+            echo "✅ Added Go to PATH in ~/.bashrc"
+        fi
+        
+        echo "✅ Go installed successfully."
     fi
-    
-    echo "✅ Go installed successfully."
 fi
 
 # Re-check Go

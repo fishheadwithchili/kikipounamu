@@ -153,6 +153,27 @@ export ASR_DEVICE=cuda
 
 ---
 
+## 🐳 Docker / Container Environment Tips
+
+If you are deploying within a **Docker container** or other restricted environments, please note:
+
+1.  **Interactive Prompts during Installation**: When running `apt install` (e.g., for `tzdata` or `locales`), you might get stuck at geographic selection.
+    *   **Solution**: Run `export DEBIAN_FRONTEND=noninteractive` before installing, or just follow the terminal prompts (e.g., selection `10` for Pacific, then `2` for Auckland).
+
+2.  **systemctl Not Found**: Standard containers do not use `systemd`. Commands like `sudo systemctl enable --now redis-server` will fail.
+    *   **Solution**: Use the `service` command to start the process:
+        ```bash
+        sudo service redis-server start
+        sudo service postgresql start
+        ```
+
+3.  **Services Don't Start After Install**: Docker often blocks automatic service starts during `apt install` (via `policy-rc.d`).
+    *   **Solution**: Always manually start your databases (Redis/Postgres) after installation using the `service` command above.
+
+4.  **Port Forwarding**: Ensure you have mapped the necessary ports (`8000`, `8081`, `6379`, `5432`) if accessing from outside the container.
+
+---
+
 ## ✅ Verification & Troubleshooting
 
 1.  **API Docs**: Visit `http://localhost:8000/docs` (or `http://<ServerIP>:8000/docs` if on a server).

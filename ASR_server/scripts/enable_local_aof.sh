@@ -13,7 +13,20 @@ fi
 
 # Check if Redis is running
 if ! $REDIS_CLI ping &> /dev/null; then
-    echo "Warning: Redis is not running. Cannot configure AOF persistence."
+    echo "⚠️ Redis is not running. Attempting to start..."
+    if command -v systemctl > /dev/null 2>&1 && [ -d /run/systemd/system ]; then
+        sudo systemctl start redis-server || true
+    elif command -v service > /dev/null 2>&1; then
+        sudo service redis-server start || true
+    else
+        sudo redis-server --daemonize yes || true
+    fi
+    sleep 2
+fi
+
+# Final check
+if ! $REDIS_CLI ping &> /dev/null; then
+    echo "Warning: Redis is still not running. Cannot configure AOF persistence."
     exit 0
 fi
 

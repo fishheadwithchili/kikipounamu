@@ -1,0 +1,27 @@
+# Git
+.git
+.gitignore
+
+# Python
+**/.venv
+**/venv
+**/.pytest_cache
+**/__pycache__
+**/*.pyc
+
+# Node
+**/node_modules
+**/npm-debug.log
+
+# Docker
+docker/
+docker-compose.yml
+.dockerignore
+
+# OS
+.DS_Store
+
+# Large/Temp
+tmp/
+logs/
+data/

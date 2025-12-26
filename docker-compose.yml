@@ -1,0 +1,95 @@
+services:
+  # 1. REDIS: Message Broker
+  redis:
+    image: redis:7-alpine
+    container_name: asr_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+
+  # 2. POSTGRES: Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: asr_postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: "123456"
+      POSTGRES_DB: asr_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # 3. WORKER: The "Brain" (Needs GPU)
+  asr-worker:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: asr_worker
+    depends_on:
+      - redis
+    # Allow GPU access (Requires nvidia-container-toolkit)
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    # Mount code so changes reflect immediately
+    volumes:
+      - .:/app
+    working_dir: /app/ASR_server
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      # Python unbuffered output so logs show up
+      - PYTHONUNBUFFERED=1
+    command: python src/worker/unified_worker.py --stream asr_tasks --group asr_group
+
+  # 4. API SERVER: The HTTP Interface
+  asr-api:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: asr_api
+    depends_on:
+      - redis
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    working_dir: /app/ASR_server
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - PYTHONUNBUFFERED=1
+    command: python src/api/api_server.py
+
+  # 5. GO BACKEND: Business Logic
+  go-backend:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: asr_go_backend
+    depends_on:
+      - postgres
+    ports:
+      - "8081:8081" # Default Go port is 8080, using 8081 to avoid conflicts or match your config
+    volumes:
+      - .:/app
+    working_dir: /app/ASR_go_backend
+    environment:
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=123456
+      - DB_NAME=asr_db
+    # Build and run
+    command: sh -c "go mod tidy && go run main.go"
+
+volumes:
+  redis_data:
+  postgres_data:

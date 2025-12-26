@@ -170,6 +170,27 @@ export ASR_DEVICE=cuda
 
 ---
 
+## 🐳 Docker / 容器环境部署建议
+
+如果你在 **Docker 容器** 或其他受限环境中进行测试或部署，请注意以下几点：
+
+1.  **安装过程中的交互式询问**: 在执行 `apt install` 时（如安装 `tzdata` 或 `locales`），可能会卡在地理位置选择界面。
+    *   **解决方法**: 在安装前执行 `export DEBIAN_FRONTEND=noninteractive` 以跳过交互，或者根据提示输入数字（例如：太平洋地区输入 `10`，然后奥克兰输入 `2`）。
+
+2.  **无法使用 systemctl**: 标准容器镜像通常不包含 `systemd`。运行 `sudo systemctl enable --now redis-server` 会报错。
+    *   **解决方法**: 改用 `service` 命令来启动服务：
+        ```bash
+        sudo service redis-server start
+        sudo service postgresql start
+        ```
+
+3.  **安装后服务未自启动**: Docker 镜像通常会拦截 `apt install` 后的自动启动逻辑（通过 `policy-rc.d`）。
+    *   **解决方法**: 安装完成后，务必使用上述 `service` 命令手动启动数据库。
+
+4.  **端口映射**: 如果从容器外部访问，确保在 `docker run` 时通过 `-p` 映射了必要的端口 (`8000`, `8081`, `6379`, `5432`)。
+
+---
+
 ## ✅ 验证与故障排除
 
 1.  **API 文档**: 访问 `http://localhost:8000/docs` (如果是服务器，访问 `http://<服务器IP>:8000/docs`)。

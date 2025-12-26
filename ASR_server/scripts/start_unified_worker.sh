@@ -117,17 +117,18 @@ if ! command -v uv &> /dev/null; then
         curl -LsSf https://astral.sh/uv/install.sh | sh
         
         # Add to path for current session
-        if [ -f "$HOME/.cargo/env" ]; then
-            source "$HOME/.cargo/env"
-        else
-            export PATH="$HOME/.local/bin:$PATH"
+        export PATH="$HOME/.local/bin:$HOME/.cargo/bin:$PATH"
+        
+        # Persist to .bashrc for future sessions (e.g. new terminals)
+        if ! grep -q "export PATH.*.local/bin" "$HOME/.bashrc"; then
+            echo 'export PATH="$HOME/.local/bin:$HOME/.cargo/bin:$PATH"' >> "$HOME/.bashrc"
+            echo "✅ Added uv path to ~/.bashrc"
         fi
     fi
 fi
 
-# Re-check uv validity and update PATH if needed
+# Re-check uv validity and update PATH if needed (for current session)
 if ! command -v uv &> /dev/null; then
-    # Try adding common paths explicitly
     export PATH="$HOME/.local/bin:$HOME/.cargo/bin:$PATH"
 fi
 

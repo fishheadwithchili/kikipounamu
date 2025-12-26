@@ -40,7 +40,37 @@ echo ""
 
 # 1. Check if Go is installed
 if ! command -v go &> /dev/null; then
-    echo "❌ Error: Go is not installed. Please install Go 1.21+."
+    echo "⚠️  Go not found. Attempting auto-installation (v1.24.5)..."
+    
+    # Download
+    echo "   Downloading Go 1.24.5..."
+    wget -q https://go.dev/dl/go1.24.5.linux-amd64.tar.gz
+    
+    # Install
+    echo "   Installing to /usr/local/go..."
+    sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf go1.24.5.linux-amd64.tar.gz
+    rm go1.24.5.linux-amd64.tar.gz
+    
+    # Configure PATH for current session
+    export PATH=$PATH:/usr/local/go/bin
+    
+    # Persist PATH to .bashrc
+    if ! grep -q "/usr/local/go/bin" "$HOME/.bashrc"; then
+        echo 'export PATH=$PATH:/usr/local/go/bin' >> "$HOME/.bashrc"
+        echo "✅ Added Go to PATH in ~/.bashrc"
+    fi
+    
+    echo "✅ Go installed successfully."
+fi
+
+# Re-check Go
+if ! command -v go &> /dev/null; then
+     # Try explicit path just in case
+     export PATH=$PATH:/usr/local/go/bin
+fi
+
+if ! command -v go &> /dev/null; then
+    echo "❌ Error: Auto-installation failed. Please install Go manually."
     exit 1
 fi
 

@@ -6,14 +6,18 @@ let tray: Tray | null = null;
 export function createTray(mainWindow: BrowserWindow) {
     try {
         // Use VITE_PUBLIC for correct path in both dev and prod
-        const iconPath = path.join(process.env.VITE_PUBLIC || '', 'vite.svg');
+        // NOTE: On Linux, SVGs are often not supported for Tray icons. Using PNG.
+        const iconPath = path.join(process.env.VITE_PUBLIC || '', 'icon.png');
 
         // Create native image
         let icon = nativeImage.createFromPath(iconPath);
+
         if (icon.isEmpty()) {
-            console.warn("Tray icon not found at", iconPath, "- using empty icon");
-            // Create a simple 16x16 transparent icon as fallback
+            console.warn("Tray icon not found or invalid at", iconPath);
             icon = nativeImage.createEmpty();
+        } else {
+            // Resize for tray (usually 16x16 or 24x24 is best for cross-platform)
+            icon = icon.resize({ width: 24, height: 24 });
         }
 
         tray = new Tray(icon);

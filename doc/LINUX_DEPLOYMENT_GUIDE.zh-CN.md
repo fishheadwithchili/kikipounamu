@@ -67,8 +67,11 @@ sudo apt install -y ffmpeg
 **Redis (5.0+)**:
 ```bash
 sudo apt install -y redis-server
-# 启动并设置为开机自启
+# 启动 (常规系统)
 sudo systemctl enable --now redis-server
+# 启动 (Docker/WSL 等无 systemd 环境)
+# sudo service redis-server start
+
 # 验证
 redis-cli ping
 # 应返回 PONG
@@ -77,7 +80,10 @@ redis-cli ping
 **PostgreSQL (14+)**:
 ```bash
 sudo apt install -y postgresql postgresql-contrib
+# 启动 (常规系统)
 sudo systemctl enable --now postgresql
+# 启动 (Docker/WSL 等无 systemd 环境)
+# sudo service postgresql start
 ```
 
 **配置数据库用户**:

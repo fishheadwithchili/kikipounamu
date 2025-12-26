@@ -67,8 +67,11 @@ sudo apt install -y ffmpeg
 **Redis (5.0+)**:
 ```bash
 sudo apt install -y redis-server
-# Start and enable on boot
+# Start (Standard Linux)
 sudo systemctl enable --now redis-server
+# Start (Docker/WSL without systemd)
+# sudo service redis-server start
+
 # Verify
 redis-cli ping
 # Should return PONG
@@ -77,7 +80,10 @@ redis-cli ping
 **PostgreSQL (14+)**:
 ```bash
 sudo apt install -y postgresql postgresql-contrib
+# Start (Standard Linux)
 sudo systemctl enable --now postgresql
+# Start (Docker/WSL without systemd)
+# sudo service postgresql start
 ```
 
 **Configure Database User**:

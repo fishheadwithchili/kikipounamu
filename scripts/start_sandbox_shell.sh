@@ -31,6 +31,10 @@ echo ""
 # But the working directory starts empty.
 
 docker run --rm -it --gpus all \
+    -p 8000:8000 \
+    -p 8081:8081 \
+    -p 6379:6379 \
+    -p 5432:5432 \
     -w /home/sim_user \
     asr_simulator \
     bash

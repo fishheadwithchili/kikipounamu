@@ -7,10 +7,17 @@ All notable changes to this project will be documented in this file.
 
 ## [1.3.0] - 2025-12-26
 
+### Added
+- **Infrastructure**: Introduced **Docker and Docker Compose** support for simplified deployment and sandbox development.
+- **Port Management**: Implemented **dynamic port allocation** and centralized configuration via `.env`, ensuring conflict-free startup.
+- **Audio**: Added **audio device selection** in the settings panel with a custom glassmorphic dropdown.
+- **Automation**: Added automatic installation of `Go` and `uv` in startup scripts for smoother onboarding.
+- **Documentation**: Extensive documentation updates including Chinese guides for architecture, local dev, and VPS updates.
+
 ### Fixed
-- **Critical Stability**: Resolved system-wide X11 freeze on Linux during text insertion. Replaced blocking `xdotool type` (typing) with instant clipboard pasting (`xdotool key ctrl+v`).
-- **UI Layout**: Fixed Settings panel overflow on small screens and eliminated height "jumping" between tabs.
-- **UI Styling**: Fixed microphone dropdown width inconsistency using strict box-sizing.
+- **Critical Stability**: Resolved system-wide X11 freeze on Linux during text insertion by switching to clipboard-based pasting.
+- **UI Layout**: Fixed Settings panel overflow and tab "jumping" issues.
+- **Tray Icon**: Switched tray icon to PNG with explicit resizing for improved cross-platform compatibility.
 
 ### Changed
 - **UI Overhaul**: Replaced native Settings dropdown with a premium "Glassmorphic" `CustomSelect` component (blur effects, smooth animations).

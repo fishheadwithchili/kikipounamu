@@ -75,8 +75,9 @@ ensure_redis_running() {
          elif command -v service > /dev/null 2>&1; then
              sudo service redis-server start || true
          else
-             # Last resort
-             sudo redis-server --daemonize yes || true
+             # DOCKER FIX: If manual start, disable protected mode for host access
+             echo "   Running manual start with protected-mode no..."
+             sudo redis-server --daemonize yes --protected-mode no || true
          fi
          sleep 2
          echo "✅ Redis check completed."

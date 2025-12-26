@@ -126,6 +126,17 @@ EOF
             local port=$2
             local start_cmd=$3
 
+            # DOCKER FIX: Expose Databases
+            if [ -f /usr/sbin/policy-rc.d ] && [ "$service_name" = "postgresql" ]; then
+                 PG_CONF="/etc/postgresql/14/main/postgresql.conf"
+                 PG_HBA="/etc/postgresql/14/main/pg_hba.conf"
+                 if ! grep -q "listen_addresses = '*'" $PG_CONF; then
+                     echo "🐳 Exposing PostgreSQL for Docker..."
+                     sudo sed -i "s/#listen_addresses = 'localhost'/listen_addresses = '*'/" $PG_CONF
+                     echo "host all all 0.0.0.0/0 scram-sha-256" | sudo tee -a $PG_HBA >/dev/null
+                 fi
+            fi
+
             if is_port_free $port; then
                 echo "⚠️  $service_name is not running on port $port. Attempting to start..."
                 
@@ -152,7 +163,13 @@ EOF
 
         # Check External Services
         start_service_if_needed "postgresql" "${POSTGRES_PORT:-5432}" "sudo -u postgres pg_ctlcluster 14 main start"
-        start_service_if_needed "redis-server" "${REDIS_PORT:-6379}" "sudo redis-server --daemonize yes"
+        
+        # DOCKER FIX: Disable Redis protected mode for external access
+        REDIS_CMD="sudo redis-server --daemonize yes"
+        if [ -f /usr/sbin/policy-rc.d ]; then
+             REDIS_CMD="sudo redis-server --daemonize yes --protected-mode no"
+        fi
+        start_service_if_needed "redis-server" "${REDIS_PORT:-6379}" "$REDIS_CMD"
         
         # Update .env if needed
         if [ "$NEED_UPDATE" = true ]; then

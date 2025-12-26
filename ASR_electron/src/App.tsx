@@ -67,7 +67,9 @@ function App() {
   useEffect(() => {
     const loadState = async () => {
       const savedSegments = await storageService.get<string[]>('segments');
-      if (savedSegments) setSegments(savedSegments);
+      if (savedSegments) {
+        setSegments(savedSegments);
+      }
 
       const savedHistory = await storageService.get<any[]>('history');
       if (savedHistory) setHistory(savedHistory);
@@ -221,7 +223,7 @@ function App() {
       setIsToggling(false);
 
     }
-  }, [vad, isToggling, vadMode, savePath, maxAudioHistory, selectedAudioDeviceId]);
+  }, [vad, isToggling, vadMode, savePath, maxAudioHistory, selectedAudioDeviceId, segments.length]);
 
   // Handle Audio Chunks from VAD
   useEffect(() => {
@@ -249,7 +251,8 @@ function App() {
     toggleRecording,
     vad,
     autoPaste,
-    maxTextHistory
+    maxTextHistory,
+    vadMode
   });
 
   useEffect(() => {

@@ -18,7 +18,7 @@ type ChunkMessage struct {
 type ServerMessage struct {
 	Type       string  `json:"type"` // ack, chunk_result, final_result, error
 	SessionID  string  `json:"session_id,omitempty"`
-	ChunkIndex int     `json:"chunk_index,omitempty"`
+	ChunkIndex int     `json:"chunk_index"`
 	Status     string  `json:"status,omitempty"`
 	Text       string  `json:"text,omitempty"`
 	Duration   float64 `json:"duration,omitempty"`

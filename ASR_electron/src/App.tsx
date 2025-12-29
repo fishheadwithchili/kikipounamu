@@ -106,6 +106,9 @@ function App() {
           d.kind === 'audioinput' && d.deviceId !== 'default'
         );
         setAudioDevices(inputs);
+
+        // DEBUG: Log available devices to help troubleshooting
+        window.ipcRenderer.invoke('log-message', 'info', `[AudioDeviceDebug] Available Inputs: ${JSON.stringify(inputs.map(d => ({ label: d.label, id: d.deviceId })))}`);
       } catch (e) {
         console.error('Failed to enumerate devices:', e);
       }
@@ -202,11 +205,11 @@ function App() {
           await window.ipcRenderer.invoke('start-recording');
           await window.ipcRenderer.invoke('log-message', 'info', 'Backend session started.');
         } else {
-          await window.ipcRenderer.invoke('log-message', 'error', 'Failed to start local VAD. Backend session NOT started.');
+          await window.ipcRenderer.invoke('log-message', 'error', 'Failed to start recording. Microphone access failed.');
           setAlertState({
             type: 'error',
-            title: 'Initialization Failed',
-            description: "Failed to start local VAD. Check microphone permissions."
+            title: 'Microphone Error',
+            description: "Failed to access microphone. Please check your device settings and permissions."
           });
         }
       }

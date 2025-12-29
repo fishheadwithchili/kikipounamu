@@ -1,0 +1,106 @@
+services:
+  # 1. REDIS: Message Broker (Added because it wasn't running)
+  # Port allocated: 17788
+  redis:
+    image: redis:7-alpine
+    container_name: asr_redis
+    ports:
+      - "17788:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+
+  # 2. API SERVER: The HTTP Interface
+  # Port allocated: 16973
+  asr-api:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: asr_api
+    depends_on:
+      - redis
+    ports:
+      - "16973:8000"
+    volumes:
+      - .:/app
+    working_dir: /app/ASR_server
+    environment:
+      # Internal redis host on docker network is still 'redis' (service name)
+      # But port 6379 is the internal port
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - PYTHONUNBUFFERED=1
+
+    # Fix: Use uv pip install psutil explicitly (pip is missing, uv is available)
+    command: sh -c "/root/.local/bin/uv pip install psutil && /venv/bin/python -m uvicorn src.api.main:app --host 0.0.0.0 --port 8000"
+
+  # 3. GO BACKEND: Business Logic
+  # Port allocated: 16484
+  go-backend:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: asr_go_backend
+    depends_on:
+      - redis
+    ports:
+      - "16484:8081"
+    volumes:
+      - .:/app
+    # Correct working directory where go.mod is located
+    working_dir: /app/ASR_go_backend
+    environment:
+      # Connect to existing postgres container
+      - DB_HOST=kikipounamu_postgres
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=123456
+      - DB_NAME=asr_db
+
+      # Connect to our new redis (internal service name 'redis', internal port 6379)
+      - REDIS_ADDR=redis:6379
+      - REDIS_PASSWORD=""
+
+      # Connect to our new api (internal service name 'asr-api', internal port 8000)
+      - FUNASR_ADDR=asr-api:8000
+
+      - PORT=8081
+
+    # Build and run - Explicitly find main.go since it is in cmd/server/
+    # And run go mod tidy inside the container to ensure deps are there
+    command: sh -c "go mod tidy && go run cmd/server/main.go"
+
+  # 4. WORKER: The "Brain" (Renamed as requested)
+  kiki_public_asr_worker:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: kiki_public_asr_worker
+    depends_on:
+      - redis
+    # Allow GPU access
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [ gpu ]
+    volumes:
+      - .:/app
+    working_dir: /app/ASR_server
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - PYTHONUNBUFFERED=1
+
+    # Use uv pip install psutil
+    command: sh -c "/root/.local/bin/uv pip install psutil && /venv/bin/python src/worker/unified_worker.py --stream asr_tasks --group asr_group"
+
+networks:
+  default:
+    name: kikipounamu-private_app-network
+    external: true
+
+volumes:
+  redis_data:

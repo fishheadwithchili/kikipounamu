@@ -43,13 +43,14 @@ COPY ASR_server/pyproject.toml ASR_server/
 
 # 6. Create Virtual Environment & Install Dependencies
 # We use a single venv for simplicity in the container
-ENV VIRTUAL_ENV=/app/.venv
+ENV VIRTUAL_ENV=/venv
 WORKDIR /app/ASR_server
 RUN uv venv $VIRTUAL_ENV
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 # Install dependencies into the venv
-RUN uv sync || true
+# Install dependencies into the venv explicitly
+RUN uv pip install . --python /venv/bin/python || true
 
 # Restore workspace
 WORKDIR /app

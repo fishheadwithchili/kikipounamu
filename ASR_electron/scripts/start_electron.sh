@@ -102,6 +102,35 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
     else
         echo "✅ All system dependencies are satisfied."
     fi
+
+    # ============================================================================
+    # ANDROIDMIC VIRTUAL MICROPHONE SETUP (Linux only)
+    # ============================================================================
+    
+    # Check if AndroidMic sink exists (user is running AndroidMic app)
+    if pactl list sinks short 2>/dev/null | grep -q "AndroidMic"; then
+        echo "📱 AndroidMic detected. Setting up virtual microphone..."
+        
+        # Create remap-source if it doesn't exist
+        if ! pactl list sources short 2>/dev/null | grep -q "AndroidMic_Source"; then
+            pactl load-module module-remap-source master=AndroidMic.monitor \
+                source_name=AndroidMic_Source \
+                source_properties="device.description='Android_Microphone'" \
+                format=s16le rate=48000 channels=1 2>/dev/null
+            echo "   ✅ Created AndroidMic_Source"
+        else
+            echo "   ✅ AndroidMic_Source already exists"
+        fi
+        
+        # Set AndroidMic volume to 100%
+        SINK_INPUT=$(pactl list sink-inputs short 2>/dev/null | grep -v "module-loopback" | head -1 | awk '{print $1}')
+        if [ -n "$SINK_INPUT" ]; then
+            pactl set-sink-input-volume "$SINK_INPUT" 100% 2>/dev/null
+            echo "   ✅ Set AndroidMic volume to 100%"
+        fi
+        
+        echo "   🎤 Select 'Android_Microphone' in Settings to use your phone mic"
+    fi
 fi
 
 # 5. Start Application

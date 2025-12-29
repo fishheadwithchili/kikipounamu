@@ -225,11 +225,12 @@ export function useVADRecording(
 
             // 获取麦克风
             const audioConstraints: MediaTrackConstraints = {
-                sampleRate: SAMPLE_RATE,
+                // sampleRate: SAMPLE_RATE, // Prepare to fail if device doesn't support 16k natively. Let AudioContext resample.
                 channelCount: 1,
-                echoCancellation: true,
-                noiseSuppression: true,
-                autoGainControl: true,
+                // Disable processing to support "Monitor" devices (which may not support these features)
+                echoCancellation: false,
+                noiseSuppression: false,
+                autoGainControl: false,
             };
 
             // 如果指定了设备ID，添加到约束中 (使用 ref 确保获取最新值)
@@ -243,6 +244,13 @@ export function useVADRecording(
                 audio: audioConstraints
             });
             streamRef.current = stream;
+
+            // DEBUG: Log the actual device used
+            const track = stream.getAudioTracks()[0];
+            const settings = track.getSettings();
+            console.log(`🎤 [Actual Device Used] Label: ${track.label}, DeviceID: ${settings.deviceId}`);
+            logger.info('Device selected', { label: track.label, deviceId: settings.deviceId });
+
             setStreamState(stream); // Trigger re-render to share stream with Waveform
 
             // Start Temp Recording Session
@@ -290,6 +298,8 @@ export function useVADRecording(
             return true;
 
         } catch (err) {
+            console.error('FAILED TO START RECORDING:', err);
+            window.ipcRenderer.invoke('log-message', 'error', `getUserMedia Error: ${(err as Error).name}: ${(err as Error).message}`);
             logger.error('Failed to start recording', err as Error);
             setError('麦克风访问失败: ' + (err as Error).message);
             return false;

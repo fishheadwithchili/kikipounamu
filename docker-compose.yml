@@ -4,7 +4,7 @@ services:
     image: redis:7-alpine
     container_name: asr_redis
     ports:
-      - "6379:6379"
+      - "6380:6379"
     volumes:
       - redis_data:/data
     command: redis-server --appendonly yes
@@ -14,7 +14,7 @@ services:
     image: postgres:15-alpine
     container_name: asr_postgres
     ports:
-      - "5432:5432"
+      - "5433:5432"
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: "123456"
@@ -37,7 +37,7 @@ services:
           devices:
             - driver: nvidia
               count: all
-              capabilities: [gpu]
+              capabilities: [ gpu ]
     # Mount code so changes reflect immediately
     volumes:
       - .:/app
@@ -66,7 +66,7 @@ services:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - PYTHONUNBUFFERED=1
-    command: python src/api/api_server.py
+    command: uvicorn src.api.main:app --host 0.0.0.0 --port 8000
 
   # 5. GO BACKEND: Business Logic
   go-backend:
@@ -88,7 +88,7 @@ services:
       - DB_PASSWORD=123456
       - DB_NAME=asr_db
     # Build and run
-    command: sh -c "go mod tidy && go run main.go"
+    command: sh -c "go mod tidy && go run cmd/server/main.go"
 
 volumes:
   redis_data:

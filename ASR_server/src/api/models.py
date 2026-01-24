@@ -73,3 +73,17 @@ class ErrorResponse(BaseModel):
     """Error response"""
     error: str
     details: Optional[dict] = None
+
+
+class EmotionScore(BaseModel):
+    """Emotion score"""
+    label: str
+    score: float
+
+
+class EmotionResponse(BaseModel):
+    """Emotion analysis response"""
+    task_id: str
+    status: str
+    emotion_scores: List[EmotionScore]
+    dominant_emotion: str
